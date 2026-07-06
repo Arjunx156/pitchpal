@@ -1,0 +1,58 @@
+import type { Venue } from './types';
+
+/**
+ * Representative sample data for a single World Cup 2026 host venue.
+ *
+ * This is fictional-but-plausible data used to demonstrate grounded,
+ * context-aware answers. It is NOT official venue information. The shape mirrors
+ * what a real stadium operations feed would expose, so swapping in live data is
+ * a data change, not a code change.
+ */
+export const venue: Venue = {
+  name: 'Grand Meadow Stadium',
+  city: 'Host City',
+  note: 'Representative sample data — not official FIFA or venue information.',
+
+  gates: [
+    { id: 'A', name: 'Gate A — North Plaza', side: 'north', stepFree: true, nearTransport: ['rail-north', 'shuttle-downtown'] },
+    { id: 'B', name: 'Gate B — East Concourse', side: 'east', stepFree: true, nearTransport: ['bus-rapid', 'rideshare-east'] },
+    { id: 'C', name: 'Gate C — South Family', side: 'south', stepFree: true, nearTransport: ['parking-accessible', 'shuttle-downtown'] },
+    { id: 'D', name: 'Gate D — West', side: 'west', stepFree: false, nearTransport: ['bike-hub'] },
+  ],
+
+  sections: [
+    { id: '101', level: 'lower', side: 'north', nearestGate: 'A', walkMinutes: 4, stepFreeAccess: true, hasElevator: true },
+    { id: '108', level: 'lower', side: 'east', nearestGate: 'B', walkMinutes: 5, stepFreeAccess: true, hasElevator: true },
+    { id: '114', level: 'lower', side: 'south', nearestGate: 'C', walkMinutes: 6, stepFreeAccess: true, hasElevator: true },
+    { id: '120', level: 'lower', side: 'west', nearestGate: 'D', walkMinutes: 5, stepFreeAccess: false, hasElevator: false },
+    { id: '205', level: 'club', side: 'south', nearestGate: 'C', walkMinutes: 8, stepFreeAccess: true, hasElevator: true },
+    { id: '214', level: 'club', side: 'east', nearestGate: 'B', walkMinutes: 9, stepFreeAccess: true, hasElevator: true },
+    { id: '301', level: 'upper', side: 'north', nearestGate: 'A', walkMinutes: 12, stepFreeAccess: true, hasElevator: true },
+    { id: '314', level: 'upper', side: 'south', nearestGate: 'C', walkMinutes: 13, stepFreeAccess: true, hasElevator: true },
+    { id: '320', level: 'upper', side: 'west', nearestGate: 'D', walkMinutes: 14, stepFreeAccess: false, hasElevator: false },
+  ],
+
+  amenities: [
+    { id: 'food-halal-1', name: 'Crescent Grill', type: 'food', tags: ['halal', 'hot-food'], nearSection: '114', level: 'lower', stepFree: true, hours: 'Gates open until full time' },
+    { id: 'food-veg-1', name: 'Green Pitch Kitchen', type: 'food', tags: ['vegetarian', 'vegan', 'gluten-free'], nearSection: '108', level: 'lower', stepFree: true, hours: 'Gates open until full time' },
+    { id: 'food-kosher-1', name: 'Blue Line Deli', type: 'food', tags: ['kosher'], nearSection: '205', level: 'club', stepFree: true, hours: 'Gates open until 80th minute' },
+    { id: 'water-1', name: 'Free Water Refill Point', type: 'water', tags: ['free', 'bottle-refill'], nearSection: '101', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'water-2', name: 'Free Water Refill Point', type: 'water', tags: ['free', 'bottle-refill'], nearSection: '301', level: 'upper', stepFree: true, hours: 'All day' },
+    { id: 'firstaid-1', name: 'First Aid Station North', type: 'first-aid', tags: ['medical', 'accessible'], nearSection: '101', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'family-1', name: 'Family & Baby Care Room', type: 'family', tags: ['baby-change', 'nursing', 'stroller'], nearSection: '114', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'prayer-1', name: 'Multi-Faith Prayer Room', type: 'prayer', tags: ['quiet', 'wudu', 'accessible'], nearSection: '108', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'restroom-acc-1', name: 'Accessible Restroom', type: 'restroom', tags: ['accessible', 'changing-places'], nearSection: '114', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'charging-1', name: 'Phone Charging Lockers', type: 'charging', tags: ['usb-c', 'power'], nearSection: '214', level: 'club', stepFree: true, hours: 'All day' },
+    { id: 'store-1', name: 'Official Team Store', type: 'store', tags: ['merch', 'jerseys'], nearSection: '205', level: 'club', stepFree: true, hours: 'Until 60 min after full time' },
+    { id: 'info-1', name: 'Fan Information Point', type: 'info', tags: ['lost-found', 'multilingual', 'accessible'], nearSection: '101', level: 'concourse', stepFree: true, hours: 'All day' },
+  ],
+
+  transport: [
+    { id: 'rail-north', mode: 'rail', name: 'North Line — Meadow Station', description: 'Regional rail directly to the North Plaza. Step-free platform to Gate A.', nearGate: 'A', accessible: true, frequency: 'Every 6 min on match day', destinations: ['Downtown', 'Airport', 'Central Station'] },
+    { id: 'shuttle-downtown', mode: 'shuttle', name: 'Downtown Express Shuttle', description: 'Free accessible shuttle looping between the stadium and downtown hotels.', nearGate: 'A', accessible: true, frequency: 'Every 10 min, 3h before to 2h after', destinations: ['Downtown', 'Convention Center', 'Riverside Hotels'] },
+    { id: 'bus-rapid', mode: 'bus', name: 'Rapid Bus Route 26', description: 'High-capacity bus to the east transit hub. Low-floor accessible vehicles.', nearGate: 'B', accessible: true, frequency: 'Every 8 min', destinations: ['East Hub', 'University', 'Stadium Park & Ride'] },
+    { id: 'rideshare-east', mode: 'rideshare', name: 'Rideshare Pickup — East', description: 'Designated rideshare and taxi pickup zone outside Gate B.', nearGate: 'B', accessible: true, frequency: 'On demand', destinations: ['Anywhere'] },
+    { id: 'parking-accessible', mode: 'parking', name: 'Accessible Parking — South Lot', description: 'Reserved accessible parking with step-free path to Gate C. Blue Badge required.', nearGate: 'C', accessible: true, frequency: 'Pre-book recommended', destinations: [] },
+    { id: 'bike-hub', mode: 'bike', name: 'Bike Share Hub — West', description: 'Docked bike share and secure cycle parking near Gate D.', nearGate: 'D', accessible: false, frequency: 'On demand', destinations: ['Riverside Trail', 'Downtown'] },
+  ],
+};

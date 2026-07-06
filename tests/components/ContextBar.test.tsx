@@ -1,0 +1,41 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import App from '../../src/App';
+import { UI } from '../../src/i18n/ui';
+
+describe('ContextBar', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    document.documentElement.dir = 'ltr';
+  });
+
+  it('switches the whole UI language and sets RTL for Arabic', async () => {
+    render(<App />);
+    expect(screen.getByText(UI.en.tagline)).toBeInTheDocument();
+
+    await userEvent.selectOptions(screen.getByLabelText(UI.en.languageLabel), 'ar');
+
+    expect(screen.getByText(UI.ar.tagline)).toBeInTheDocument();
+    expect(document.documentElement.dir).toBe('rtl');
+    expect(document.documentElement.lang).toBe('ar');
+  });
+
+  it('persists the fan location to storage', async () => {
+    render(<App />);
+    await userEvent.type(screen.getByLabelText(UI.en.locationLabel), 'Gate B');
+
+    const saved = JSON.parse(localStorage.getItem('pitchpal.context') ?? '{}');
+    expect(saved.location).toBe('Gate B');
+  });
+
+  it('updates the accessibility profile', async () => {
+    render(<App />);
+    await userEvent.selectOptions(
+      screen.getByLabelText(UI.en.accessibilityLabel),
+      UI.en.accessibility.wheelchair,
+    );
+    const saved = JSON.parse(localStorage.getItem('pitchpal.context') ?? '{}');
+    expect(saved.accessibility).toBe('wheelchair');
+  });
+});

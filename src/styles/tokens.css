@@ -1,0 +1,90 @@
+/*
+ * Design tokens — single source of truth for color, type, spacing and motion.
+ * Colors use oklch for perceptually even contrast. Light + dark are both
+ * intentional; contrast pairs meet WCAG 2.2 AA.
+ */
+:root {
+  /* Brand: a pitch-green + tournament-magenta accent */
+  --color-pitch: oklch(62% 0.15 155);
+  --color-pitch-strong: oklch(52% 0.16 155);
+  --color-accent: oklch(60% 0.22 355);
+
+  /* Light surfaces */
+  --color-bg: oklch(98.5% 0.006 145);
+  --color-surface: oklch(100% 0 0);
+  --color-surface-2: oklch(96% 0.008 145);
+  --color-border: oklch(88% 0.01 145);
+  --color-text: oklch(24% 0.02 155);
+  --color-text-muted: oklch(46% 0.02 155);
+  --color-on-accent: oklch(99% 0 0);
+
+  --color-focus: oklch(58% 0.2 255);
+  --color-danger: oklch(55% 0.2 25);
+  --color-ok: oklch(60% 0.15 155);
+
+  /* Typography */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji';
+  --text-sm: clamp(0.82rem, 0.8rem + 0.1vw, 0.9rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
+  --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
+  --text-xl: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
+  --text-hero: clamp(1.8rem, 1.3rem + 2.4vw, 3rem);
+  --leading: 1.55;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* Radius + elevation */
+  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --shadow-1: 0 1px 2px oklch(20% 0.02 155 / 0.08),
+    0 4px 16px oklch(20% 0.02 155 / 0.06);
+  --shadow-2: 0 8px 32px oklch(20% 0.02 155 / 0.14);
+
+  /* Motion */
+  --duration-fast: 140ms;
+  --duration-normal: 260ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --maxw-app: 900px;
+}
+
+/* System dark preference — unless the user has explicitly chosen light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-bg: oklch(20% 0.015 155);
+    --color-surface: oklch(24% 0.017 155);
+    --color-surface-2: oklch(28% 0.018 155);
+    --color-border: oklch(36% 0.02 155);
+    --color-text: oklch(95% 0.006 145);
+    --color-text-muted: oklch(74% 0.012 145);
+    --color-pitch: oklch(72% 0.14 155);
+    --color-accent: oklch(72% 0.19 355);
+    --color-on-accent: oklch(18% 0.02 355);
+    --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 4px 16px oklch(0% 0 0 / 0.3);
+    --shadow-2: 0 8px 32px oklch(0% 0 0 / 0.45);
+  }
+}
+
+/* Explicit dark theme (set by data-theme) — mirrors the media query block */
+:root[data-theme='dark'] {
+  --color-bg: oklch(20% 0.015 155);
+  --color-surface: oklch(24% 0.017 155);
+  --color-surface-2: oklch(28% 0.018 155);
+  --color-border: oklch(36% 0.02 155);
+  --color-text: oklch(95% 0.006 145);
+  --color-text-muted: oklch(74% 0.012 145);
+  --color-pitch: oklch(72% 0.14 155);
+  --color-accent: oklch(72% 0.19 355);
+  --color-on-accent: oklch(18% 0.02 355);
+  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 4px 16px oklch(0% 0 0 / 0.3);
+  --shadow-2: 0 8px 32px oklch(0% 0 0 / 0.45);
+}
