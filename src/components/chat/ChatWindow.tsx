@@ -59,7 +59,8 @@ export function ChatWindow() {
   return (
     <section className="chat" aria-labelledby="chat-heading">
       <div className="chat__head">
-        <h2 id="chat-heading" className="chat__heading display">
+        <h2 id="chat-heading" className="chat__heading">
+          <span className="chat__heading-dot" aria-hidden="true" />
           {ui.assistant}
         </h2>
         <ModeBadge mode={mode} ui={ui} />

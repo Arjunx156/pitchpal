@@ -46,7 +46,7 @@ export function OpsHud() {
   return (
     <section className="ops" aria-labelledby="ops-heading">
       <div className="ops__top">
-        <h2 id="ops-heading" className="ops__heading display">
+        <h2 id="ops-heading" className="ops__heading">
           {ui.ops.heading}
         </h2>
         <span className="ops__weather">

@@ -7,7 +7,7 @@ export function Standings() {
 
   return (
     <section className="standings" aria-labelledby="standings-heading">
-      <h2 id="standings-heading" className="standings__heading display">
+      <h2 id="standings-heading" className="standings__heading">
         {ui.standings.heading} — {fixture.group}
       </h2>
       <table className="standings__table">

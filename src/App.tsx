@@ -119,19 +119,19 @@ function Shell() {
         </nav>
 
         <main className="workspace">
-          <div className="rail">
+          <aside className="rail rail--left" aria-label={ui.settingsHeading}>
             <ContextBar />
-            <OpsHud />
             <ItineraryPanel />
             <Standings />
-            <CrowdAnalytics />
-          </div>
+          </aside>
           <div id="chat-main" tabIndex={-1} className="workspace__chat">
             <ChatWindow />
           </div>
-          <div className="workspace__map">
+          <aside className="rail rail--right workspace__map" aria-label={ui.map.heading}>
             <StadiumMap />
-          </div>
+            <OpsHud />
+            <CrowdAnalytics />
+          </aside>
         </main>
 
         <footer className="app__footer">

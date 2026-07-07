@@ -52,7 +52,7 @@ export function ItineraryPanel() {
   return (
     <section className="itinerary" aria-labelledby="itinerary-heading">
       <div className="itinerary__head">
-        <h2 id="itinerary-heading" className="itinerary__heading display">
+        <h2 id="itinerary-heading" className="itinerary__heading">
           {strings.heading}
         </h2>
         {alerts.permission !== 'unsupported' ? (

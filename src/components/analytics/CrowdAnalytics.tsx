@@ -28,7 +28,7 @@ export function CrowdAnalytics() {
 
   return (
     <section className="analytics" aria-labelledby="analytics-heading">
-      <h2 id="analytics-heading" className="analytics__heading display">
+      <h2 id="analytics-heading" className="analytics__heading">
         {a.heading}
       </h2>
       <div className="analytics__grid">

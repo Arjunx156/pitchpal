@@ -49,7 +49,7 @@ export function StadiumMap() {
   return (
     <section className="map" aria-labelledby="map-heading">
       <div className="map__head">
-        <h2 id="map-heading" className="map__heading display">
+        <h2 id="map-heading" className="map__heading">
           {ui.map.heading}
         </h2>
         <button
