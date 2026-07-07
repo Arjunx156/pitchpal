@@ -11,6 +11,7 @@ import { ContextBar } from './components/context-bar/ContextBar';
 import { OpsHud } from './components/ops/OpsHud';
 import { CrowdAnalytics } from './components/analytics/CrowdAnalytics';
 import { Standings } from './components/standings/Standings';
+import { ItineraryPanel } from './components/itinerary/ItineraryPanel';
 import { ChatWindow } from './components/chat/ChatWindow';
 import { StadiumMap } from './components/map/StadiumMap';
 import { ThemeToggle } from './components/ui/ThemeToggle';
@@ -121,6 +122,7 @@ function Shell() {
           <div className="rail">
             <ContextBar />
             <OpsHud />
+            <ItineraryPanel />
             <Standings />
             <CrowdAnalytics />
           </div>

@@ -1156,6 +1156,71 @@
   background: color-mix(in oklch, var(--color-accent) 8%, transparent);
 }
 
+/* ================================================================== */
+/* Itinerary — "My Match Day" + gate alerts                            */
+/* ================================================================== */
+.itinerary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4);
+}
+.itinerary__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.itinerary__heading {
+  font-size: var(--text-lg);
+  letter-spacing: 0.04em;
+}
+.itinerary__alert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  cursor: pointer;
+}
+.itinerary__alert-btn[aria-pressed='true'] {
+  background: color-mix(in oklch, var(--color-accent) 16%, transparent);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  cursor: default;
+}
+.itinerary__unsupported {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.itinerary__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.itinerary__step {
+  display: grid;
+  grid-template-columns: 5.5em 1fr;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+.itinerary__step:last-child {
+  border-bottom: none;
+}
+.itinerary__time {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
 .map__toggle {
   display: inline-flex;
   align-items: center;

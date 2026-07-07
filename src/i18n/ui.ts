@@ -397,6 +397,21 @@ export interface ScanStrings {
   cancel: string;
 }
 
+export interface ItineraryStrings {
+  heading: string;
+  arrive: string;
+  gate: string; // {id}
+  seat: string;
+  kickoff: string;
+  halftime: string;
+  leave: string; // {transport}
+  alertsEnable: string;
+  alertsOn: string;
+  alertsUnsupported: string;
+  alertTitle: string;
+  alertBody: string; // {gate}
+}
+
 export interface AnalyticsStrings {
   heading: string;
   heatmap: string;
@@ -416,6 +431,80 @@ export const ANALYTICS: Record<LanguageCode, AnalyticsStrings> = {
   fr: { heading: 'Analyses en direct', heatmap: 'Carte de chaleur', crowd: 'Affluence du stade', queue: 'File · Porte {gate}', low: 'Calme', medium: 'Se remplit', high: 'Comble', crowdSummary: 'Le stade est rempli à {pct}% et augmente.', queueSummary: 'Porte la plus fréquentée {gate}, environ {min} min.' },
   pt: { heading: 'Análises ao vivo', heatmap: 'Mapa de calor', crowd: 'Público do estádio', queue: 'Fila · Portão {gate}', low: 'Tranquilo', medium: 'Enchendo', high: 'Lotado', crowdSummary: 'O estádio está {pct}% cheio e subindo.', queueSummary: 'Portão mais movimentado {gate}, cerca de {min} min.' },
   ar: { heading: 'تحليلات مباشرة', heatmap: 'خريطة حرارية', crowd: 'حضور الملعب', queue: 'الطابور · البوابة {gate}', low: 'هادئ', medium: 'يمتلئ', high: 'مكتظ', crowdSummary: 'الملعب ممتلئ بنسبة {pct}% وفي ازدياد.', queueSummary: 'أكثر البوابات ازدحامًا {gate}، حوالي {min} دقيقة.' },
+};
+
+/** Localized strings for the "My Match Day" itinerary + on-device gate alerts. */
+export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
+  en: {
+    heading: 'My match day',
+    arrive: 'Arrive at the stadium',
+    gate: 'Head to Gate {id}',
+    seat: 'Find your seat',
+    kickoff: 'Kickoff',
+    halftime: 'Half-time — grab a snack',
+    leave: 'Leave via {transport}',
+    alertsEnable: 'Enable gate alerts',
+    alertsOn: 'Gate alerts on',
+    alertsUnsupported: 'Notifications are not supported on this device.',
+    alertTitle: 'PitchPal — gate alert',
+    alertBody: 'Gate {gate} is getting busy. Consider heading over now.',
+  },
+  es: {
+    heading: 'Mi día de partido',
+    arrive: 'Llega al estadio',
+    gate: 'Dirígete a la Puerta {id}',
+    seat: 'Encuentra tu asiento',
+    kickoff: 'Inicio del partido',
+    halftime: 'Descanso — toma un tentempié',
+    leave: 'Sal vía {transport}',
+    alertsEnable: 'Activar alertas de puerta',
+    alertsOn: 'Alertas de puerta activas',
+    alertsUnsupported: 'Las notificaciones no son compatibles con este dispositivo.',
+    alertTitle: 'PitchPal — alerta de puerta',
+    alertBody: 'La Puerta {gate} se está llenando. Considera dirigirte ahora.',
+  },
+  fr: {
+    heading: 'Mon jour de match',
+    arrive: 'Arrivez au stade',
+    gate: 'Dirigez-vous vers la Porte {id}',
+    seat: 'Trouvez votre place',
+    kickoff: 'Coup d’envoi',
+    halftime: 'Mi-temps — prenez une collation',
+    leave: 'Partez via {transport}',
+    alertsEnable: 'Activer les alertes de porte',
+    alertsOn: 'Alertes de porte activées',
+    alertsUnsupported: "Les notifications ne sont pas prises en charge sur cet appareil.",
+    alertTitle: 'PitchPal — alerte de porte',
+    alertBody: 'La Porte {gate} se remplit. Pensez à vous y rendre maintenant.',
+  },
+  pt: {
+    heading: 'Meu dia de jogo',
+    arrive: 'Chegue ao estádio',
+    gate: 'Vá para o Portão {id}',
+    seat: 'Encontre seu lugar',
+    kickoff: 'Início do jogo',
+    halftime: 'Intervalo — pegue um lanche',
+    leave: 'Saia via {transport}',
+    alertsEnable: 'Ativar alertas de portão',
+    alertsOn: 'Alertas de portão ativos',
+    alertsUnsupported: 'Notificações não são compatíveis com este dispositivo.',
+    alertTitle: 'PitchPal — alerta de portão',
+    alertBody: 'O Portão {gate} está enchendo. Considere ir para lá agora.',
+  },
+  ar: {
+    heading: 'يوم مباراتي',
+    arrive: 'اصل إلى الملعب',
+    gate: 'توجه إلى البوابة {id}',
+    seat: 'ابحث عن مقعدك',
+    kickoff: 'انطلاق المباراة',
+    halftime: 'الاستراحة — تناول وجبة خفيفة',
+    leave: 'غادر عبر {transport}',
+    alertsEnable: 'تفعيل تنبيهات البوابة',
+    alertsOn: 'تنبيهات البوابة مفعّلة',
+    alertsUnsupported: 'الإشعارات غير مدعومة على هذا الجهاز.',
+    alertTitle: 'PitchPal — تنبيه بوابة',
+    alertBody: 'البوابة {gate} أصبحت مزدحمة. فكر في التوجه إليها الآن.',
+  },
 };
 
 /** Localized strings for the ticket-scan flow. */
