@@ -85,7 +85,8 @@ const server = createServer((req, res) => {
   void serveStatic(req, res);
 });
 
-server.listen(PORT, () => {
+// Bind 0.0.0.0 so cloud platforms (Render, Fly, etc.) can route to the service.
+server.listen(PORT, '0.0.0.0', () => {
   const mode = process.env.GEMINI_API_KEY ? 'live (Gemini)' : 'mock';
-  console.log(`PitchPal running at http://localhost:${PORT}  —  mode: ${mode}`);
+  console.log(`PitchPal running on port ${PORT}  —  mode: ${mode}`);
 });

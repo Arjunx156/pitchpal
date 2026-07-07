@@ -1,0 +1,26 @@
+# Render Blueprint — deploys PitchPal as a Node web service.
+# 1. Push this repo to GitHub (already done).
+# 2. On https://dashboard.render.com → New → Blueprint → connect this repo.
+# 3. Render reads this file; enter your GEMINI_API_KEY when prompted (kept secret).
+# The free plan sleeps after ~15 min idle and cold-starts on the next request.
+services:
+  - type: web
+    name: pitchpal
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    # --include=dev so build tools (vite/esbuild) install even under NODE_ENV=production
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      # Enter this in the Render dashboard — it is never stored in the repo.
+      # Leave it unset to run in the deterministic (no-key) demo mode.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash
+      - key: NODE_VERSION
+        value: "22"

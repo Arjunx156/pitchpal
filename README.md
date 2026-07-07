@@ -115,6 +115,30 @@ npm run typecheck # strict TypeScript
 
 ---
 
+## Deploy (Render)
+
+The app ships as a single Node web service (serves the built SPA **and** the `/api/chat` proxy),
+so the Gemini key stays server-side. A [`render.yaml`](./render.yaml) blueprint is included.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arjunx156/pitchpal)
+
+**Blueprint (recommended):**
+1. On [dashboard.render.com](https://dashboard.render.com) → **New → Blueprint** → connect this repo.
+2. Render reads `render.yaml`. When prompted, paste your **`GEMINI_API_KEY`** (kept secret, never in git).
+3. Deploy. Your app is live at `https://pitchpal.onrender.com` (or similar).
+
+**Manual web service** (equivalent):
+- Build command: `npm install --include=dev && npm run build`
+- Start command: `npm start`
+- Env var: `GEMINI_API_KEY` (optional — omit for the deterministic demo mode)
+
+Notes: the production build bundles the server to `dist-server/index.js` (via esbuild) so runtime
+needs no dev tooling. `npm start` binds `0.0.0.0` and honors the platform `PORT`. The **free plan
+sleeps after ~15 min idle** and cold-starts on the next request. The same setup works on Railway,
+Fly.io, or any Node host; a Dockerfile can be added on request.
+
+---
+
 ## Project structure
 
 ```
