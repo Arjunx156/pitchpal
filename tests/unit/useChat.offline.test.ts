@@ -2,13 +2,14 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useChat } from '../../src/features/chat/useChat';
 import { DEFAULT_CONTEXT } from '../../src/features/context/types';
+import { venue } from '../../src/features/venue/venue-data';
 
 describe('useChat — offline fallback', () => {
   afterEach(() => vi.unstubAllGlobals());
 
   it('answers on-device with a grounded card when the network is unreachable', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
-    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error', () => {}));
+    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, venue, 'error', () => {}));
 
     await act(async () => {
       await result.current.send('How do I get to section 205?');
@@ -22,7 +23,7 @@ describe('useChat — offline fallback', () => {
   });
 
   it('ignores empty input', async () => {
-    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error', () => {}));
+    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, venue, 'error', () => {}));
     await act(async () => {
       await result.current.send('   ');
     });

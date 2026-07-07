@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { answerOffline } from '../../lib/tools-core';
 import { getOpsSnapshot } from '../ops/opsFeed';
-import { venue } from '../venue/venue-data';
 import type { FanContext } from '../context/types';
+import type { Venue } from '../venue/types';
 import type { AnswerCard } from '../../lib/cards';
 import type { ChatImage, ChatMessage, ChatRequest, ChatStreamEvent } from './types';
 
@@ -44,6 +44,7 @@ export interface UseChatResult {
 
 export function useChat(
   context: FanContext,
+  venue: Venue,
   errorText: string,
   applyPatch: (patch: Partial<FanContext>) => void,
 ): UseChatResult {
@@ -143,7 +144,7 @@ export function useChat(
         setIsStreaming(false);
       }
     },
-    [messages, context, isStreaming, errorText, applyPatch],
+    [messages, context, venue, isStreaming, errorText, applyPatch],
   );
 
   return { messages, isStreaming, mode, send };

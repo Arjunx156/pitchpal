@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
-import { venue } from '../../features/venue/venue-data';
 import { useFanContext } from '../../features/context/ContextProvider';
-import { CURRENT_FIXTURE, liveScore } from '../../features/tournament/fixture';
+import { liveScore } from '../../features/tournament/fixture';
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
@@ -23,7 +22,7 @@ function TeamBlock({ code, name, align }: { code: string; name: string; align: '
 }
 
 export function Scoreboard() {
-  const { ui } = useFanContext();
+  const { ui, venue, fixture } = useFanContext();
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
@@ -33,7 +32,7 @@ export function Scoreboard() {
 
   const ops = getOpsSnapshot(venue, now);
   const score = liveScore(ops.matchClock);
-  const { home, away, group } = CURRENT_FIXTURE;
+  const { home, away, group } = fixture;
   const remainingMs = Math.max(0, ops.kickoffAt - now);
   const countdown = `${Math.floor(remainingMs / 60000)}:${pad(Math.floor((remainingMs % 60000) / 1000))}`;
 

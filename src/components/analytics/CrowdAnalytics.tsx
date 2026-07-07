@@ -5,14 +5,13 @@ import {
   gateQueueSeries,
   getOpsSnapshot,
 } from '../../features/ops/opsFeed';
-import { venue } from '../../features/venue/venue-data';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { ANALYTICS } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { Sparkline } from '../charts/Sparkline';
 
 export function CrowdAnalytics() {
-  const { context } = useFanContext();
+  const { context, venue } = useFanContext();
   const a = ANALYTICS[context.language];
   const [now, setNow] = useState(() => Date.now());
 

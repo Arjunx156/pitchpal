@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { retrieveContext } from '../../lib/retrieval';
-import { venue } from '../venue/venue-data';
 import type { FanContext } from '../context/types';
+import type { Venue } from '../venue/types';
 import { useFanContext } from '../context/ContextProvider';
 import { useChatContext } from '../chat/ChatProvider';
 
@@ -15,7 +15,7 @@ export interface MapFocus {
 const EMPTY: MapFocus = { amenitySectionIds: [], transportGateIds: [] };
 
 /** Derive which map elements to highlight from a fan message (pure). */
-export function deriveMapFocus(message: string, context: FanContext): MapFocus {
+export function deriveMapFocus(message: string, context: FanContext, venue: Venue): MapFocus {
   const slice = retrieveContext(message, context, venue);
   const target = slice.sections[0];
 
@@ -36,14 +36,14 @@ export function deriveMapFocus(message: string, context: FanContext): MapFocus {
 
 /** Highlight state driven by the most recent fan message. */
 export function useMapFocus(): MapFocus {
-  const { context } = useFanContext();
+  const { context, venue } = useFanContext();
   const { messages } = useChatContext();
   const lastUser = useMemo(
     () => [...messages].reverse().find((m) => m.role === 'user')?.content ?? '',
     [messages],
   );
   return useMemo(
-    () => (lastUser ? deriveMapFocus(lastUser, context) : EMPTY),
-    [lastUser, context],
+    () => (lastUser ? deriveMapFocus(lastUser, context, venue) : EMPTY),
+    [lastUser, context, venue],
   );
 }

@@ -40,4 +40,16 @@ describe('ContextBar', () => {
     const saved = JSON.parse(localStorage.getItem('pitchpal.context') ?? '{}');
     expect(saved.accessibility).toBe('wheelchair');
   });
+
+  it('switches match, venue and standings group together', async () => {
+    render(<App />);
+    expect(screen.getByLabelText(/Brazil.*Argentina/)).toBeInTheDocument();
+
+    await userEvent.selectOptions(screen.getByLabelText(UI.en.matchLabel), 'usa-mex');
+
+    const saved = JSON.parse(localStorage.getItem('pitchpal.context') ?? '{}');
+    expect(saved.matchId).toBe('usa-mex');
+    expect(screen.getByLabelText(/United States.*Mexico/)).toBeInTheDocument();
+    expect(screen.getByText(/Group A/)).toBeInTheDocument();
+  });
 });

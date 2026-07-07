@@ -1,7 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { getOpsSnapshot } from '../src/features/ops/opsFeed';
 import { answerOffline } from '../src/lib/tools-core';
-import { venue } from '../src/features/venue/venue-data';
+import { resolveFixture } from '../src/features/tournament/fixture';
+import { resolveVenue } from '../src/features/venue/venues';
 import type { ChatStreamEvent } from '../src/features/chat/types';
 import { runAgent } from './agent';
 import {
@@ -32,6 +33,7 @@ export async function* runChat(
   env: AppEnv,
   deps: ChatDeps = defaultDeps,
 ): AsyncGenerator<ChatStreamEvent> {
+  const venue = resolveVenue(resolveFixture(body.context.matchId).venueId);
   const ops = getOpsSnapshot(venue);
   try {
     if (deps.resolveMode(env) === 'live') {

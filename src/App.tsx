@@ -10,6 +10,7 @@ import { useInstallPrompt } from './features/pwa/useInstallPrompt';
 import { ContextBar } from './components/context-bar/ContextBar';
 import { OpsHud } from './components/ops/OpsHud';
 import { CrowdAnalytics } from './components/analytics/CrowdAnalytics';
+import { Standings } from './components/standings/Standings';
 import { ChatWindow } from './components/chat/ChatWindow';
 import { StadiumMap } from './components/map/StadiumMap';
 import { ThemeToggle } from './components/ui/ThemeToggle';
@@ -120,6 +121,7 @@ function Shell() {
           <div className="rail">
             <ContextBar />
             <OpsHud />
+            <Standings />
             <CrowdAnalytics />
           </div>
           <div id="chat-main" tabIndex={-1} className="workspace__chat">

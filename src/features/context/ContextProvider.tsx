@@ -7,10 +7,15 @@ import {
   type FanContext,
 } from './types';
 import { UI, type UiStrings } from '../../i18n/ui';
+import { FIXTURES, resolveFixture, type Fixture } from '../tournament/fixture';
+import { resolveVenue } from '../venue/venues';
+import type { Venue } from '../venue/types';
 
 interface FanContextValue {
   context: FanContext;
   ui: UiStrings;
+  venue: Venue;
+  fixture: Fixture;
   update: (patch: Partial<FanContext>) => void;
 }
 
@@ -24,6 +29,7 @@ function loadContext(): FanContext {
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const languages: readonly string[] = LANGUAGES;
     const profiles: readonly string[] = ACCESSIBILITY_PROFILES;
+    const matchIds = FIXTURES.map((f) => f.id);
     return {
       language: languages.includes(parsed.language as string)
         ? (parsed.language as FanContext['language'])
@@ -32,6 +38,9 @@ function loadContext(): FanContext {
         ? (parsed.accessibility as FanContext['accessibility'])
         : DEFAULT_CONTEXT.accessibility,
       location: typeof parsed.location === 'string' ? parsed.location.slice(0, 120) : '',
+      matchId: matchIds.includes(parsed.matchId as string)
+        ? (parsed.matchId as string)
+        : DEFAULT_CONTEXT.matchId,
     };
   } catch {
     return DEFAULT_CONTEXT;
@@ -51,14 +60,16 @@ export function FanContextProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = isRtl(context.language) ? 'rtl' : 'ltr';
   }, [context]);
 
-  const value = useMemo<FanContextValue>(
-    () => ({
+  const value = useMemo<FanContextValue>(() => {
+    const fixture = resolveFixture(context.matchId);
+    return {
       context,
       ui: UI[context.language],
+      venue: resolveVenue(fixture.venueId),
+      fixture,
       update: (patch) => setContext((current) => ({ ...current, ...patch })),
-    }),
-    [context],
-  );
+    };
+  }, [context]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -5,7 +5,6 @@ import {
   type CongestionLevel,
   type Weather,
 } from '../../features/ops/opsFeed';
-import { venue } from '../../features/venue/venue-data';
 import { useFanContext } from '../../features/context/ContextProvider';
 import type { UiStrings } from '../../i18n/ui';
 
@@ -32,7 +31,7 @@ function pad(n: number): string {
 }
 
 export function OpsHud() {
-  const { ui } = useFanContext();
+  const { ui, venue } = useFanContext();
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {

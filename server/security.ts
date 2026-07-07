@@ -3,6 +3,9 @@ import {
   ACCESSIBILITY_PROFILES,
   LANGUAGES,
 } from '../src/features/context/types';
+import { FIXTURES, DEFAULT_MATCH_ID } from '../src/features/tournament/fixture';
+
+const MATCH_IDS = FIXTURES.map((f) => f.id) as [string, ...string[]];
 
 /** Validation schema for the POST /api/chat body. Rejects anything unexpected. */
 const turnSchema = z.object({
@@ -22,6 +25,7 @@ export const chatRequestSchema = z.object({
     language: z.enum(LANGUAGES),
     accessibility: z.enum(ACCESSIBILITY_PROFILES),
     location: z.string().max(120).default(''),
+    matchId: z.enum(MATCH_IDS).default(DEFAULT_MATCH_ID),
   }),
   history: z.array(turnSchema).max(20).default([]),
   image: imageSchema.optional(),

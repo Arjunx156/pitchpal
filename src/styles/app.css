@@ -1113,6 +1113,49 @@
   fill: var(--color-accent);
 }
 
+/* ================================================================== */
+/* Group standings                                                     */
+/* ================================================================== */
+.standings {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding: var(--space-4);
+}
+.standings__heading {
+  font-size: var(--text-lg);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-3);
+}
+.standings__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+.standings__table th,
+.standings__table td {
+  padding: var(--space-2) var(--space-2);
+  text-align: start;
+  border-bottom: 1px solid var(--color-border);
+}
+.standings__table td.tabular {
+  text-align: end;
+}
+.standings__code {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-inline-end: var(--space-1);
+}
+.standings__pts {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+.standings__table tr.is-playing {
+  background: color-mix(in oklch, var(--color-accent) 8%, transparent);
+}
+
 .map__toggle {
   display: inline-flex;
   align-items: center;

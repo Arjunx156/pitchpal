@@ -5,6 +5,7 @@ import {
   type AccessibilityProfile,
   type LanguageCode,
 } from '../../features/context/types';
+import { FIXTURES } from '../../features/tournament/fixture';
 import { LANGUAGE_NAMES } from '../../i18n/ui';
 
 export function ContextBar() {
@@ -15,6 +16,21 @@ export function ContextBar() {
       <h2 id="context-heading" className="context-bar__heading">
         {ui.settingsHeading}
       </h2>
+
+      <div className="field">
+        <label htmlFor="ctx-match">{ui.matchLabel}</label>
+        <select
+          id="ctx-match"
+          value={context.matchId}
+          onChange={(e) => update({ matchId: e.target.value })}
+        >
+          {FIXTURES.map((f) => (
+            <option key={f.id} value={f.id}>
+              {f.home.code} vs {f.away.code}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="field">
         <label htmlFor="ctx-language">{ui.languageLabel}</label>

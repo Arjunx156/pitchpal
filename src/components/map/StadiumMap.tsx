@@ -3,7 +3,6 @@ import { Flame } from 'lucide-react';
 import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
 import { useMapFocus } from '../../features/map/useMapFocus';
 import { getOpsSnapshot, gateStatus, sectionDensity, densityLevel } from '../../features/ops/opsFeed';
-import { venue } from '../../features/venue/venue-data';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { fmt } from '../../i18n/answers';
@@ -19,13 +18,13 @@ function onActivate(handler: () => void) {
 }
 
 export function StadiumMap() {
-  const { ui, context } = useFanContext();
+  const { ui, context, venue } = useFanContext();
   const { send, isStreaming } = useChatContext();
   const focus = useMapFocus();
-  const geo = useMemo(() => buildMapGeometry(venue), []);
-  const ops = useMemo(() => getOpsSnapshot(venue), [focus]);
+  const geo = useMemo(() => buildMapGeometry(venue), [venue]);
+  const ops = useMemo(() => getOpsSnapshot(venue), [venue, focus]);
   const [showHeat, setShowHeat] = useState(true);
-  const density = useMemo(() => sectionDensity(venue), [focus]);
+  const density = useMemo(() => sectionDensity(venue), [venue, focus]);
   const a = ANALYTICS[context.language];
 
   const route = useMemo(

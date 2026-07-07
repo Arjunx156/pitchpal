@@ -1,0 +1,46 @@
+import type { Venue } from '../types';
+
+/** Representative sample data for a fourth host venue — not official. */
+export const mapleVenue: Venue = {
+  name: 'Maple Grounds',
+  city: 'Northern City',
+  note: 'Representative sample data — not official FIFA or venue information.',
+
+  gates: [
+    { id: 'A', name: 'Gate A — North Commons', side: 'north', stepFree: true, nearTransport: ['rail-maple', 'shuttle-harbour'] },
+    { id: 'B', name: 'Gate B — East Terrace', side: 'east', stepFree: true, nearTransport: ['bus-crosstown', 'rideshare-east'] },
+    { id: 'C', name: 'Gate C — South Family', side: 'south', stepFree: true, nearTransport: ['parking-access', 'shuttle-harbour'] },
+    { id: 'D', name: 'Gate D — West Yard', side: 'west', stepFree: false, nearTransport: ['bike-west'] },
+  ],
+
+  sections: [
+    { id: '103', level: 'lower', side: 'north', nearestGate: 'A', walkMinutes: 4, stepFreeAccess: true, hasElevator: true },
+    { id: '111', level: 'lower', side: 'east', nearestGate: 'B', walkMinutes: 5, stepFreeAccess: true, hasElevator: true },
+    { id: '117', level: 'lower', side: 'south', nearestGate: 'C', walkMinutes: 6, stepFreeAccess: true, hasElevator: true },
+    { id: '123', level: 'lower', side: 'west', nearestGate: 'D', walkMinutes: 6, stepFreeAccess: false, hasElevator: false },
+    { id: '210', level: 'club', side: 'east', nearestGate: 'B', walkMinutes: 9, stepFreeAccess: true, hasElevator: true },
+    { id: '305', level: 'upper', side: 'north', nearestGate: 'A', walkMinutes: 13, stepFreeAccess: true, hasElevator: true },
+    { id: '321', level: 'upper', side: 'west', nearestGate: 'D', walkMinutes: 14, stepFreeAccess: false, hasElevator: false },
+  ],
+
+  amenities: [
+    { id: 'map-food-1', name: 'Harbourside Grill', type: 'food', tags: ['halal', 'hot-food'], nearSection: '117', level: 'lower', stepFree: true, hours: 'Gates open until full time' },
+    { id: 'map-food-2', name: 'Northern Greens Kitchen', type: 'food', tags: ['vegetarian', 'vegan', 'gluten-free'], nearSection: '111', level: 'lower', stepFree: true, hours: 'Gates open until full time' },
+    { id: 'map-water-1', name: 'Free Water Refill Point', type: 'water', tags: ['free', 'bottle-refill'], nearSection: '103', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'map-firstaid-1', name: 'First Aid Station North', type: 'first-aid', tags: ['medical', 'accessible'], nearSection: '103', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'map-family-1', name: 'Family & Baby Care Room', type: 'family', tags: ['baby-change', 'nursing', 'stroller'], nearSection: '117', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'map-prayer-1', name: 'Multi-Faith Prayer Room', type: 'prayer', tags: ['quiet', 'wudu', 'accessible'], nearSection: '111', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'map-restroom-1', name: 'Accessible Restroom', type: 'restroom', tags: ['accessible', 'changing-places'], nearSection: '117', level: 'lower', stepFree: true, hours: 'All day' },
+    { id: 'map-store-1', name: 'Official Team Store', type: 'store', tags: ['merch', 'jerseys'], nearSection: '210', level: 'club', stepFree: true, hours: 'Until 60 min after full time' },
+    { id: 'map-info-1', name: 'Fan Information Point', type: 'info', tags: ['lost-found', 'multilingual', 'accessible'], nearSection: '103', level: 'concourse', stepFree: true, hours: 'All day' },
+  ],
+
+  transport: [
+    { id: 'rail-maple', mode: 'rail', name: 'Maple Line — Commons Station', description: 'Regional rail directly to North Commons. Step-free platform to Gate A.', nearGate: 'A', accessible: true, frequency: 'Every 6 min on match day', destinations: ['Downtown', 'Airport', 'Harbourfront'], carbonKg: 0.4 },
+    { id: 'shuttle-harbour', mode: 'shuttle', name: 'Harbourfront Express Shuttle', description: 'Free accessible shuttle looping between the stadium and harbourfront hotels.', nearGate: 'A', accessible: true, frequency: 'Every 10 min, 3h before to 2h after', destinations: ['Harbourfront', 'Convention Center'], carbonKg: 0.5 },
+    { id: 'bus-crosstown', mode: 'bus', name: 'Crosstown Rapid 8', description: 'High-capacity bus to the east transit hub. Low-floor accessible vehicles.', nearGate: 'B', accessible: true, frequency: 'Every 8 min', destinations: ['East Hub', 'University'], carbonKg: 0.6 },
+    { id: 'rideshare-east', mode: 'rideshare', name: 'Rideshare Pickup — East', description: 'Designated rideshare and taxi pickup zone outside Gate B.', nearGate: 'B', accessible: true, frequency: 'On demand', destinations: ['Anywhere'], carbonKg: 2.6 },
+    { id: 'parking-access', mode: 'parking', name: 'Accessible Parking — South Lot', description: 'Reserved accessible parking with step-free path to Gate C.', nearGate: 'C', accessible: true, frequency: 'Pre-book recommended', destinations: [], carbonKg: 3.2 },
+    { id: 'bike-west', mode: 'bike', name: 'Bike Share Hub — West Yard', description: 'Docked bike share and secure cycle parking near Gate D.', nearGate: 'D', accessible: false, frequency: 'On demand', destinations: ['Waterfront Trail', 'Downtown'], carbonKg: 0 },
+  ],
+};

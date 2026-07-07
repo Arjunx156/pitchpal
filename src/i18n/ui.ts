@@ -16,6 +16,7 @@ export interface UiStrings {
   accessibility: Record<AccessibilityProfile, string>;
   locationLabel: string;
   locationPlaceholder: string;
+  matchLabel: string;
   suggestionsHeading: string;
   composerLabel: string;
   composerPlaceholder: string;
@@ -105,6 +106,11 @@ export interface UiStrings {
     step: string; // {n} {total}
   };
   dataNote: string;
+  standings: {
+    heading: string;
+    played: string;
+    points: string;
+  };
 }
 
 /** Endonyms — shown the same in every UI language. */
@@ -127,6 +133,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     accessibility: { none: 'No specific needs', wheelchair: 'Wheelchair user', stroller: 'With a stroller', 'low-vision': 'Low vision' },
     locationLabel: 'Where are you now?',
     locationPlaceholder: 'e.g. Gate B or Section 114',
+    matchLabel: 'Match',
     suggestionsHeading: 'Try asking',
     composerLabel: 'Ask PitchPal',
     composerPlaceholder: 'Ask about seats, food, access, or transport…',
@@ -158,6 +165,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     commandPalette: { open: 'Command palette', placeholder: 'Search actions…', empty: 'No matching actions', groupAsk: 'Ask PitchPal', groupSettings: 'Settings', changeLanguage: 'Change language', toggleTheme: 'Switch theme', toggleReadAloud: 'Toggle read-aloud', focusMap: 'Show stadium map' },
     onboarding: { title: 'Welcome to PitchPal', subtitle: 'Set up your match-day companion.', stepLanguage: 'Your language', stepAccess: 'Accessibility', stepSeat: 'Your seat or gate', next: 'Next', back: 'Back', finish: 'Start exploring', skip: 'Skip', step: 'Step {n} of {total}' },
     dataNote: 'Uses representative sample venue data — not official FIFA information.',
+    standings: { heading: 'Group standings', played: 'P', points: 'Pts' },
   },
   es: {
     title: 'PitchPal',
@@ -169,6 +177,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     accessibility: { none: 'Sin necesidades específicas', wheelchair: 'Usuario de silla de ruedas', stroller: 'Con cochecito', 'low-vision': 'Visión reducida' },
     locationLabel: '¿Dónde estás ahora?',
     locationPlaceholder: 'p. ej. Puerta B o Sección 114',
+    matchLabel: 'Partido',
     suggestionsHeading: 'Prueba a preguntar',
     composerLabel: 'Pregunta a PitchPal',
     composerPlaceholder: 'Pregunta por asientos, comida, accesibilidad o transporte…',
@@ -200,6 +209,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     commandPalette: { open: 'Paleta de comandos', placeholder: 'Buscar acciones…', empty: 'Sin acciones coincidentes', groupAsk: 'Preguntar a PitchPal', groupSettings: 'Ajustes', changeLanguage: 'Cambiar idioma', toggleTheme: 'Cambiar tema', toggleReadAloud: 'Alternar lectura en voz alta', focusMap: 'Ver mapa del estadio' },
     onboarding: { title: 'Bienvenido a PitchPal', subtitle: 'Configura tu asistente del partido.', stepLanguage: 'Tu idioma', stepAccess: 'Accesibilidad', stepSeat: 'Tu asiento o puerta', next: 'Siguiente', back: 'Atrás', finish: 'Empezar', skip: 'Omitir', step: 'Paso {n} de {total}' },
     dataNote: 'Usa datos de ejemplo del estadio, no información oficial de la FIFA.',
+    standings: { heading: 'Clasificación del grupo', played: 'PJ', points: 'Pts' },
   },
   fr: {
     title: 'PitchPal',
@@ -211,6 +221,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     accessibility: { none: 'Aucun besoin particulier', wheelchair: 'Utilisateur de fauteuil roulant', stroller: 'Avec une poussette', 'low-vision': 'Malvoyance' },
     locationLabel: 'Où êtes-vous maintenant ?',
     locationPlaceholder: 'ex. Porte B ou Section 114',
+    matchLabel: 'Match',
     suggestionsHeading: 'Essayez de demander',
     composerLabel: 'Demandez à PitchPal',
     composerPlaceholder: 'Places, restauration, accessibilité ou transport…',
@@ -242,6 +253,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     commandPalette: { open: 'Palette de commandes', placeholder: 'Rechercher des actions…', empty: 'Aucune action correspondante', groupAsk: 'Demander à PitchPal', groupSettings: 'Réglages', changeLanguage: 'Changer de langue', toggleTheme: 'Changer de thème', toggleReadAloud: 'Activer la lecture à voix haute', focusMap: 'Afficher le plan du stade' },
     onboarding: { title: 'Bienvenue sur PitchPal', subtitle: 'Configurez votre compagnon de match.', stepLanguage: 'Votre langue', stepAccess: 'Accessibilité', stepSeat: 'Votre place ou porte', next: 'Suivant', back: 'Retour', finish: 'Commencer', skip: 'Passer', step: 'Étape {n} sur {total}' },
     dataNote: "Utilise des données de stade d'exemple, pas d'informations officielles FIFA.",
+    standings: { heading: 'Classement du groupe', played: 'J', points: 'Pts' },
   },
   pt: {
     title: 'PitchPal',
@@ -253,6 +265,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     accessibility: { none: 'Sem necessidades específicas', wheelchair: 'Usuário de cadeira de rodas', stroller: 'Com carrinho de bebê', 'low-vision': 'Baixa visão' },
     locationLabel: 'Onde você está agora?',
     locationPlaceholder: 'ex. Portão B ou Seção 114',
+    matchLabel: 'Partida',
     suggestionsHeading: 'Experimente perguntar',
     composerLabel: 'Pergunte ao PitchPal',
     composerPlaceholder: 'Pergunte sobre lugares, comida, acesso ou transporte…',
@@ -284,6 +297,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     commandPalette: { open: 'Paleta de comandos', placeholder: 'Buscar ações…', empty: 'Nenhuma ação correspondente', groupAsk: 'Perguntar ao PitchPal', groupSettings: 'Configurações', changeLanguage: 'Mudar idioma', toggleTheme: 'Mudar tema', toggleReadAloud: 'Alternar leitura em voz alta', focusMap: 'Ver mapa do estádio' },
     onboarding: { title: 'Bem-vindo ao PitchPal', subtitle: 'Configure seu companheiro de jogo.', stepLanguage: 'Seu idioma', stepAccess: 'Acessibilidade', stepSeat: 'Seu lugar ou portão', next: 'Próximo', back: 'Voltar', finish: 'Começar', skip: 'Pular', step: 'Passo {n} de {total}' },
     dataNote: 'Usa dados de exemplo do estádio, não informações oficiais da FIFA.',
+    standings: { heading: 'Classificação do grupo', played: 'J', points: 'Pts' },
   },
   ar: {
     title: 'PitchPal',
@@ -295,6 +309,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     accessibility: { none: 'لا احتياجات خاصة', wheelchair: 'مستخدم كرسي متحرك', stroller: 'مع عربة أطفال', 'low-vision': 'ضعف البصر' },
     locationLabel: 'أين أنت الآن؟',
     locationPlaceholder: 'مثال: البوابة B أو القسم 114',
+    matchLabel: 'المباراة',
     suggestionsHeading: 'جرّب أن تسأل',
     composerLabel: 'اسأل PitchPal',
     composerPlaceholder: 'اسأل عن المقاعد أو الطعام أو الوصول أو المواصلات…',
@@ -326,6 +341,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     commandPalette: { open: 'لوحة الأوامر', placeholder: 'ابحث عن إجراءات…', empty: 'لا توجد إجراءات مطابقة', groupAsk: 'اسأل PitchPal', groupSettings: 'الإعدادات', changeLanguage: 'تغيير اللغة', toggleTheme: 'تغيير المظهر', toggleReadAloud: 'تبديل القراءة الصوتية', focusMap: 'عرض خريطة الملعب' },
     onboarding: { title: 'مرحبًا بك في PitchPal', subtitle: 'اضبط رفيقك ليوم المباراة.', stepLanguage: 'لغتك', stepAccess: 'إمكانية الوصول', stepSeat: 'مقعدك أو بوابتك', next: 'التالي', back: 'السابق', finish: 'ابدأ', skip: 'تخطٍّ', step: 'الخطوة {n} من {total}' },
     dataNote: 'يستخدم بيانات ملعب نموذجية، وليست معلومات رسمية من الفيفا.',
+    standings: { heading: 'ترتيب المجموعة', played: 'لعب', points: 'نقاط' },
   },
 };
 

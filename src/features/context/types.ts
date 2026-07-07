@@ -16,12 +16,15 @@ export interface FanContext {
   accessibility: AccessibilityProfile;
   /** Free-form current location, e.g. "Gate B" or "Section 114". Optional. */
   location: string;
+  /** Selected fixture id — determines both the match and its host venue. */
+  matchId: string;
 }
 
 export const DEFAULT_CONTEXT: FanContext = {
   language: 'en',
   accessibility: 'none',
   location: '',
+  matchId: 'bra-arg',
 };
 
 /** Languages that read right-to-left. */
