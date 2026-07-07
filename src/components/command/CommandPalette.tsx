@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
@@ -89,8 +90,6 @@ export function CommandPalette({ open, onClose, onFocusMap }: CommandPaletteProp
 
   useEffect(() => setActive(0), [query]);
 
-  if (!open) return null;
-
   const onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
@@ -108,52 +107,67 @@ export function CommandPalette({ open, onClose, onFocusMap }: CommandPaletteProp
   };
 
   return (
-    <div className="palette-overlay" onClick={onClose}>
-      <div
-        className="palette"
-        role="dialog"
-        aria-modal="true"
-        aria-label={ui.commandPalette.open}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="palette__search">
-          <Search size={18} aria-hidden="true" />
-          <input
-            ref={inputRef}
-            type="text"
-            className="palette__input"
-            value={query}
-            role="combobox"
-            aria-expanded="true"
-            aria-controls="palette-list"
-            aria-activedescendant={filtered[active] ? `palette-opt-${active}` : undefined}
-            placeholder={ui.commandPalette.placeholder}
-            aria-label={ui.commandPalette.placeholder}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={onKeyDown}
-          />
-        </div>
-        <ul id="palette-list" className="palette__list" role="listbox" aria-label={ui.commandPalette.open}>
-          {filtered.length === 0 ? (
-            <li className="palette__empty">{ui.commandPalette.empty}</li>
-          ) : (
-            filtered.map((a, i) => (
-              <li
-                key={a.id}
-                id={`palette-opt-${i}`}
-                role="option"
-                aria-selected={i === active}
-                className={`palette__item${i === active ? ' is-active' : ''}`}
-                onMouseEnter={() => setActive(i)}
-                onClick={() => a.run()}
-              >
-                <span className="palette__item-label">{a.label}</span>
-                <span className="palette__item-group">{a.group}</span>
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-    </div>
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          className="palette-overlay"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+        >
+          <motion.div
+            className="palette"
+            role="dialog"
+            aria-modal="true"
+            aria-label={ui.commandPalette.open}
+            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, scale: 0.97, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: -8 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 32 }}
+          >
+            <div className="palette__search">
+              <Search size={18} aria-hidden="true" />
+              <input
+                ref={inputRef}
+                type="text"
+                className="palette__input"
+                value={query}
+                role="combobox"
+                aria-expanded="true"
+                aria-controls="palette-list"
+                aria-activedescendant={filtered[active] ? `palette-opt-${active}` : undefined}
+                placeholder={ui.commandPalette.placeholder}
+                aria-label={ui.commandPalette.placeholder}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={onKeyDown}
+              />
+            </div>
+            <ul id="palette-list" className="palette__list" role="listbox" aria-label={ui.commandPalette.open}>
+              {filtered.length === 0 ? (
+                <li className="palette__empty">{ui.commandPalette.empty}</li>
+              ) : (
+                filtered.map((a, i) => (
+                  <li
+                    key={a.id}
+                    id={`palette-opt-${i}`}
+                    role="option"
+                    aria-selected={i === active}
+                    className={`palette__item${i === active ? ' is-active' : ''}`}
+                    onMouseEnter={() => setActive(i)}
+                    onClick={() => a.run()}
+                  >
+                    <span className="palette__item-label">{a.label}</span>
+                    <span className="palette__item-group">{a.group}</span>
+                  </li>
+                ))
+              )}
+            </ul>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
   );
 }

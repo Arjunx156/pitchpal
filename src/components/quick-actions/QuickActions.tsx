@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Accessibility, Armchair, HeartPulse, LogOut, Toilet, Utensils } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
@@ -26,15 +27,18 @@ export function QuickActions() {
           const Icon = ICONS[key];
           return (
             <li key={key}>
-              <button
+              <motion.button
                 type="button"
                 className="chip-btn"
                 disabled={isStreaming}
                 onClick={() => void send(action.query)}
+                whileHover={isStreaming ? undefined : { scale: 1.03 }}
+                whileTap={isStreaming ? undefined : { scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 24 }}
               >
                 <Icon size={16} aria-hidden="true" />
                 {action.label}
-              </button>
+              </motion.button>
             </li>
           );
         })}
