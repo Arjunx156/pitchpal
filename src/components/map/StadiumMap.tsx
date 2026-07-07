@@ -1,11 +1,13 @@
-import { useMemo, type KeyboardEvent } from 'react';
+import { useMemo, useState, type KeyboardEvent } from 'react';
+import { Flame } from 'lucide-react';
 import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
 import { useMapFocus } from '../../features/map/useMapFocus';
-import { getOpsSnapshot, gateStatus } from '../../features/ops/opsFeed';
+import { getOpsSnapshot, gateStatus, sectionDensity, densityLevel } from '../../features/ops/opsFeed';
 import { venue } from '../../features/venue/venue-data';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { fmt } from '../../i18n/answers';
+import { ANALYTICS } from '../../i18n/ui';
 
 function onActivate(handler: () => void) {
   return (e: KeyboardEvent) => {
@@ -22,6 +24,9 @@ export function StadiumMap() {
   const focus = useMapFocus();
   const geo = useMemo(() => buildMapGeometry(venue), []);
   const ops = useMemo(() => getOpsSnapshot(venue), [focus]);
+  const [showHeat, setShowHeat] = useState(true);
+  const density = useMemo(() => sectionDensity(venue), [focus]);
+  const a = ANALYTICS[context.language];
 
   const route = useMemo(
     () =>
@@ -48,6 +53,15 @@ export function StadiumMap() {
         <h2 id="map-heading" className="map__heading display">
           {ui.map.heading}
         </h2>
+        <button
+          type="button"
+          className="map__toggle"
+          aria-pressed={showHeat}
+          onClick={() => setShowHeat((v) => !v)}
+        >
+          <Flame size={14} aria-hidden="true" />
+          {a.heatmap}
+        </button>
       </div>
 
       <div role="status" aria-live="polite" className="visually-hidden">
@@ -95,7 +109,8 @@ export function StadiumMap() {
           {geo.sections.map((s) => {
             const isTarget = s.id === focus.targetSectionId;
             const isAmenity = focus.amenitySectionIds.includes(s.id);
-            const cls = `map-seat${isTarget ? ' is-target' : ''}${isAmenity ? ' is-amenity' : ''}`;
+            const heat = showHeat ? ` heat-${densityLevel(density[s.id] ?? 0)}` : '';
+            const cls = `map-seat${heat}${isTarget ? ' is-target' : ''}${isAmenity ? ' is-amenity' : ''}`;
             const query = fmt(ui.map.askSection, { id: s.id });
             return (
               <g

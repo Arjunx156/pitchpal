@@ -3,6 +3,11 @@ import {
   getOpsSnapshot,
   gateStatus,
   quietestAccessibleGate,
+  sectionDensity,
+  densityLevel,
+  crowdSeries,
+  gateQueueSeries,
+  busiestGate,
 } from '../../src/features/ops/opsFeed';
 import { venue } from '../../src/features/venue/venue-data';
 
@@ -66,5 +71,33 @@ describe('gateStatus & quietestAccessibleGate', () => {
     const stepFree = snap.gates.filter((g) => g.stepFree);
     const minOcc = Math.min(...stepFree.map((g) => g.occupancy));
     expect(quietest?.occupancy).toBe(minOcc);
+  });
+});
+
+describe('crowd analytics helpers', () => {
+  it('sectionDensity returns a 0..1 value for every section', () => {
+    const density = sectionDensity(venue, 30 * MIN);
+    for (const s of venue.sections) {
+      expect(density[s.id]).toBeGreaterThanOrEqual(0.05);
+      expect(density[s.id]).toBeLessThanOrEqual(0.98);
+    }
+  });
+
+  it('densityLevel buckets values into low/medium/high', () => {
+    expect(densityLevel(0.2)).toBe('low');
+    expect(densityLevel(0.6)).toBe('medium');
+    expect(densityLevel(0.9)).toBe('high');
+  });
+
+  it('crowdSeries and gateQueueSeries return the requested number of points', () => {
+    expect(crowdSeries(venue, 60 * MIN, 8)).toHaveLength(8);
+    expect(gateQueueSeries(venue, 'A', 60 * MIN, 8)).toHaveLength(8);
+  });
+
+  it('busiestGate returns the most congested gate', () => {
+    const snap = getOpsSnapshot(venue, 30 * MIN);
+    const busy = busiestGate(snap);
+    const maxOcc = Math.max(...snap.gates.map((g) => g.occupancy));
+    expect(busy?.occupancy).toBe(maxOcc);
   });
 });

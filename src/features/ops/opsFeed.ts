@@ -122,3 +122,59 @@ export function quietestAccessibleGate(snapshot: OpsSnapshot): GateStatus | unde
       undefined,
     );
 }
+
+export type DensityLevel = 'low' | 'medium' | 'high';
+
+export function densityLevel(value: number): DensityLevel {
+  if (value < 0.45) return 'low';
+  if (value < 0.75) return 'medium';
+  return 'high';
+}
+
+/** Crowd density (0..1) per seating section, derived from nearby gate load. */
+export function sectionDensity(venue: Venue, now: number = Date.now()): Record<string, number> {
+  const snapshot = getOpsSnapshot(venue, now);
+  const byGate = new Map(snapshot.gates.map((g) => [g.gateId, g.occupancy]));
+  const out: Record<string, number> = {};
+  for (const section of venue.sections) {
+    const base = byGate.get(section.nearestGate) ?? 0.4;
+    const wobble = 0.12 * Math.sin(now / (5 * MS) + section.id.charCodeAt(2));
+    out[section.id] = clamp(base * 0.8 + 0.12 + wobble, 0.05, 0.98);
+  }
+  return out;
+}
+
+/** Average stadium occupancy % over the last `points` intervals (for a trend chart). */
+export function crowdSeries(venue: Venue, now: number, points = 12, stepMin = 5): number[] {
+  const series: number[] = [];
+  for (let i = points - 1; i >= 0; i--) {
+    const snapshot = getOpsSnapshot(venue, now - i * stepMin * MS);
+    const avg = snapshot.gates.reduce((a, g) => a + g.occupancy, 0) / snapshot.gates.length;
+    series.push(Math.round(avg * 100));
+  }
+  return series;
+}
+
+/** Queue-minute history for one gate over the last `points` intervals (sparkline). */
+export function gateQueueSeries(
+  venue: Venue,
+  gateId: string,
+  now: number,
+  points = 12,
+  stepMin = 5,
+): number[] {
+  const series: number[] = [];
+  for (let i = points - 1; i >= 0; i--) {
+    const g = gateStatus(getOpsSnapshot(venue, now - i * stepMin * MS), gateId);
+    series.push(g?.queueMinutes ?? 0);
+  }
+  return series;
+}
+
+/** The busiest gate right now — used to headline the analytics strip. */
+export function busiestGate(snapshot: OpsSnapshot): GateStatus | undefined {
+  return snapshot.gates.reduce<GateStatus | undefined>(
+    (worst, g) => (!worst || g.occupancy > worst.occupancy ? g : worst),
+    undefined,
+  );
+}

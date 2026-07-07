@@ -18,8 +18,8 @@ describe('StadiumMap', () => {
   it('renders a button for every gate and section', () => {
     renderWithProviders(<StadiumMap />);
     const buttons = screen.getAllByRole('button');
-    // 4 gates + 9 sections
-    expect(buttons.length).toBe(venue.gates.length + venue.sections.length);
+    // 4 gates + 9 sections + the heatmap toggle
+    expect(buttons.length).toBe(venue.gates.length + venue.sections.length + 1);
     expect(screen.getByText(UI.en.map.heading)).toBeInTheDocument();
   });
 
