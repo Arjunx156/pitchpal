@@ -64,4 +64,22 @@ export const FUNCTION_DECLARATIONS = [
       required: [],
     },
   },
+  {
+    name: 'getSustainability',
+    description:
+      'Recommend the greenest, lowest-carbon ways to leave the stadium. Use for eco / sustainability / carbon / "greenest way" questions.',
+    parametersJsonSchema: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'bookAccessibilityService',
+    description:
+      'Book an accessibility service for the fan: wheelchair assistance, a sensory room, or an accessible meeting point.',
+    parametersJsonSchema: {
+      type: 'object',
+      properties: {
+        service: { type: 'string', enum: ['wheelchair', 'sensory-room', 'meeting-point'] },
+      },
+      required: ['service'],
+    },
+  },
 ];

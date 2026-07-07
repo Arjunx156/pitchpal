@@ -178,3 +178,26 @@ export function fmt(template: string, vars: Record<string, string | number>): st
     key in vars ? String(vars[key]) : whole,
   );
 }
+
+/** Sustainability (green-route) phrases. */
+export const ECO_PHRASES: Record<LanguageCode, { title: string; greenest: string; carbon: string }> = {
+  en: { title: 'Greenest ways to leave', greenest: 'Greenest option: {name} — about {kg} kg CO₂.', carbon: '~{kg} kg CO₂' },
+  es: { title: 'Formas más ecológicas de salir', greenest: 'Opción más ecológica: {name} — unos {kg} kg CO₂.', carbon: '~{kg} kg CO₂' },
+  fr: { title: 'Départs les plus écologiques', greenest: 'Option la plus verte : {name} — environ {kg} kg CO₂.', carbon: '~{kg} kg CO₂' },
+  pt: { title: 'Formas mais ecológicas de sair', greenest: 'Opção mais verde: {name} — cerca de {kg} kg CO₂.', carbon: '~{kg} kg CO₂' },
+  ar: { title: 'أكثر طرق المغادرة صداقة للبيئة', greenest: 'الخيار الأكثر خضرة: {name} — حوالي {kg} كجم CO₂.', carbon: '~{kg} كجم CO₂' },
+};
+
+export type AccessServiceKey = 'wheelchair' | 'sensory-room' | 'meeting-point';
+
+/** Accessibility-service booking phrases. */
+export const ACCESS_PHRASES: Record<
+  LanguageCode,
+  { booked: string; services: Record<AccessServiceKey, string> }
+> = {
+  en: { booked: '{service} is booked (ref {ref}). Staff will meet you{where}.', services: { wheelchair: 'Wheelchair assistance', 'sensory-room': 'Sensory room access', 'meeting-point': 'Accessible meeting point' } },
+  es: { booked: '{service} reservado (ref {ref}). El personal te recibirá{where}.', services: { wheelchair: 'Asistencia en silla de ruedas', 'sensory-room': 'Acceso a sala sensorial', 'meeting-point': 'Punto de encuentro accesible' } },
+  fr: { booked: '{service} réservé (réf {ref}). Le personnel vous accueillera{where}.', services: { wheelchair: 'Assistance en fauteuil roulant', 'sensory-room': 'Accès à la salle sensorielle', 'meeting-point': 'Point de rencontre accessible' } },
+  pt: { booked: '{service} reservado (ref {ref}). A equipe vai recebê-lo{where}.', services: { wheelchair: 'Assistência em cadeira de rodas', 'sensory-room': 'Acesso à sala sensorial', 'meeting-point': 'Ponto de encontro acessível' } },
+  ar: { booked: 'تم حجز {service} (المرجع {ref}). سيستقبلك الطاقم{where}.', services: { wheelchair: 'مساعدة الكرسي المتحرك', 'sensory-room': 'الدخول إلى الغرفة الحسية', 'meeting-point': 'نقطة لقاء مناسبة' } },
+};

@@ -42,7 +42,7 @@ export function CommandPalette({ open, onClose, onFocusMap }: CommandPaletteProp
   // Close on Escape regardless of where focus currently sits.
   useEffect(() => {
     if (!open) return undefined;
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);

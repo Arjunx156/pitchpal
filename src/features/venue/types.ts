@@ -70,6 +70,8 @@ export interface TransportOption {
   accessible: boolean;
   frequency: string;
   destinations: string[];
+  /** Rough CO₂ estimate per trip (kg) — for the sustainability tool. */
+  carbonKg: number;
 }
 
 export interface Venue {

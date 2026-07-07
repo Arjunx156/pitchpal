@@ -48,11 +48,11 @@ export const venue: Venue = {
   ],
 
   transport: [
-    { id: 'rail-north', mode: 'rail', name: 'North Line — Meadow Station', description: 'Regional rail directly to the North Plaza. Step-free platform to Gate A.', nearGate: 'A', accessible: true, frequency: 'Every 6 min on match day', destinations: ['Downtown', 'Airport', 'Central Station'] },
-    { id: 'shuttle-downtown', mode: 'shuttle', name: 'Downtown Express Shuttle', description: 'Free accessible shuttle looping between the stadium and downtown hotels.', nearGate: 'A', accessible: true, frequency: 'Every 10 min, 3h before to 2h after', destinations: ['Downtown', 'Convention Center', 'Riverside Hotels'] },
-    { id: 'bus-rapid', mode: 'bus', name: 'Rapid Bus Route 26', description: 'High-capacity bus to the east transit hub. Low-floor accessible vehicles.', nearGate: 'B', accessible: true, frequency: 'Every 8 min', destinations: ['East Hub', 'University', 'Stadium Park & Ride'] },
-    { id: 'rideshare-east', mode: 'rideshare', name: 'Rideshare Pickup — East', description: 'Designated rideshare and taxi pickup zone outside Gate B.', nearGate: 'B', accessible: true, frequency: 'On demand', destinations: ['Anywhere'] },
-    { id: 'parking-accessible', mode: 'parking', name: 'Accessible Parking — South Lot', description: 'Reserved accessible parking with step-free path to Gate C. Blue Badge required.', nearGate: 'C', accessible: true, frequency: 'Pre-book recommended', destinations: [] },
-    { id: 'bike-hub', mode: 'bike', name: 'Bike Share Hub — West', description: 'Docked bike share and secure cycle parking near Gate D.', nearGate: 'D', accessible: false, frequency: 'On demand', destinations: ['Riverside Trail', 'Downtown'] },
+    { id: 'rail-north', mode: 'rail', name: 'North Line — Meadow Station', description: 'Regional rail directly to the North Plaza. Step-free platform to Gate A.', nearGate: 'A', accessible: true, frequency: 'Every 6 min on match day', destinations: ['Downtown', 'Airport', 'Central Station'], carbonKg: 0.4 },
+    { id: 'shuttle-downtown', mode: 'shuttle', name: 'Downtown Express Shuttle', description: 'Free accessible shuttle looping between the stadium and downtown hotels.', nearGate: 'A', accessible: true, frequency: 'Every 10 min, 3h before to 2h after', destinations: ['Downtown', 'Convention Center', 'Riverside Hotels'], carbonKg: 0.5 },
+    { id: 'bus-rapid', mode: 'bus', name: 'Rapid Bus Route 26', description: 'High-capacity bus to the east transit hub. Low-floor accessible vehicles.', nearGate: 'B', accessible: true, frequency: 'Every 8 min', destinations: ['East Hub', 'University', 'Stadium Park & Ride'], carbonKg: 0.6 },
+    { id: 'rideshare-east', mode: 'rideshare', name: 'Rideshare Pickup — East', description: 'Designated rideshare and taxi pickup zone outside Gate B.', nearGate: 'B', accessible: true, frequency: 'On demand', destinations: ['Anywhere'], carbonKg: 2.6 },
+    { id: 'parking-accessible', mode: 'parking', name: 'Accessible Parking — South Lot', description: 'Reserved accessible parking with step-free path to Gate C. Blue Badge required.', nearGate: 'C', accessible: true, frequency: 'Pre-book recommended', destinations: [], carbonKg: 3.2 },
+    { id: 'bike-hub', mode: 'bike', name: 'Bike Share Hub — West', description: 'Docked bike share and secure cycle parking near Gate D.', nearGate: 'D', accessible: false, frequency: 'On demand', destinations: ['Riverside Trail', 'Downtown'], carbonKg: 0 },
   ],
 };

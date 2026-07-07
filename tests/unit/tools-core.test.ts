@@ -5,6 +5,8 @@ import {
   getTransport,
   getGateStatus,
   setFanTicket,
+  getSustainability,
+  bookAccessibilityService,
   runTool,
   answerOffline,
 } from '../../src/lib/tools-core';
@@ -43,6 +45,22 @@ describe('tool-core implementations', () => {
     const r = setFanTicket({ section: '114', seat: '12', gate: 'C' }, ctx(), venue, ops);
     expect(r.contextPatch?.location).toBe('Section 114');
     expect(r.summary).toContain('114');
+  });
+
+  it('getSustainability recommends the greenest option (lowest carbon)', () => {
+    const r = getSustainability({}, ctx(), venue, ops);
+    expect(r.card?.type).toBe('transport');
+    // Bike (0 kg) is the greenest and should headline the summary.
+    expect(r.summary).toContain('Bike');
+  });
+
+  it('bookAccessibilityService returns a deterministic booking reference', () => {
+    const a = bookAccessibilityService({ service: 'wheelchair' }, ctx({ location: 'Gate C' }), venue, ops);
+    const b = bookAccessibilityService({ service: 'wheelchair' }, ctx({ location: 'Gate C' }), venue, ops);
+    expect(a.data?.ref).toBe(b.data?.ref);
+    expect(a.summary).toContain(String(a.data?.ref));
+    // Unknown service falls back to wheelchair.
+    expect(bookAccessibilityService({ service: 'x' }, ctx(), venue, ops).data?.service).toBe('wheelchair');
   });
 
   it('runTool dispatches by name and handles unknown tools', () => {

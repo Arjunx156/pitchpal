@@ -5,6 +5,7 @@ import type { AnswerCard } from './cards';
 import { retrieveContext } from './retrieval';
 import { composeGroundedAnswer } from './compose';
 import { classifyIntent } from './intent';
+import { fmt, ECO_PHRASES, ACCESS_PHRASES, type AccessServiceKey } from '../i18n/answers';
 
 /**
  * Pure tool implementations shared by the live agent (Gemini function calls),
@@ -18,7 +19,9 @@ export type ToolName =
   | 'findAmenities'
   | 'getTransport'
   | 'getGateStatus'
-  | 'setFanTicket';
+  | 'setFanTicket'
+  | 'getSustainability'
+  | 'bookAccessibilityService';
 
 export interface ToolResult {
   summary: string;
@@ -121,6 +124,53 @@ export function setFanTicket(
   };
 }
 
+/** Rank ways to leave by carbon footprint and recommend the greenest. */
+export function getSustainability(
+  _args: Record<string, unknown>,
+  context: FanContext,
+  venue: Venue,
+  _ops: OpsSnapshot,
+): ToolResult {
+  const p = ECO_PHRASES[context.language];
+  const sorted = [...venue.transport].sort((a, b) => a.carbonKg - b.carbonKg);
+  const greenest = sorted[0];
+  const card: AnswerCard = {
+    type: 'transport',
+    title: p.title,
+    options: sorted.slice(0, 5).map((t) => ({
+      name: t.name,
+      detail: fmt(p.carbon, { kg: t.carbonKg }),
+      accessible: t.accessible,
+      frequency: t.frequency,
+    })),
+  };
+  const summary = greenest ? fmt(p.greenest, { name: greenest.name, kg: greenest.carbonKg }) : p.title;
+  return { summary, card };
+}
+
+const ACCESS_SERVICES: readonly AccessServiceKey[] = ['wheelchair', 'sensory-room', 'meeting-point'];
+
+/** Book an accessibility service and return a deterministic confirmation. */
+export function bookAccessibilityService(
+  args: Record<string, unknown>,
+  context: FanContext,
+  _venue: Venue,
+  _ops: OpsSnapshot,
+): ToolResult {
+  const p = ACCESS_PHRASES[context.language];
+  const raw = asString(args.service) ?? 'wheelchair';
+  const key: AccessServiceKey = ACCESS_SERVICES.includes(raw as AccessServiceKey)
+    ? (raw as AccessServiceKey)
+    : 'wheelchair';
+  const service = p.services[key];
+  const ref = `AS-${((key.length * 137 + context.location.length * 31) % 9000) + 1000}`;
+  const where = context.location ? ` (${context.location})` : '';
+  return {
+    summary: fmt(p.booked, { service, ref, where }),
+    data: { service: key, ref },
+  };
+}
+
 export const TOOL_IMPLS: Record<
   ToolName,
   (args: Record<string, unknown>, context: FanContext, venue: Venue, ops: OpsSnapshot) => ToolResult
@@ -130,6 +180,8 @@ export const TOOL_IMPLS: Record<
   getTransport,
   getGateStatus,
   setFanTicket,
+  getSustainability,
+  bookAccessibilityService,
 };
 
 export function runTool(
