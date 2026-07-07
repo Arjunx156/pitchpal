@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { BellRing } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
@@ -8,6 +9,7 @@ import { buildItinerary, type ItineraryStepKind } from '../../features/itinerary
 import { SPEECH_LOCALE } from '../../features/voice/locale';
 import { ITINERARY } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
+import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
 
 function stepLabel(
   kind: ItineraryStepKind,
@@ -50,7 +52,7 @@ export function ItineraryPanel() {
   );
 
   return (
-    <section className="itinerary" aria-labelledby="itinerary-heading">
+    <motion.section className="itinerary" aria-labelledby="itinerary-heading" variants={panelItem}>
       <div className="itinerary__head">
         <h2 id="itinerary-heading" className="itinerary__heading">
           {strings.heading}
@@ -71,16 +73,16 @@ export function ItineraryPanel() {
         )}
       </div>
 
-      <ol className="itinerary__list">
+      <motion.ol className="itinerary__list" variants={staggerContainer} initial="hidden" animate="show">
         {steps.map((step) => (
-          <li key={step.kind} className="itinerary__step">
+          <motion.li key={step.kind} className="itinerary__step" variants={rowItem}>
             <span className="itinerary__time tabular">{formatter.format(step.time)}</span>
             <span className="itinerary__label">
               {stepLabel(step.kind, strings, step.gateId, step.transportName)}
             </span>
-          </li>
+          </motion.li>
         ))}
-      </ol>
-    </section>
+      </motion.ol>
+    </motion.section>
   );
 }

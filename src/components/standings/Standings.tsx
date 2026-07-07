@@ -1,12 +1,14 @@
+import { motion } from 'framer-motion';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { GROUP_STANDINGS } from '../../features/tournament/standings';
+import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
 
 export function Standings() {
   const { ui, fixture } = useFanContext();
   const rows = GROUP_STANDINGS[fixture.group] ?? [];
 
   return (
-    <section className="standings" aria-labelledby="standings-heading">
+    <motion.section className="standings" aria-labelledby="standings-heading" variants={panelItem}>
       <h2 id="standings-heading" className="standings__heading">
         {ui.standings.heading} — {fixture.group}
       </h2>
@@ -20,18 +22,27 @@ export function Standings() {
             <th scope="col">{ui.standings.points}</th>
           </tr>
         </thead>
-        <tbody>
+        <motion.tbody
+          key={fixture.group}
+          variants={staggerContainer}
+          initial="hidden"
+          animate="show"
+        >
           {rows.map((row) => (
-            <tr key={row.code} className={row.code === fixture.home.code || row.code === fixture.away.code ? 'is-playing' : ''}>
+            <motion.tr
+              key={row.code}
+              variants={rowItem}
+              className={row.code === fixture.home.code || row.code === fixture.away.code ? 'is-playing' : ''}
+            >
               <th scope="row">
                 <span className="standings__code">{row.code}</span> {row.name}
               </th>
               <td className="tabular">{row.played}</td>
               <td className="tabular standings__pts">{row.points}</td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
+        </motion.tbody>
       </table>
-    </section>
+    </motion.section>
   );
 }

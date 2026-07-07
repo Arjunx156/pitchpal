@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useFanContext } from '../../features/context/ContextProvider';
 import {
   ACCESSIBILITY_PROFILES,
@@ -7,12 +8,13 @@ import {
 } from '../../features/context/types';
 import { FIXTURES } from '../../features/tournament/fixture';
 import { LANGUAGE_NAMES } from '../../i18n/ui';
+import { panelItem } from '../../lib/motion';
 
 export function ContextBar() {
   const { context, ui, update } = useFanContext();
 
   return (
-    <section className="context-bar" aria-labelledby="context-heading">
+    <motion.section className="context-bar" aria-labelledby="context-heading" variants={panelItem}>
       <h2 id="context-heading" className="context-bar__heading">
         {ui.settingsHeading}
       </h2>
@@ -73,6 +75,6 @@ export function ContextBar() {
           onChange={(e) => update({ location: e.target.value })}
         />
       </div>
-    </section>
+    </motion.section>
   );
 }

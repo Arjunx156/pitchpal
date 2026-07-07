@@ -1,4 +1,5 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
+import { motion } from 'framer-motion';
 import { Flame } from 'lucide-react';
 import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
 import { useMapFocus } from '../../features/map/useMapFocus';
@@ -7,6 +8,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { fmt } from '../../i18n/answers';
 import { ANALYTICS } from '../../i18n/ui';
+import { panelItem } from '../../lib/motion';
 
 function onActivate(handler: () => void) {
   return (e: KeyboardEvent) => {
@@ -47,7 +49,7 @@ export function StadiumMap() {
   };
 
   return (
-    <section className="map" aria-labelledby="map-heading">
+    <motion.section className="map" aria-labelledby="map-heading" variants={panelItem}>
       <div className="map__head">
         <h2 id="map-heading" className="map__heading">
           {ui.map.heading}
@@ -174,6 +176,6 @@ export function StadiumMap() {
         </li>
       </ul>
       <p className="map__hint">{context.location ? summary : ui.map.summaryIdle}</p>
-    </section>
+    </motion.section>
   );
 }

@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 interface SparklineProps {
   data: number[];
   ariaLabel: string;
@@ -34,9 +36,33 @@ export function Sparkline({ data, ariaLabel, area = false, className }: Sparklin
       aria-label={ariaLabel}
       preserveAspectRatio="none"
     >
-      {area ? <polygon className="spark__area" points={`${PAD},${H} ${line} ${W - PAD},${H}`} /> : null}
-      <polyline className="spark__line" points={line} />
-      {last ? <circle className="spark__dot" cx={last.x} cy={last.y} r={2.6} /> : null}
+      {area ? (
+        <motion.polygon
+          className="spark__area"
+          points={`${PAD},${H} ${line} ${W - PAD},${H}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        />
+      ) : null}
+      <motion.polyline
+        className="spark__line"
+        points={line}
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+      />
+      {last ? (
+        <motion.circle
+          className="spark__dot"
+          cx={last.x}
+          cy={last.y}
+          r={2.6}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.7, type: 'spring', stiffness: 400, damping: 20 }}
+        />
+      ) : null}
     </svg>
   );
 }

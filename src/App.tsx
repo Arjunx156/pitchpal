@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { MotionConfig } from 'framer-motion';
+import { MotionConfig, motion } from 'framer-motion';
 import { Command, Download, MessagesSquare, Map as MapIcon } from 'lucide-react';
+import { staggerContainer } from './lib/motion';
 import { ThemeProvider } from './features/theme/ThemeProvider';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
@@ -104,8 +105,13 @@ function Shell() {
             aria-pressed={view === 'chat'}
             onClick={() => setView('chat')}
           >
-            <MessagesSquare size={16} aria-hidden="true" />
-            {ui.map.tabChat}
+            {view === 'chat' ? (
+              <motion.span layoutId="viewswitch-pill" className="viewswitch__pill" aria-hidden="true" />
+            ) : null}
+            <span className="viewswitch__label">
+              <MessagesSquare size={16} aria-hidden="true" />
+              {ui.map.tabChat}
+            </span>
           </button>
           <button
             type="button"
@@ -113,25 +119,42 @@ function Shell() {
             aria-pressed={view === 'map'}
             onClick={() => setView('map')}
           >
-            <MapIcon size={16} aria-hidden="true" />
-            {ui.map.tabMap}
+            {view === 'map' ? (
+              <motion.span layoutId="viewswitch-pill" className="viewswitch__pill" aria-hidden="true" />
+            ) : null}
+            <span className="viewswitch__label">
+              <MapIcon size={16} aria-hidden="true" />
+              {ui.map.tabMap}
+            </span>
           </button>
         </nav>
 
         <main className="workspace">
-          <aside className="rail rail--left" aria-label={ui.settingsHeading}>
+          <motion.aside
+            className="rail rail--left"
+            aria-label={ui.settingsHeading}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             <ContextBar />
             <ItineraryPanel />
             <Standings />
-          </aside>
+          </motion.aside>
           <div id="chat-main" tabIndex={-1} className="workspace__chat">
             <ChatWindow />
           </div>
-          <aside className="rail rail--right workspace__map" aria-label={ui.map.heading}>
+          <motion.aside
+            className="rail rail--right workspace__map"
+            aria-label={ui.map.heading}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="show"
+          >
             <StadiumMap />
             <OpsHud />
             <CrowdAnalytics />
-          </aside>
+          </motion.aside>
         </main>
 
         <footer className="app__footer">

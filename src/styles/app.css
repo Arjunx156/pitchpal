@@ -187,11 +187,11 @@
   border-radius: var(--radius-pill);
 }
 .viewswitch__btn {
+  position: relative;
   flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
   padding: var(--space-2);
   border: none;
   border-radius: var(--radius-pill);
@@ -199,11 +199,25 @@
   color: var(--color-text-muted);
   font-weight: 600;
   cursor: pointer;
+  transition: color var(--duration-fast);
+}
+.viewswitch__label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.viewswitch__pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
 }
 .viewswitch__btn.is-active {
-  background: var(--color-surface);
   color: var(--color-text);
-  box-shadow: var(--shadow-1);
 }
 
 /* ================================================================== */

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   busiestGate,
   crowdSeries,
@@ -9,6 +10,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { ANALYTICS } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { Sparkline } from '../charts/Sparkline';
+import { panelItem } from '../../lib/motion';
 
 export function CrowdAnalytics() {
   const { context, venue } = useFanContext();
@@ -27,7 +29,7 @@ export function CrowdAnalytics() {
   const queue = busiest ? gateQueueSeries(venue, busiest.gateId, now) : [];
 
   return (
-    <section className="analytics" aria-labelledby="analytics-heading">
+    <motion.section className="analytics" aria-labelledby="analytics-heading" variants={panelItem}>
       <h2 id="analytics-heading" className="analytics__heading">
         {a.heading}
       </h2>
@@ -48,6 +50,6 @@ export function CrowdAnalytics() {
           </div>
         ) : null}
       </div>
-    </section>
+    </motion.section>
   );
 }

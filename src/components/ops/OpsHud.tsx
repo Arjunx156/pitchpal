@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Cloud, CloudRain, Sun } from 'lucide-react';
 import {
   getOpsSnapshot,
@@ -7,6 +8,7 @@ import {
 } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import type { UiStrings } from '../../i18n/ui';
+import { panelItem } from '../../lib/motion';
 
 function WeatherIcon({ weather }: { weather: Weather }) {
   if (weather === 'rain') return <CloudRain size={16} aria-hidden="true" />;
@@ -44,7 +46,7 @@ export function OpsHud() {
   const countdown = `${Math.floor(remainingMs / 60000)}:${pad(Math.floor((remainingMs % 60000) / 1000))}`;
 
   return (
-    <section className="ops" aria-labelledby="ops-heading">
+    <motion.section className="ops" aria-labelledby="ops-heading" variants={panelItem}>
       <div className="ops__top">
         <h2 id="ops-heading" className="ops__heading">
           {ui.ops.heading}
@@ -103,6 +105,6 @@ export function OpsHud() {
           })}
         </ul>
       </div>
-    </section>
+    </motion.section>
   );
 }
