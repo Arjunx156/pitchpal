@@ -9,7 +9,10 @@ transport questions **in the fan's own language**, grounded in a structured venu
 and **live match-day operations**. It pairs a streaming chat with an **interactive stadium map**,
 **voice** input/output, a **live ops HUD**, and works **offline** as an installable PWA.
 
-Powered by Google **Gemini** with a deterministic **no-key fallback**, so it runs out of the box.
+The assistant is **agentic**: Google **Gemini** drives a **function-calling** loop over a typed tool
+registry (route planning, amenities, transport, live gate status, ticket reading), and can **read a
+photo of your ticket** (multimodal) to auto-find your seat. A deterministic **no-key fallback** runs
+the exact same tools, so everything works out of the box and offline.
 
 ---
 
@@ -32,6 +35,12 @@ during a global tournament.
 
 ## Signature features
 
+- **🤖 Agentic tool-calling** — Gemini decides which typed tools to call (`planRoute`,
+  `findAmenities`, `getTransport`, `getGateStatus`, `setFanTicket`), the server runs them against the
+  pure core, and structured **cards** stream back from tool results — the UI even shows the live tool
+  it's running ("Planning your route…"). The same tools power the mock and offline paths.
+- **🎫 Scan your ticket (multimodal)** — snap or upload a photo of your ticket; Gemini reads the
+  section, seat and gate and auto-fills your context to route you.
 - **🗺️ Interactive stadium map** — an accessible SVG bowl (computed from the venue data) that
   highlights your seat, gates and amenities and **animates the route** when the assistant answers.
   Click any section or gate to ask about it. Fully keyboard- and screen-reader-operable.
@@ -53,22 +62,25 @@ The intelligence is a small, **deterministic pipeline** that grounds the model i
 it improvise:
 
 ```
-Fan context (language · accessibility · location)  +  live ops snapshot
+Fan context (language · accessibility · location · ticket)  +  live ops snapshot
         │
         ▼
-  1. Classify intent   →  navigation | amenity | transport | general   (src/lib/intent.ts)
-  2. Retrieve slice    →  only the relevant gates/sections/amenities,   (src/lib/retrieval.ts)
-                          filtered step-free when needed
-  3. Ground + reason   →  Gemini prompt with venue + ops facts          (server/prompt.ts)
-                          OR the deterministic composer (mock/offline)   (src/lib/compose.ts)
-  4. Answer + card     →  prose + a schema-validated action card         (src/lib/cards.ts)
+  LIVE:  Gemini function-calling loop  (server/agent.ts)
+         model → picks tool(s) → server runs them (src/lib/tools-core.ts) → cards + summary
+         → model composes a short reply.   Tools: planRoute · findAmenities · getTransport
+         · getGateStatus · setFanTicket (reads a ticket photo).
+  MOCK / OFFLINE:  deterministic router (answerOffline) runs the SAME tools → identical events.
+        │
+        ▼
+  Structured SSE:  status · tool_result(card) · token · context-patch · done
         │
         ▼
   The map derives its highlights from the same pure retrieval — no server round-trip.
 ```
 
-Why: **grounding, not guessing** keeps answers accurate and tokens (cost) low; the **pure core**
-is fully unit-tested and doubles as the offline engine and the map's highlight source.
+Why: the **tools are one pure implementation** reused by the live agent, the mock, and the offline
+engine — so behaviour is identical everywhere and fully unit-tested; **cards come from tool results**
+(reliable), not parsed from prose.
 
 ---
 
@@ -195,8 +207,9 @@ light and dark themes are intentional.
 
 ## Tech stack
 
-React 18 · TypeScript · Vite · vite-plugin-pwa · Node (native `http`) · Google Gemini
-(`@google/genai`) · Zod · Lucide icons · @fontsource · Vitest + Testing Library + jest-axe.
+React 18 · TypeScript · Vite · Tailwind CSS + shadcn/ui (Radix) + Framer Motion · vite-plugin-pwa ·
+Node (native `http`, esbuild-bundled) · Google Gemini (`@google/genai`, function-calling + vision) ·
+Zod · Lucide icons · @fontsource · Vitest + Testing Library + jest-axe.
 
 ## License
 
