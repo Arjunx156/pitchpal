@@ -1,3 +1,4 @@
+import { Navigation } from 'lucide-react';
 import type { RouteCard as RouteCardData } from '../../lib/cards';
 import { fmt } from '../../i18n/answers';
 import type { UiStrings } from '../../i18n/ui';
@@ -6,7 +7,7 @@ export function RouteCard({ card, ui }: { card: RouteCardData; ui: UiStrings }) 
   return (
     <figure className="card card--route" aria-label={card.title}>
       <figcaption className="card__title">
-        <span aria-hidden="true" className="card__icon">🧭</span>
+        <Navigation className="card__icon" size={18} aria-hidden="true" />
         {card.title}
       </figcaption>
       <div className="card__meta">

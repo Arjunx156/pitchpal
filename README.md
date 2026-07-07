@@ -1,133 +1,106 @@
-# PitchPal ⚽
+# PitchPal ⚽ — Match Day Edition
 
 **A multilingual, accessible GenAI stadium companion for FIFA World Cup 2026 fans.**
 
 _PromptWars Virtual — Challenge 4: Smart Stadiums & Tournament Operations._
 
 PitchPal is a fan-facing assistant that answers wayfinding, amenity, accessibility, and
-transport questions **in the fan's own language**, grounded in a structured venue knowledge
-base. It reasons over a lightweight **fan context** (language, accessibility needs, current
-location) to give practical, context-aware answers — and returns rich, structured **action
-cards** (routes, amenities, transport) alongside the reply.
+transport questions **in the fan's own language**, grounded in a structured venue knowledge base
+and **live match-day operations**. It pairs a streaming chat with an **interactive stadium map**,
+**voice** input/output, a **live ops HUD**, and works **offline** as an installable PWA.
 
-It runs **out of the box with no API key** in a deterministic demo mode, and switches to live
-Google **Gemini** responses when a key is provided.
+Powered by Google **Gemini** with a deterministic **no-key fallback**, so it runs out of the box.
 
 ---
 
 ## Chosen vertical: the Fan
 
 Challenge 4 asks for a GenAI solution that improves the stadium experience for one persona.
-PitchPal targets the **international fan** — the persona that most directly exercises the two
-graded criteria the challenge calls out (**accessibility** and **multilingual assistance**),
-and the one with the clearest real-world use during a global tournament where millions of
-visitors arrive speaking dozens of languages.
+PitchPal targets the **international fan** — the persona that most directly exercises two graded
+criteria (**accessibility** and **multilingual assistance**) and has the clearest real-world use
+during a global tournament.
 
-| Capability | Example question | What PitchPal returns |
+| Capability | Example question | What PitchPal does |
 |---|---|---|
-| Navigation / wayfinding | _"How do I get to section 205 from Gate B?"_ | A **route card**: steps, walk time, step-free status |
-| Accessibility | _"¿Ruta en silla de ruedas a la sección 205?"_ | The same route, routed step-free, with a warning if a section isn't accessible |
-| Amenities | _"Where's the nearest halal food?"_ | An **amenity card**: closest matching options, hours, step-free flags |
-| Transport | _"How do I get downtown after the match?"_ | A **transport card**: accessible-first options and frequencies |
-| Multilingual | Any of the above in EN / ES / FR / PT / AR | The whole reply, localized (with right-to-left layout for Arabic) |
+| Navigation | _"How do I get to section 205 from Gate B?"_ | Route card **+ the map lights up the path** |
+| Accessibility | _"¿Ruta en silla de ruedas a la sección 205?"_ | Step-free route, elevator, warnings — in Spanish |
+| Amenities | _"Where's the nearest halal food?"_ | Amenity card, nearest options, hours |
+| Transport | _"How do I get downtown after the match?"_ | Accessible-first transport options |
+| Live ops | _"How busy is my gate?"_ | Real gate congestion + **reroutes you around jams** |
+
+---
+
+## Signature features
+
+- **🗺️ Interactive stadium map** — an accessible SVG bowl (computed from the venue data) that
+  highlights your seat, gates and amenities and **animates the route** when the assistant answers.
+  Click any section or gate to ask about it. Fully keyboard- and screen-reader-operable.
+- **🎙️ Voice** — ask by speech (speech-to-text in your language) and have answers **read aloud**
+  (text-to-speech). Progressive enhancement — hidden where unsupported.
+- **📊 Live match-day ops HUD** — kickoff countdown, per-gate congestion + queue times, and
+  weather. The assistant **factors congestion into its advice** ("Gate C is busy — use Gate A"),
+  grounded into both the live Gemini prompt and the offline composer.
+- **📴 PWA + offline** — installable to the home screen, and it **still answers with no signal** by
+  running the same deterministic assistant logic on-device.
+- **⌘K command palette · quick-action chips · first-run onboarding** — fast, complete UX.
+- **🌍 Fully localized** UI + answers in EN / ES / FR / PT / AR, with right-to-left layout for Arabic.
 
 ---
 
 ## Approach & logic
 
-The "smart, dynamic assistant" behavior comes from a small, **deterministic decision pipeline**
-that grounds the language model instead of letting it improvise:
+The intelligence is a small, **deterministic pipeline** that grounds the model instead of letting
+it improvise:
 
 ```
-Fan context (language, accessibility, location)
+Fan context (language · accessibility · location)  +  live ops snapshot
         │
         ▼
-  1. Classify intent   ──►  navigation | amenity | transport | general   (src/lib/intent.ts)
-        │                    + accessibility focus (a cross-cutting modifier)
-        ▼
-  2. Retrieve slice    ──►  only the relevant gates/sections/amenities/    (src/lib/retrieval.ts)
-        │                    transport, filtered to step-free when needed
-        ▼
-  3. Build prompt      ──►  persona + guardrails + injected VENUE FACTS    (server/prompt.ts)
+  1. Classify intent   →  navigation | amenity | transport | general   (src/lib/intent.ts)
+  2. Retrieve slice    →  only the relevant gates/sections/amenities,   (src/lib/retrieval.ts)
+                          filtered step-free when needed
+  3. Ground + reason   →  Gemini prompt with venue + ops facts          (server/prompt.ts)
+                          OR the deterministic composer (mock/offline)   (src/lib/compose.ts)
+  4. Answer + card     →  prose + a schema-validated action card         (src/lib/cards.ts)
         │
         ▼
-  4. Generate          ──►  Gemini (live)  OR  deterministic composer (mock)
-        │                                        (server/gemini.ts, src/lib/compose.ts)
-        ▼
-  5. Answer + card     ──►  prose reply + a validated structured card      (src/lib/cards.ts)
+  The map derives its highlights from the same pure retrieval — no server round-trip.
 ```
 
-Why this shape:
-
-- **Grounding, not guessing.** The model is only ever given the small slice of venue data
-  relevant to the question, and is instructed to answer *only* from those facts. This keeps
-  answers accurate, keeps token usage (and cost) low, and makes hallucination unlikely.
-- **Accessibility is a first-class modifier.** A wheelchair or stroller profile changes *which*
-  data is retrieved (step-free routes, accessible facilities and transport) — the logic adapts,
-  it doesn't just re-word.
-- **Deterministic core = testable + demoable.** Intent, retrieval, prompt assembly and card
-  parsing are pure functions with no network dependency, so they're unit-tested and power a
-  fully working offline demo.
-
----
-
-## How the solution works
-
-- **Frontend** (React + TypeScript + Vite): a chat UI plus a "your details" panel for language,
-  accessibility profile and location. Replies stream in token-by-token over SSE and render
-  structured cards.
-- **Server** (thin Node layer): a single chat handler validates the request, applies rate
-  limiting, grounds the prompt, and streams the answer. **The Gemini API key lives only on the
-  server** and never reaches the browser. The same handler is mounted by the Vite dev plugin
-  (`npm run dev`) and by the production Node server (`npm start`).
-- **Mock fallback**: with no `GEMINI_API_KEY`, the server answers from the deterministic
-  composer — grounded, localized, and instant — so judges can try everything without a key.
-
-```
-Browser (React)  ──POST /api/chat (context, message, history)──►  Node handler
-     ▲   SSE stream: tokens + a fenced ```card JSON block            │
-     │                                    ┌───────────────────────┐  │
-     └───────────────────────────────────│ validate → rate-limit  │◄─┘
-                                          │ → classify → retrieve  │
-                                          │ → prompt → Gemini/mock │
-                                          └───────────────────────┘
-```
+Why: **grounding, not guessing** keeps answers accurate and tokens (cost) low; the **pure core**
+is fully unit-tested and doubles as the offline engine and the map's highlight source.
 
 ---
 
 ## Getting started
 
 ### Prerequisites
-- Node.js **20+** (developed on Node 24)
-- npm
+- Node.js **20+** (developed on Node 24) · npm
 
-### Install & run (demo mode — no key needed)
+### Run (demo mode — no key needed)
 ```bash
 npm install
-npm run dev
+npm run dev        # http://localhost:5173  — "Demo mode" badge
 ```
-Open the printed URL (default http://localhost:5173). A **"Demo mode"** badge indicates
-built-in sample answers.
 
-### Enable live Gemini responses (optional)
+### Live Gemini responses
 ```bash
-cp .env.example .env
-# edit .env and set GEMINI_API_KEY=your_key   (get one at https://aistudio.google.com/apikey)
-npm run dev
+cp .env.example .env      # then set GEMINI_API_KEY=your_key
+npm run dev               # badge switches to "Live AI"
 ```
-The badge switches to **"Live AI"**. The key is read only on the server.
+The key is read **only on the server** and never reaches the browser. `.env` is git-ignored.
 
-### Production build & serve
+### Production & PWA
 ```bash
-npm run build     # outputs to dist/
+npm run build     # → dist/ (also generates the service worker + manifest)
 npm start         # serves dist/ + /api/chat on http://localhost:8080
 ```
 
-### Tests, coverage, types
+### Quality
 ```bash
-npm test              # run the full Vitest suite
-npm run coverage      # run with coverage (thresholds enforced at 80%)
-npm run typecheck     # strict TypeScript, no emit
+npm test          # 113 tests (Vitest + Testing Library + jest-axe)
+npm run coverage  # thresholds enforced at 80%
+npm run typecheck # strict TypeScript
 ```
 
 ---
@@ -137,76 +110,69 @@ npm run typecheck     # strict TypeScript, no emit
 | Variable | Default | Purpose |
 |---|---|---|
 | `GEMINI_API_KEY` | _(empty)_ | Google Gemini key. Empty → deterministic mock mode. |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Model used for live responses. |
-| `PORT` | `8080` | Port for the production server (`npm start`). |
-
-Only `.env.example` is committed — never a real key. `.env` is git-ignored.
+| `GEMINI_MODEL` | `gemini-2.5-flash` | Model for live responses. |
+| `PORT` | `8080` | Production server port. |
 
 ---
 
 ## Project structure
 
 ```
-server/                 Thin Node layer (no framework)
-  handler.ts            runChat() pipeline + HTTP/SSE adapter
-  gemini.ts             Gemini client + deterministic mock streamer
-  prompt.ts             Persona, guardrails, grounded prompt assembly
-  security.ts           Zod validation, rate limiting, security headers/CSP
-  index.ts              Production static + API server
+server/            handler · gemini(+mock) · prompt(ops-aware) · security(CSP) · index (prod)
 src/
   features/
-    context/            Fan context (language/accessibility/location) + provider
-    chat/               Streaming useChat hook + message types
-    venue/              Venue types + representative sample dataset
-  lib/                  intent · retrieval · compose · cards (the deterministic core)
-  components/           chat · cards · context-bar · ui (all accessible)
-  i18n/                 UI chrome + answer phrases (EN/ES/FR/PT/AR)
-  styles/               Design tokens + global + component CSS
-tests/                  Vitest: unit · components · server (69+ tests)
+    context/       fan context provider (language/accessibility/location)
+    chat/          streaming useChat (with offline fallback) + ChatProvider
+    ops/           deterministic match-day ops simulation (shared client + server)
+    map/           map geometry + useMapFocus (both pure)
+    voice/         speech input/output hooks + provider (browser APIs)
+    theme/         theme provider · pwa/ install prompt · venue/ sample dataset
+  lib/             intent · retrieval · compose · cards (the deterministic core)
+  components/      chat · cards · map · ops · command · onboarding · quick-actions · ui
+  i18n/            UI chrome + answer phrases (EN/ES/FR/PT/AR)
+  styles/          design tokens + global + component CSS
+tests/             113 tests — unit · components · server
+public/icons/      PWA + favicon assets
 ```
+
+Design system: a **"Match Day" broadcast** direction (charcoal + gold + pitch-green, self-hosted
+Bebas Neue + Source Sans 3, Lucide icons) — derived via the `ui-ux-pro-max` design engine. Both
+light and dark themes are intentional.
 
 ---
 
-## Evaluation criteria — how PitchPal addresses each
+## Evaluation criteria
 
-- **Code Quality** — small, focused, single-responsibility modules; strict TypeScript with no
-  `any` on boundaries; pure functions for the core logic; feature-oriented structure; immutable
-  state updates.
-- **Security** — API key server-side only; all input schema-validated (Zod); per-IP rate
-  limiting; 64 KB body cap; prompt-injection guardrails (venue data trusted, user input
-  untrusted, model output never executed); React auto-escaping (no `dangerouslySetInnerHTML`);
-  restrictive CSP + hardening headers; path-traversal guard on static serving.
-- **Efficiency** — retrieval injects only the relevant venue slice (small prompts, low cost);
-  streaming for fast perceived response; no heavy UI libraries (~65 KB gzipped JS); static data
-  cached in memory.
-- **Testing** — 69+ Vitest tests across the deterministic core, the server pipeline (incl. the
-  HTTP adapter and a mocked Gemini client), and the React UI; coverage enforced at 80%.
-- **Accessibility** — WCAG 2.2 AA intent: semantic landmarks, labelled controls, full keyboard
-  operation, visible focus, a polite live region for streamed answers, right-to-left support for
-  Arabic, `prefers-reduced-motion` handling, and an automated `jest-axe` check. The accessibility
-  profile also makes the *content* accessible (step-free routing).
+- **Code Quality** — small, feature-oriented modules; strict TypeScript; pure functions for all
+  logic; immutable state; shared providers instead of prop-drilling.
+- **Security** — Gemini key server-side only; Zod validation; per-IP rate limiting; 64 KB body cap;
+  prompt-injection guardrails; restrictive CSP (self-only, incl. `worker-src`/`manifest-src`) +
+  hardening headers; path-traversal guard; no `dangerouslySetInnerHTML`.
+- **Efficiency** — only the relevant venue slice is grounded into the prompt; streaming; ~85 KB
+  gzipped JS; self-hosted subsetted fonts; ops/map computed from pure functions.
+- **Testing** — 113 tests across the pure core, the server pipeline (HTTP adapter + mocked Gemini),
+  and the React UI (map, ops, palette, onboarding, voice, offline); coverage enforced at 80%.
+- **Accessibility** — WCAG 2.2 AA: landmarks, keyboard operation (incl. the SVG map and palette),
+  focus management, polite live regions, accessible congestion meters, Arabic RTL,
+  `prefers-reduced-motion`, and an automated `jest-axe` check. Content is accessible too
+  (step-free routing driven by the fan's profile).
 
 ---
 
 ## Assumptions & limitations
 
-- **Sample venue data.** `src/features/venue/venue-data.ts` is fictional-but-plausible data for a
-  single representative stadium, clearly labelled — not official FIFA or venue information. The
-  data shape mirrors what a real operations feed would expose, so going live is a data swap, not
-  a rewrite.
-- **Mock mode is English-leaning for free-form nuance** but fully localized for the templated
-  answers it produces; live Gemini mode does complete free-form translation.
-- **Rate limiting is in-memory** (per server instance), suitable for a demo/single instance; a
-  shared store (e.g. Redis) would be the production step.
-- Intent keywords cover English plus common Spanish/French/Portuguese terms; unrecognized
-  phrasing safely falls back to a general, still-grounded response.
-
----
+- **Sample venue + ops data** (`src/features/venue/venue-data.ts`, `src/features/ops/opsFeed.ts`) —
+  fictional-but-plausible, clearly labelled, not official FIFA information. Ops runs on a virtual
+  140-minute match cycle so the demo is always lively. The shapes mirror real feeds, so going live
+  is a data swap, not a rewrite.
+- **Voice & install** are progressive enhancements — hidden where the browser lacks the APIs.
+- **Rate limiting** is in-memory (per instance); a shared store (Redis) would be the production step.
+- Bebas Neue / Source Sans 3 cover Latin scripts; Arabic falls back to a system Arabic font.
 
 ## Tech stack
 
-React 18 · TypeScript · Vite · Node (native `http`) · Google Gemini (`@google/genai`) ·
-Zod · Vitest + Testing Library + jest-axe.
+React 18 · TypeScript · Vite · vite-plugin-pwa · Node (native `http`) · Google Gemini
+(`@google/genai`) · Zod · Lucide icons · @fontsource · Vitest + Testing Library + jest-axe.
 
 ## License
 

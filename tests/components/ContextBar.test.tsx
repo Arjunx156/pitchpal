@@ -3,10 +3,12 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
+import { markOnboarded } from '../helpers/render';
 
 describe('ContextBar', () => {
   beforeEach(() => {
     localStorage.clear();
+    markOnboarded();
     document.documentElement.dir = 'ltr';
   });
 

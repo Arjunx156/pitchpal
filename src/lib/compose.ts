@@ -3,10 +3,36 @@ import type { AnswerCard } from './cards';
 import type { FanContext } from '../features/context/types';
 import type { Venue } from '../features/venue/types';
 import { ANSWER_PHRASES, fmt, type AnswerPhrases } from '../i18n/answers';
+import {
+  gateStatus,
+  quietestAccessibleGate,
+  type OpsSnapshot,
+} from '../features/ops/opsFeed';
 
 export interface ComposedAnswer {
   text: string;
   card?: AnswerCard;
+}
+
+/** Congestion advice for the target's nearest gate, if it is busy right now. */
+function congestionLines(
+  gateId: string,
+  gateName: string,
+  slice: ContextSlice,
+  venue: Venue,
+  p: AnswerPhrases,
+  ops: OpsSnapshot,
+): string[] {
+  const status = gateStatus(ops, gateId);
+  if (!status || status.level === 'ok') return [];
+
+  const lines = [fmt(p.gateBusy, { gate: gateName, min: status.queueMinutes })];
+  const quiet = quietestAccessibleGate(ops);
+  if (quiet && quiet.gateId !== gateId && (slice.accessibilityFocus || status.level === 'jam')) {
+    const quietName = venue.gates.find((g) => g.id === quiet.gateId)?.name ?? quiet.gateId;
+    lines.push(fmt(p.gateQuieter, { gate: quietName }));
+  }
+  return lines;
 }
 
 function originLabel(slice: ContextSlice, fallback: string): string | undefined {
@@ -19,6 +45,7 @@ function composeNavigation(
   context: FanContext,
   venue: Venue,
   p: AnswerPhrases,
+  ops?: OpsSnapshot,
 ): ComposedAnswer {
   const target = slice.sections[0];
   if (!target) return composeGeneral(p);
@@ -43,6 +70,11 @@ function composeNavigation(
 
   const lines = [p.navIntro];
   if (slice.accessibilityFocus && !stepFree) lines.push(p.stepFreeNo);
+  if (ops) {
+    const advice = congestionLines(target.nearestGate, gateName, slice, venue, p, ops);
+    lines.push(...advice);
+    steps.push(...advice);
+  }
   const text = lines.join(' ');
 
   const card: AnswerCard = {
@@ -104,11 +136,12 @@ export function composeGroundedAnswer(
   slice: ContextSlice,
   context: FanContext,
   venue: Venue,
+  ops?: OpsSnapshot,
 ): ComposedAnswer {
   const p = ANSWER_PHRASES[context.language];
   switch (slice.intent) {
     case 'navigation':
-      return composeNavigation(slice, context, venue, p);
+      return composeNavigation(slice, context, venue, p, ops);
     case 'amenity':
       return composeAmenity(slice, p);
     case 'transport':

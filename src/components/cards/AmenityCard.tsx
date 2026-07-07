@@ -1,3 +1,4 @@
+import { MapPin } from 'lucide-react';
 import type { AmenityCard as AmenityCardData } from '../../lib/cards';
 import type { UiStrings } from '../../i18n/ui';
 
@@ -5,7 +6,7 @@ export function AmenityCard({ card, ui }: { card: AmenityCardData; ui: UiStrings
   return (
     <figure className="card card--amenity" aria-label={card.title}>
       <figcaption className="card__title">
-        <span aria-hidden="true" className="card__icon">📍</span>
+        <MapPin className="card__icon" size={18} aria-hidden="true" />
         {card.title}
       </figcaption>
       <ul className="card__list">

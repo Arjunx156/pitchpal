@@ -17,15 +17,31 @@ body {
   font-size: var(--text-base);
   line-height: var(--leading);
   color: var(--color-text);
-  background:
-    radial-gradient(
-      120% 90% at 100% 0%,
-      color-mix(in oklch, var(--color-pitch) 12%, transparent),
-      transparent 60%
-    ),
-    var(--color-bg);
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(120% 80% at 100% -10%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 55%),
+    radial-gradient(100% 70% at -10% 110%, color-mix(in oklch, var(--color-pitch) 12%, transparent), transparent 55%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Broadcast grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 140px 140px;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 h1,
@@ -36,6 +52,21 @@ figure {
   margin: 0;
 }
 
+/* Display type — Bebas Neue for scoreboard/headline moments */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: var(--tracking-display);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+/* Tabular figures for timers/scores to avoid layout shift */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
 button,
 input,
 select,
@@ -44,18 +75,16 @@ textarea {
   color: inherit;
 }
 
-/* Visible focus for keyboard users everywhere */
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Skip link — first tab stop */
 .skip-link {
   position: absolute;
   left: var(--space-3);
-  top: -3rem;
+  top: -4rem;
   z-index: 100;
   padding: var(--space-2) var(--space-4);
   background: var(--color-surface);
@@ -69,7 +98,6 @@ textarea {
   top: var(--space-3);
 }
 
-/* Screen-reader-only utility */
 .visually-hidden {
   position: absolute !important;
   width: 1px;
@@ -82,7 +110,10 @@ textarea {
   border: 0;
 }
 
-/* Respect reduced-motion globally */
+::selection {
+  background: color-mix(in oklch, var(--color-accent) 40%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

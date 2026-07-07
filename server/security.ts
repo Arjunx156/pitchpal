@@ -81,6 +81,8 @@ export function contentSecurityPolicy(): string {
     "img-src 'self' data:",
     "connect-src 'self'",
     "font-src 'self'",
+    "worker-src 'self'",
+    "manifest-src 'self'",
     "base-uri 'self'",
     "form-action 'self'",
     "frame-ancestors 'none'",

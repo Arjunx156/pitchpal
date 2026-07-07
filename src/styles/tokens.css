@@ -1,38 +1,59 @@
 /*
- * Design tokens — single source of truth for color, type, spacing and motion.
- * Colors use oklch for perceptually even contrast. Light + dark are both
- * intentional; contrast pairs meet WCAG 2.2 AA.
+ * PitchPal design tokens — "Match Day" broadcast system.
+ * Charcoal base · gold accent · pitch-green as the live/positive/accessible signal.
+ * Dark is the hero broadcast look; light is a clean premium variant. Both are
+ * intentional and meet WCAG 2.2 AA for text pairs. Colors in oklch.
  */
 :root {
-  /* Brand: a pitch-green + tournament-magenta accent */
-  --color-pitch: oklch(62% 0.15 155);
-  --color-pitch-strong: oklch(52% 0.16 155);
-  --color-accent: oklch(60% 0.22 355);
+  /* ---- Brand constants (hue anchors) ---- */
+  --h-charcoal: 60;
+  --h-gold: 85;
+  --h-pitch: 152;
 
-  /* Light surfaces */
-  --color-bg: oklch(98.5% 0.006 145);
+  /* ---- Light (premium) — default ---- */
+  --color-bg: oklch(96.5% 0.008 var(--h-gold));
   --color-surface: oklch(100% 0 0);
-  --color-surface-2: oklch(96% 0.008 145);
-  --color-border: oklch(88% 0.01 145);
-  --color-text: oklch(24% 0.02 155);
-  --color-text-muted: oklch(46% 0.02 155);
-  --color-on-accent: oklch(99% 0 0);
+  --color-surface-2: oklch(97% 0.006 var(--h-gold));
+  --color-elevated: oklch(99% 0.004 var(--h-gold));
+  --color-border: oklch(88% 0.012 var(--h-gold));
+  --color-border-strong: oklch(80% 0.015 var(--h-gold));
+  --color-text: oklch(24% 0.018 var(--h-charcoal));
+  --color-text-muted: oklch(46% 0.02 var(--h-charcoal));
 
-  --color-focus: oklch(58% 0.2 255);
-  --color-danger: oklch(55% 0.2 25);
-  --color-ok: oklch(60% 0.15 155);
+  /* Gold: darker for text/contrast on light, bright for fills */
+  --color-accent: oklch(52% 0.13 var(--h-gold));
+  --color-accent-strong: oklch(46% 0.13 var(--h-gold));
+  --color-accent-bright: oklch(80% 0.15 var(--h-gold));
+  --color-on-accent: oklch(20% 0.02 var(--h-gold));
 
-  /* Typography */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji';
+  --color-pitch: oklch(50% 0.15 var(--h-pitch));
+  --color-pitch-bright: oklch(72% 0.16 var(--h-pitch));
+  --color-live: oklch(58% 0.2 20);
+  --color-danger: oklch(53% 0.2 25);
+  --color-warn: oklch(62% 0.16 65);
+  --color-focus: oklch(55% 0.2 250);
+
+  /* Congestion scale (meters) — not color-only; always paired with text/icon */
+  --color-ok: oklch(58% 0.15 var(--h-pitch));
+  --color-busy: oklch(70% 0.16 75);
+  --color-jam: oklch(58% 0.2 30);
+
+  /* ---- Typography ---- */
+  --font-display: 'Bebas Neue', 'Arial Narrow', 'Segoe UI', system-ui, sans-serif;
+  --font-sans: 'Source Sans 3', 'Segoe UI', 'Noto Sans Arabic', system-ui, -apple-system,
+    Roboto, sans-serif, 'Apple Color Emoji';
+
+  --text-xs: 0.75rem;
   --text-sm: clamp(0.82rem, 0.8rem + 0.1vw, 0.9rem);
   --text-base: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
   --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
-  --text-xl: clamp(1.4rem, 1.1rem + 1.2vw, 2rem);
-  --text-hero: clamp(1.8rem, 1.3rem + 2.4vw, 3rem);
+  --display-sm: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
+  --display-md: clamp(2rem, 1.4rem + 2.6vw, 3.2rem);
+  --display-lg: clamp(2.6rem, 1.6rem + 4.6vw, 5rem);
   --leading: 1.55;
+  --tracking-display: 0.02em;
 
-  /* Spacing scale */
+  /* ---- Spacing (4/8 rhythm) ---- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -40,51 +61,86 @@
   --space-5: 1.5rem;
   --space-6: 2rem;
   --space-8: 3rem;
+  --space-10: 4rem;
 
-  /* Radius + elevation */
-  --radius-sm: 8px;
-  --radius: 14px;
-  --radius-lg: 22px;
-  --shadow-1: 0 1px 2px oklch(20% 0.02 155 / 0.08),
-    0 4px 16px oklch(20% 0.02 155 / 0.06);
-  --shadow-2: 0 8px 32px oklch(20% 0.02 155 / 0.14);
+  /* ---- Radius / elevation ---- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+  --shadow-1: 0 1px 2px oklch(20% 0.02 var(--h-charcoal) / 0.1),
+    0 6px 20px oklch(20% 0.02 var(--h-charcoal) / 0.08);
+  --shadow-2: 0 10px 40px oklch(20% 0.02 var(--h-charcoal) / 0.16);
+  --glow-gold: 0 0 0 1px oklch(80% 0.15 var(--h-gold) / 0.4),
+    0 0 24px oklch(80% 0.15 var(--h-gold) / 0.25);
+  --glow-live: 0 0 0 4px oklch(58% 0.2 20 / 0.18);
 
-  /* Motion */
-  --duration-fast: 140ms;
+  /* ---- Motion ---- */
+  --duration-fast: 150ms;
   --duration-normal: 260ms;
+  --duration-slow: 400ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --maxw-app: 900px;
+  /* ---- Layout ---- */
+  --maxw-app: 1360px;
+  --rail-w: 300px;
+  --map-w: 380px;
+
+  /* Grain overlay (subtle broadcast texture) */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
-/* System dark preference — unless the user has explicitly chosen light */
+/* ---- Dark (hero broadcast) — system preference unless user chose light ---- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --color-bg: oklch(20% 0.015 155);
-    --color-surface: oklch(24% 0.017 155);
-    --color-surface-2: oklch(28% 0.018 155);
-    --color-border: oklch(36% 0.02 155);
-    --color-text: oklch(95% 0.006 145);
-    --color-text-muted: oklch(74% 0.012 145);
-    --color-pitch: oklch(72% 0.14 155);
-    --color-accent: oklch(72% 0.19 355);
-    --color-on-accent: oklch(18% 0.02 355);
-    --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 4px 16px oklch(0% 0 0 / 0.3);
-    --shadow-2: 0 8px 32px oklch(0% 0 0 / 0.45);
+    --color-bg: oklch(17% 0.012 var(--h-charcoal));
+    --color-surface: oklch(21% 0.014 var(--h-charcoal));
+    --color-surface-2: oklch(25% 0.015 var(--h-charcoal));
+    --color-elevated: oklch(28% 0.016 var(--h-charcoal));
+    --color-border: oklch(33% 0.016 var(--h-charcoal));
+    --color-border-strong: oklch(42% 0.018 var(--h-charcoal));
+    --color-text: oklch(96% 0.01 var(--h-gold));
+    --color-text-muted: oklch(74% 0.02 var(--h-gold));
+
+    --color-accent: oklch(82% 0.14 var(--h-gold));
+    --color-accent-strong: oklch(86% 0.15 var(--h-gold));
+    --color-accent-bright: oklch(85% 0.16 var(--h-gold));
+    --color-on-accent: oklch(18% 0.02 var(--h-gold));
+
+    --color-pitch: oklch(78% 0.15 var(--h-pitch));
+    --color-pitch-bright: oklch(80% 0.17 var(--h-pitch));
+    --color-danger: oklch(68% 0.19 25);
+    --color-ok: oklch(78% 0.15 var(--h-pitch));
+    --color-busy: oklch(80% 0.15 80);
+    --color-jam: oklch(70% 0.2 30);
+
+    --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
+    --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
   }
 }
 
-/* Explicit dark theme (set by data-theme) — mirrors the media query block */
+/* Explicit dark theme (mirrors the media block) */
 :root[data-theme='dark'] {
-  --color-bg: oklch(20% 0.015 155);
-  --color-surface: oklch(24% 0.017 155);
-  --color-surface-2: oklch(28% 0.018 155);
-  --color-border: oklch(36% 0.02 155);
-  --color-text: oklch(95% 0.006 145);
-  --color-text-muted: oklch(74% 0.012 145);
-  --color-pitch: oklch(72% 0.14 155);
-  --color-accent: oklch(72% 0.19 355);
-  --color-on-accent: oklch(18% 0.02 355);
-  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 4px 16px oklch(0% 0 0 / 0.3);
-  --shadow-2: 0 8px 32px oklch(0% 0 0 / 0.45);
+  --color-bg: oklch(17% 0.012 var(--h-charcoal));
+  --color-surface: oklch(21% 0.014 var(--h-charcoal));
+  --color-surface-2: oklch(25% 0.015 var(--h-charcoal));
+  --color-elevated: oklch(28% 0.016 var(--h-charcoal));
+  --color-border: oklch(33% 0.016 var(--h-charcoal));
+  --color-border-strong: oklch(42% 0.018 var(--h-charcoal));
+  --color-text: oklch(96% 0.01 var(--h-gold));
+  --color-text-muted: oklch(74% 0.02 var(--h-gold));
+  --color-accent: oklch(82% 0.14 var(--h-gold));
+  --color-accent-strong: oklch(86% 0.15 var(--h-gold));
+  --color-accent-bright: oklch(85% 0.16 var(--h-gold));
+  --color-on-accent: oklch(18% 0.02 var(--h-gold));
+  --color-pitch: oklch(78% 0.15 var(--h-pitch));
+  --color-pitch-bright: oklch(80% 0.17 var(--h-pitch));
+  --color-danger: oklch(68% 0.19 25);
+  --color-ok: oklch(78% 0.15 var(--h-pitch));
+  --color-busy: oklch(80% 0.15 80);
+  --color-jam: oklch(70% 0.2 30);
+  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
+  --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
 }

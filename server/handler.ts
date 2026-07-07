@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { retrieveContext } from '../src/lib/retrieval';
 import { composeGroundedAnswer } from '../src/lib/compose';
+import { getOpsSnapshot } from '../src/features/ops/opsFeed';
 import { venue } from '../src/features/venue/venue-data';
 import type { ChatStreamEvent } from '../src/features/chat/types';
 import { buildPrompt } from './prompt';
@@ -41,12 +42,13 @@ export async function* runChat(
 ): AsyncGenerator<ChatStreamEvent> {
   const mode = deps.resolveMode(env);
   const slice = retrieveContext(body.message, body.context, venue);
+  const ops = getOpsSnapshot(venue);
 
   try {
     const stream =
       mode === 'live'
-        ? deps.streamLive(buildPrompt(body.message, body.history, slice, body.context, venue), env)
-        : deps.streamMock(composeGroundedAnswer(slice, body.context, venue));
+        ? deps.streamLive(buildPrompt(body.message, body.history, slice, body.context, venue, ops), env)
+        : deps.streamMock(composeGroundedAnswer(slice, body.context, venue, ops));
 
     for await (const chunk of stream) {
       yield { type: 'token', value: chunk };

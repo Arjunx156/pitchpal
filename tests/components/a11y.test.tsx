@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import App from '../../src/App';
+import { markOnboarded } from '../helpers/render';
 
 expect.extend(toHaveNoViolations);
 
@@ -10,9 +11,19 @@ expect.extend(toHaveNoViolations);
 const axeOptions = { rules: { 'color-contrast': { enabled: false } } };
 
 describe('accessibility (axe)', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    markOnboarded();
+  });
 
-  it('the initial view has no automatically-detectable violations', async () => {
+  it('the main app view has no automatically-detectable violations', async () => {
+    const { container } = render(<App />);
+    const results = await axe(container, axeOptions);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('the onboarding dialog has no automatically-detectable violations', async () => {
+    localStorage.clear(); // force first-run onboarding
     const { container } = render(<App />);
     const results = await axe(container, axeOptions);
     expect(results).toHaveNoViolations();

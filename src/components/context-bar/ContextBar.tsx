@@ -11,8 +11,10 @@ export function ContextBar() {
   const { context, ui, update } = useFanContext();
 
   return (
-    <aside className="context-bar" aria-label={ui.settingsHeading}>
-      <h2 className="context-bar__heading">{ui.settingsHeading}</h2>
+    <section className="context-bar" aria-labelledby="context-heading">
+      <h2 id="context-heading" className="context-bar__heading">
+        {ui.settingsHeading}
+      </h2>
 
       <div className="field">
         <label htmlFor="ctx-language">{ui.languageLabel}</label>
@@ -55,6 +57,6 @@ export function ContextBar() {
           onChange={(e) => update({ location: e.target.value })}
         />
       </div>
-    </aside>
+    </section>
   );
 }

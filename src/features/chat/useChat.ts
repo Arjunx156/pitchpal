@@ -1,9 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
 import { parseAnswerCard } from '../../lib/cards';
+import { retrieveContext } from '../../lib/retrieval';
+import { composeGroundedAnswer } from '../../lib/compose';
+import { getOpsSnapshot } from '../ops/opsFeed';
+import { venue } from '../venue/venue-data';
 import type { FanContext } from '../context/types';
 import type { ChatMessage, ChatRequest, ChatStreamEvent } from './types';
 
-export type ChatMode = 'unknown' | 'mock' | 'live';
+export type ChatMode = 'unknown' | 'mock' | 'live' | 'offline';
 
 /** Split an SSE buffer into complete events, returning any trailing partial. */
 export function extractEvents(buffer: string): { events: ChatStreamEvent[]; rest: string } {
@@ -30,6 +34,15 @@ function patchMessage(
   patch: Partial<ChatMessage>,
 ): ChatMessage[] {
   return list.map((m) => (m.id === id ? { ...m, ...patch } : m));
+}
+
+/** Produce a grounded answer entirely on-device (used when offline). */
+function localAnswer(message: string, context: FanContext): string {
+  const slice = retrieveContext(message, context, venue);
+  const answer = composeGroundedAnswer(slice, context, venue, getOpsSnapshot(venue));
+  return answer.card
+    ? `${answer.text}\n\n\`\`\`card\n${JSON.stringify(answer.card)}\n\`\`\``
+    : answer.text;
 }
 
 export interface UseChatResult {
@@ -62,13 +75,33 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
       ]);
       setIsStreaming(true);
 
+      const finishLocal = () => {
+        const parsed = parseAnswerCard(localAnswer(trimmed, context));
+        setMode('offline');
+        setMessages((prev) =>
+          patchMessage(prev, assistantId, {
+            content: parsed.text,
+            ...(parsed.card ? { card: parsed.card } : {}),
+            pending: false,
+          }),
+        );
+      };
+
+      let response: Response;
       try {
-        const response = await fetch('/api/chat', {
+        response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: trimmed, context, history } satisfies ChatRequest),
         });
+      } catch {
+        // Network unreachable → answer on-device.
+        finishLocal();
+        setIsStreaming(false);
+        return;
+      }
 
+      try {
         const headerMode = response.headers.get('X-Pitchpal-Mode');
         if (headerMode === 'live' || headerMode === 'mock') setMode(headerMode);
         if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}`);

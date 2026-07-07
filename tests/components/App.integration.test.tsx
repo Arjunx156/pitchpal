@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
 import { mockChatResponse, cardBlock } from '../helpers/sse';
+import { markOnboarded } from '../helpers/render';
 
 const routeCard = {
   type: 'route',
@@ -17,6 +18,7 @@ const routeCard = {
 describe('App — end-to-end fan flow (mock fetch)', () => {
   beforeEach(() => {
     localStorage.clear();
+    markOnboarded();
     document.documentElement.removeAttribute('data-theme');
   });
   afterEach(() => {

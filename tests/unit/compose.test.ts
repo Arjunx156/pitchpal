@@ -4,8 +4,25 @@ import { retrieveContext } from '../../src/lib/retrieval';
 import { venue } from '../../src/features/venue/venue-data';
 import { DEFAULT_CONTEXT, type FanContext } from '../../src/features/context/types';
 import { ANSWER_PHRASES } from '../../src/i18n/answers';
+import type { OpsSnapshot } from '../../src/features/ops/opsFeed';
 
 const ctx = (over: Partial<FanContext> = {}): FanContext => ({ ...DEFAULT_CONTEXT, ...over });
+
+const jammedOps: OpsSnapshot = {
+  now: 0,
+  kickoffAt: 0,
+  minutesToKickoff: 5,
+  phase: 'pre',
+  matchClock: null,
+  weather: 'clear',
+  temperatureC: 22,
+  gates: [
+    { gateId: 'C', stepFree: true, occupancy: 0.93, queueMinutes: 20, level: 'jam' },
+    { gateId: 'A', stepFree: true, occupancy: 0.25, queueMinutes: 5, level: 'ok' },
+    { gateId: 'B', stepFree: true, occupancy: 0.4, queueMinutes: 9, level: 'ok' },
+    { gateId: 'D', stepFree: false, occupancy: 0.5, queueMinutes: 11, level: 'busy' },
+  ],
+};
 
 function answerFor(message: string, context: FanContext) {
   const slice = retrieveContext(message, context, venue);
@@ -55,6 +72,15 @@ describe('composeGroundedAnswer', () => {
     if (card?.type === 'transport') {
       expect(card.options.length).toBeGreaterThan(0);
     }
+  });
+
+  it('adds a live congestion warning and reroutes to a quieter step-free gate', () => {
+    const context = ctx();
+    const slice = retrieveContext('how do I get to section 205?', context, venue);
+    const { text } = composeGroundedAnswer(slice, context, venue, jammedOps);
+    // 205's nearest gate is C (jammed) → warn + suggest the quietest step-free gate (A).
+    expect(text).toContain('very busy');
+    expect(text).toContain('Gate A');
   });
 
   it('gives a localized greeting with no card for small talk', () => {

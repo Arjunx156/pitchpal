@@ -1,0 +1,165 @@
+import { useMemo, type KeyboardEvent } from 'react';
+import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
+import { useMapFocus } from '../../features/map/useMapFocus';
+import { getOpsSnapshot, gateStatus } from '../../features/ops/opsFeed';
+import { venue } from '../../features/venue/venue-data';
+import { useFanContext } from '../../features/context/ContextProvider';
+import { useChatContext } from '../../features/chat/ChatProvider';
+import { fmt } from '../../i18n/answers';
+
+function onActivate(handler: () => void) {
+  return (e: KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handler();
+    }
+  };
+}
+
+export function StadiumMap() {
+  const { ui, context } = useFanContext();
+  const { send, isStreaming } = useChatContext();
+  const focus = useMapFocus();
+  const geo = useMemo(() => buildMapGeometry(venue), []);
+  const ops = useMemo(() => getOpsSnapshot(venue), [focus]);
+
+  const route = useMemo(
+    () =>
+      focus.originGateId && focus.targetSectionId
+        ? routePath(geo, focus.originGateId, focus.targetSectionId)
+        : [],
+    [geo, focus.originGateId, focus.targetSectionId],
+  );
+  const routePoints = route.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+
+  const originGate = venue.gates.find((g) => g.id === focus.originGateId);
+  const target = venue.sections.find((s) => s.id === focus.targetSectionId);
+  const summary = target
+    ? fmt(ui.map.summaryRoute, { from: originGate?.name ?? focus.originGateId ?? '', to: target.id })
+    : ui.map.summaryIdle;
+
+  const ask = (query: string) => {
+    if (!isStreaming) void send(query);
+  };
+
+  return (
+    <section className="map" aria-labelledby="map-heading">
+      <div className="map__head">
+        <h2 id="map-heading" className="map__heading display">
+          {ui.map.heading}
+        </h2>
+      </div>
+
+      <div role="status" aria-live="polite" className="visually-hidden">
+        {summary}
+      </div>
+
+      <div className="map__frame">
+        <svg
+          className="map__svg"
+          viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
+          role="group"
+          aria-label={ui.map.heading}
+        >
+          {/* Bowl rings */}
+          {geo.rings.map((ring) => (
+            <ellipse
+              key={ring.level}
+              className="map-ring"
+              cx={geo.center.x}
+              cy={geo.center.y}
+              rx={ring.rx}
+              ry={ring.ry}
+            />
+          ))}
+          {/* Pitch */}
+          <ellipse
+            className="map-pitch"
+            cx={geo.center.x}
+            cy={geo.center.y}
+            rx={geo.rx * 0.3}
+            ry={geo.ry * 0.3}
+          />
+          <line
+            className="map-pitch-line"
+            x1={geo.center.x}
+            y1={geo.center.y - geo.ry * 0.3}
+            x2={geo.center.x}
+            y2={geo.center.y + geo.ry * 0.3}
+          />
+
+          {/* Route */}
+          {routePoints ? <polyline className="map-route" points={routePoints} /> : null}
+
+          {/* Sections */}
+          {geo.sections.map((s) => {
+            const isTarget = s.id === focus.targetSectionId;
+            const isAmenity = focus.amenitySectionIds.includes(s.id);
+            const cls = `map-seat${isTarget ? ' is-target' : ''}${isAmenity ? ' is-amenity' : ''}`;
+            const query = fmt(ui.map.askSection, { id: s.id });
+            return (
+              <g
+                key={s.id}
+                className={cls}
+                role="button"
+                tabIndex={0}
+                aria-label={query}
+                onClick={() => ask(query)}
+                onKeyDown={onActivate(() => ask(query))}
+              >
+                <title>{query}</title>
+                <circle cx={s.point.x} cy={s.point.y} r={isTarget ? 9 : 6} />
+                <text x={s.point.x} y={s.point.y + 3} className="map-seat__label">
+                  {s.id}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Gates */}
+          {geo.gates.map((g) => {
+            const status = gateStatus(ops, g.id);
+            const level = status?.level ?? 'ok';
+            const isOrigin = g.id === focus.originGateId;
+            const gate = venue.gates.find((v) => v.id === g.id);
+            const label = `${ui.ops.gate} ${g.id}${status ? ` · ${ui.ops.queue.replace('{min}', String(status.queueMinutes))}` : ''}`;
+            const query = fmt(ui.map.askGate, { id: g.id });
+            return (
+              <g
+                key={g.id}
+                className={`map-gate is-${level}${isOrigin ? ' is-origin' : ''}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`${label}${gate ? `, ${gate.name}` : ''}`}
+                onClick={() => ask(query)}
+                onKeyDown={onActivate(() => ask(query))}
+              >
+                <title>{`${label}${gate ? `, ${gate.name}` : ''}`}</title>
+                <circle cx={g.point.x} cy={g.point.y} r={11} />
+                <text x={g.point.x} y={g.point.y + 4} className="map-gate__label">
+                  {g.id}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      <ul className="map__legend" aria-hidden="true">
+        <li>
+          <span className="dot dot--gate" /> {ui.map.legendGate}
+        </li>
+        <li>
+          <span className="dot dot--seat" /> {ui.map.legendSeat}
+        </li>
+        <li>
+          <span className="dot dot--amenity" /> {ui.map.legendAmenity}
+        </li>
+        <li>
+          <span className="dot dot--route" /> {ui.map.legendRoute}
+        </li>
+      </ul>
+      <p className="map__hint">{context.location ? summary : ui.map.summaryIdle}</p>
+    </section>
+  );
+}

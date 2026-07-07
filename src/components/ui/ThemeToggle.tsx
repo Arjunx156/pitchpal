@@ -1,51 +1,26 @@
-import { useEffect, useState } from 'react';
+import { Monitor, Moon, Sun } from 'lucide-react';
+import { useTheme, type Theme } from '../../features/theme/ThemeProvider';
 import type { UiStrings } from '../../i18n/ui';
 
-type Theme = 'system' | 'light' | 'dark';
-const ORDER: Theme[] = ['system', 'light', 'dark'];
-const STORAGE_KEY = 'pitchpal.theme';
-const ICONS: Record<Theme, string> = { system: '🖥️', light: '☀️', dark: '🌙' };
-
-function loadTheme(): Theme {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
-  } catch {
-    /* storage unavailable */
-  }
-  return 'system';
-}
+const ICONS: Record<Theme, typeof Monitor> = { system: Monitor, light: Sun, dark: Moon };
 
 export function ThemeToggle({ ui }: { ui: UiStrings }) {
-  const [theme, setTheme] = useState<Theme>(loadTheme);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      /* storage unavailable */
-    }
-  }, [theme]);
-
+  const { theme, cycle } = useTheme();
   const labels: Record<Theme, string> = {
     system: ui.theme.system,
     light: ui.theme.light,
     dark: ui.theme.dark,
   };
-  const cycle = () => setTheme((current) => ORDER[(ORDER.indexOf(current) + 1) % ORDER.length] ?? 'system');
+  const Icon = ICONS[theme];
 
   return (
     <button
       type="button"
-      className="theme-toggle"
+      className="icon-btn"
       onClick={cycle}
       aria-label={`${ui.theme.label}: ${labels[theme]}`}
     >
-      <span aria-hidden="true">{ICONS[theme]}</span>
-      <span className="theme-toggle__text">{labels[theme]}</span>
+      <Icon size={18} aria-hidden="true" />
     </button>
   );
 }

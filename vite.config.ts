@@ -1,6 +1,15 @@
 /// <reference types="vitest/config" />
 import { defineConfig, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
+
+// Load .env into process.env so the dev API handler runs in live mode when a
+// GEMINI_API_KEY is present (Vite does not expose .env to process.env itself).
+try {
+  process.loadEnvFile('.env');
+} catch {
+  /* no .env — dev runs in mock mode */
+}
 
 /**
  * Dev-only plugin: mounts the same chat handler used in production so that a
@@ -29,7 +38,31 @@ function apiPlugin(): PluginOption {
 }
 
 export default defineConfig({
-  plugins: [react(), apiPlugin()],
+  plugins: [
+    react(),
+    apiPlugin(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png', 'icons/favicon-64.png'],
+      manifest: {
+        name: 'PitchPal — Stadium Companion',
+        short_name: 'PitchPal',
+        description: 'Multilingual, accessible GenAI stadium companion for FIFA World Cup 2026.',
+        theme_color: '#12100e',
+        background_color: '#12100e',
+        display: 'standalone',
+        start_url: '/',
+        lang: 'en',
+        icons: [
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        ],
+      },
+      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'] },
+      devOptions: { enabled: false },
+    }),
+  ],
   server: { port: 5173 },
   build: { outDir: 'dist', sourcemap: false, target: 'es2022' },
   test: {
@@ -49,6 +82,10 @@ export default defineConfig({
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',
         'src/features/venue/types.ts',
+        // Browser-only APIs (speech, install prompt) — not exercisable in jsdom.
+        'src/features/voice/useSpeechInput.ts',
+        'src/features/voice/useSpeechOutput.ts',
+        'src/features/pwa/**',
       ],
       thresholds: { lines: 80, functions: 80, branches: 80, statements: 80 },
     },

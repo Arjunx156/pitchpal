@@ -1,3 +1,4 @@
+import { TrainFront } from 'lucide-react';
 import type { TransportCard as TransportCardData } from '../../lib/cards';
 import type { UiStrings } from '../../i18n/ui';
 
@@ -5,7 +6,7 @@ export function TransportCard({ card, ui }: { card: TransportCardData; ui: UiStr
   return (
     <figure className="card card--transport" aria-label={card.title}>
       <figcaption className="card__title">
-        <span aria-hidden="true" className="card__icon">🚆</span>
+        <TrainFront className="card__icon" size={18} aria-hidden="true" />
         {card.title}
       </figcaption>
       <ul className="card__list">

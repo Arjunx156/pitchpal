@@ -16,6 +16,8 @@ export interface AnswerPhrases {
   sectionInfo: string; // {section} {side} {min}
   stepFreeYes: string;
   stepFreeNo: string;
+  gateBusy: string; // {gate} {min}
+  gateQuieter: string; // {gate}
   amenityTitle: string;
   amenityIntro: string;
   amenityNear: string; // {section} {level}
@@ -42,6 +44,8 @@ export const ANSWER_PHRASES: Record<LanguageCode, AnswerPhrases> = {
     sectionInfo: 'Section {section} is on the {side} side, about {min} min from the gate.',
     stepFreeYes: 'Good news: this route is step-free.',
     stepFreeNo: "Heads up: this section isn't step-free. Visit the Fan Information Point for an accessible route.",
+    gateBusy: '{gate} is very busy right now — about {min} min to get in.',
+    gateQuieter: 'For a quieter step-free entrance, try {gate}.',
     amenityTitle: 'Nearby options',
     amenityIntro: 'Here are the closest options:',
     amenityNear: 'Near section {section}, {level} level.',
@@ -67,6 +71,8 @@ export const ANSWER_PHRASES: Record<LanguageCode, AnswerPhrases> = {
     sectionInfo: 'La sección {section} está en el lado {side}, a unos {min} min de la puerta.',
     stepFreeYes: 'Buenas noticias: esta ruta es sin escaleras.',
     stepFreeNo: 'Aviso: esta sección no es sin escaleras. Visita el Punto de Información para una ruta accesible.',
+    gateBusy: '{gate} está muy concurrida ahora — unos {min} min para entrar.',
+    gateQuieter: 'Para una entrada sin escaleras más tranquila, prueba {gate}.',
     amenityTitle: 'Opciones cercanas',
     amenityIntro: 'Estas son las opciones más cercanas:',
     amenityNear: 'Cerca de la sección {section}, nivel {level}.',
@@ -92,6 +98,8 @@ export const ANSWER_PHRASES: Record<LanguageCode, AnswerPhrases> = {
     sectionInfo: 'La section {section} est du côté {side}, à environ {min} min de la porte.',
     stepFreeYes: 'Bonne nouvelle : cet itinéraire est sans marches.',
     stepFreeNo: "À noter : cette section n'est pas sans marches. Rendez-vous au Point d'Information pour un itinéraire accessible.",
+    gateBusy: '{gate} est très fréquentée en ce moment — environ {min} min pour entrer.',
+    gateQuieter: 'Pour une entrée sans marches plus calme, essayez {gate}.',
     amenityTitle: 'Options à proximité',
     amenityIntro: 'Voici les options les plus proches :',
     amenityNear: 'Près de la section {section}, niveau {level}.',
@@ -117,6 +125,8 @@ export const ANSWER_PHRASES: Record<LanguageCode, AnswerPhrases> = {
     sectionInfo: 'A seção {section} fica no lado {side}, a cerca de {min} min do portão.',
     stepFreeYes: 'Boa notícia: este trajeto é sem degraus.',
     stepFreeNo: 'Atenção: esta seção não é sem degraus. Vá ao Ponto de Informação para uma rota acessível.',
+    gateBusy: '{gate} está muito movimentado agora — cerca de {min} min para entrar.',
+    gateQuieter: 'Para uma entrada sem degraus mais tranquila, tente {gate}.',
     amenityTitle: 'Opções próximas',
     amenityIntro: 'Estas são as opções mais próximas:',
     amenityNear: 'Perto da seção {section}, nível {level}.',
@@ -142,6 +152,8 @@ export const ANSWER_PHRASES: Record<LanguageCode, AnswerPhrases> = {
     sectionInfo: 'القسم {section} في الجهة {side}، على بُعد حوالي {min} دقيقة من البوابة.',
     stepFreeYes: 'خبر جيد: هذا المسار خالٍ من الدرج.',
     stepFreeNo: 'تنبيه: هذا القسم ليس خاليًا من الدرج. توجّه إلى نقطة معلومات المشجعين للحصول على مسار مناسب لذوي الإعاقة.',
+    gateBusy: '{gate} مزدحمة جدًا الآن — حوالي {min} دقيقة للدخول.',
+    gateQuieter: 'للدخول من مكان أهدأ وخالٍ من الدرج، جرّب {gate}.',
     amenityTitle: 'خيارات قريبة',
     amenityIntro: 'إليك أقرب الخيارات:',
     amenityNear: 'قرب القسم {section}، المستوى {level}.',
