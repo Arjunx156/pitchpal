@@ -332,3 +332,60 @@ export const UI: Record<LanguageCode, UiStrings> = {
 /** Ordered quick-action keys for rendering. */
 export const QUICK_ACTION_KEYS = ['seat', 'food', 'restroom', 'accessible', 'leave', 'firstAid'] as const;
 export type QuickActionKey = (typeof QUICK_ACTION_KEYS)[number];
+
+/** Localized labels shown while the agent runs a tool (from `status` events). */
+export const TOOL_STATUS: Record<LanguageCode, Record<string, string>> = {
+  en: {
+    planRoute: 'Planning your route…',
+    findAmenities: 'Finding places nearby…',
+    getTransport: 'Checking transport…',
+    getGateStatus: 'Checking gate queues…',
+    setFanTicket: 'Reading your ticket…',
+  },
+  es: {
+    planRoute: 'Planificando tu ruta…',
+    findAmenities: 'Buscando lugares cercanos…',
+    getTransport: 'Consultando el transporte…',
+    getGateStatus: 'Revisando las colas de las puertas…',
+    setFanTicket: 'Leyendo tu entrada…',
+  },
+  fr: {
+    planRoute: 'Calcul de votre itinéraire…',
+    findAmenities: 'Recherche de lieux à proximité…',
+    getTransport: 'Vérification des transports…',
+    getGateStatus: 'Vérification des files aux portes…',
+    setFanTicket: 'Lecture de votre billet…',
+  },
+  pt: {
+    planRoute: 'Planejando sua rota…',
+    findAmenities: 'Procurando lugares próximos…',
+    getTransport: 'Verificando o transporte…',
+    getGateStatus: 'Verificando as filas dos portões…',
+    setFanTicket: 'Lendo seu ingresso…',
+  },
+  ar: {
+    planRoute: 'نخطط مسارك…',
+    findAmenities: 'نبحث عن أماكن قريبة…',
+    getTransport: 'نتحقق من المواصلات…',
+    getGateStatus: 'نتحقق من طوابير البوابات…',
+    setFanTicket: 'نقرأ تذكرتك…',
+  },
+};
+
+export interface ScanStrings {
+  button: string;
+  scanning: string;
+  hint: string;
+  retake: string;
+  use: string;
+  cancel: string;
+}
+
+/** Localized strings for the ticket-scan flow. */
+export const SCAN_STRINGS: Record<LanguageCode, ScanStrings> = {
+  en: { button: 'Scan ticket', scanning: 'Reading your ticket…', hint: 'Snap or upload your ticket to auto-find your seat.', retake: 'Choose another', use: 'Find my seat', cancel: 'Cancel' },
+  es: { button: 'Escanear entrada', scanning: 'Leyendo tu entrada…', hint: 'Haz una foto o sube tu entrada para encontrar tu asiento.', retake: 'Elegir otra', use: 'Encontrar mi asiento', cancel: 'Cancelar' },
+  fr: { button: 'Scanner le billet', scanning: 'Lecture de votre billet…', hint: 'Prenez ou importez votre billet pour trouver votre place.', retake: 'En choisir un autre', use: 'Trouver ma place', cancel: 'Annuler' },
+  pt: { button: 'Escanear ingresso', scanning: 'Lendo seu ingresso…', hint: 'Tire uma foto ou envie seu ingresso para achar seu lugar.', retake: 'Escolher outro', use: 'Encontrar meu lugar', cancel: 'Cancelar' },
+  ar: { button: 'مسح التذكرة', scanning: 'نقرأ تذكرتك…', hint: 'صوّر أو ارفع تذكرتك للعثور على مقعدك تلقائيًا.', retake: 'اختر أخرى', use: 'اعثر على مقعدي', cancel: 'إلغاء' },
+};

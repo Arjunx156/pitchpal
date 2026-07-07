@@ -562,6 +562,22 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+.bubble__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+.bubble__tool-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 .bubble__typing {
   display: inline-flex;
   gap: 0.3rem;

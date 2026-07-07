@@ -9,6 +9,7 @@ import { MessageList } from './MessageList';
 import { Composer } from './Composer';
 import { LiveRegion } from '../ui/LiveRegion';
 import { QuickActions } from '../quick-actions/QuickActions';
+import { TicketScan } from '../ticket-scan/TicketScan';
 
 function ModeBadge({ mode, ui }: { mode: ChatMode; ui: UiStrings }) {
   if (mode === 'unknown') return null;
@@ -77,6 +78,9 @@ export function ChatWindow() {
       </div>
 
       <QuickActions />
+      <div className="flex px-4 pb-2">
+        <TicketScan />
+      </div>
       <Composer onSend={send} disabled={isStreaming} />
       <LiveRegion message={liveMessage} />
     </section>
