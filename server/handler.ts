@@ -1,57 +1,56 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { retrieveContext } from '../src/lib/retrieval';
-import { composeGroundedAnswer } from '../src/lib/compose';
 import { getOpsSnapshot } from '../src/features/ops/opsFeed';
+import { answerOffline } from '../src/lib/tools-core';
 import { venue } from '../src/features/venue/venue-data';
 import type { ChatStreamEvent } from '../src/features/chat/types';
-import { buildPrompt } from './prompt';
+import { runAgent } from './agent';
 import {
   chatRequestSchema,
   rateLimit,
   securityHeaders,
   type ValidatedChatRequest,
 } from './security';
-import {
-  resolveMode,
-  streamLive,
-  streamMock,
-  type AppEnv,
-  type GenerationMode,
-} from './gemini';
+import { resolveMode, tokenize, type AppEnv, type GenerationMode } from './gemini';
 
-const MAX_BODY_BYTES = 64_000;
+const MAX_BODY_BYTES = 8_000_000; // allows a base64 ticket image (~4 MB binary)
 
 /** Injectable generation deps so runChat is testable without a network. */
 export interface ChatDeps {
   resolveMode: (env: AppEnv) => GenerationMode;
-  streamLive: typeof streamLive;
-  streamMock: typeof streamMock;
+  runAgent: typeof runAgent;
 }
 
-const defaultDeps: ChatDeps = { resolveMode, streamLive, streamMock };
+const defaultDeps: ChatDeps = { resolveMode, runAgent };
 
 /**
- * Core chat pipeline as an async event stream. Pure of HTTP concerns so it can
- * be unit-tested directly. Never throws — generation failures become an
- * `error` event.
+ * Core chat pipeline as an async event stream. Live mode drives the Gemini
+ * function-calling agent; mock/offline uses the deterministic tool router. Both
+ * emit the same structured events. Never throws — failures become an `error`.
  */
 export async function* runChat(
   body: ValidatedChatRequest,
   env: AppEnv,
   deps: ChatDeps = defaultDeps,
 ): AsyncGenerator<ChatStreamEvent> {
-  const mode = deps.resolveMode(env);
-  const slice = retrieveContext(body.message, body.context, venue);
   const ops = getOpsSnapshot(venue);
-
   try {
-    const stream =
-      mode === 'live'
-        ? deps.streamLive(buildPrompt(body.message, body.history, slice, body.context, venue, ops), env)
-        : deps.streamMock(composeGroundedAnswer(slice, body.context, venue, ops));
-
-    for await (const chunk of stream) {
-      yield { type: 'token', value: chunk };
+    if (deps.resolveMode(env) === 'live') {
+      yield* deps.runAgent(
+        {
+          message: body.message,
+          history: body.history,
+          context: body.context,
+          venue,
+          ops,
+          image: body.image,
+        },
+        env,
+      );
+    } else {
+      const { toolName, result } = answerOffline(body.message, body.context, venue, ops);
+      yield { type: 'status', tool: toolName };
+      if (result.card) yield { type: 'tool_result', tool: toolName, card: result.card };
+      for (const token of tokenize(result.summary)) yield { type: 'token', value: token };
     }
     yield { type: 'done' };
   } catch (err) {

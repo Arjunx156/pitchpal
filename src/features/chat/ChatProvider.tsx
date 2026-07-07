@@ -6,8 +6,8 @@ const Ctx = createContext<UseChatResult | null>(null);
 
 /** Shares one chat session across the chat panel, map, quick actions and palette. */
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { context, ui } = useFanContext();
-  const chat = useChat(context, ui.errorGeneric);
+  const { context, ui, update } = useFanContext();
+  const chat = useChat(context, ui.errorGeneric, update);
   return <Ctx.Provider value={chat}>{children}</Ctx.Provider>;
 }
 

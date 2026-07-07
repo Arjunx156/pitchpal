@@ -1,11 +1,10 @@
 import { useCallback, useRef, useState } from 'react';
-import { parseAnswerCard } from '../../lib/cards';
-import { retrieveContext } from '../../lib/retrieval';
-import { composeGroundedAnswer } from '../../lib/compose';
+import { answerOffline } from '../../lib/tools-core';
 import { getOpsSnapshot } from '../ops/opsFeed';
 import { venue } from '../venue/venue-data';
 import type { FanContext } from '../context/types';
-import type { ChatMessage, ChatRequest, ChatStreamEvent } from './types';
+import type { AnswerCard } from '../../lib/cards';
+import type { ChatImage, ChatMessage, ChatRequest, ChatStreamEvent } from './types';
 
 export type ChatMode = 'unknown' | 'mock' | 'live' | 'offline';
 
@@ -28,31 +27,26 @@ export function extractEvents(buffer: string): { events: ChatStreamEvent[]; rest
   return { events, rest };
 }
 
-function patchMessage(
-  list: ChatMessage[],
-  id: string,
-  patch: Partial<ChatMessage>,
-): ChatMessage[] {
+function patchMessage(list: ChatMessage[], id: string, patch: Partial<ChatMessage>): ChatMessage[] {
   return list.map((m) => (m.id === id ? { ...m, ...patch } : m));
 }
 
-/** Produce a grounded answer entirely on-device (used when offline). */
-function localAnswer(message: string, context: FanContext): string {
-  const slice = retrieveContext(message, context, venue);
-  const answer = composeGroundedAnswer(slice, context, venue, getOpsSnapshot(venue));
-  return answer.card
-    ? `${answer.text}\n\n\`\`\`card\n${JSON.stringify(answer.card)}\n\`\`\``
-    : answer.text;
+function appendCard(list: ChatMessage[], id: string, card: AnswerCard): ChatMessage[] {
+  return list.map((m) => (m.id === id ? { ...m, cards: [...(m.cards ?? []), card] } : m));
 }
 
 export interface UseChatResult {
   messages: ChatMessage[];
   isStreaming: boolean;
   mode: ChatMode;
-  send: (text: string) => Promise<void>;
+  send: (text: string, image?: ChatImage) => Promise<void>;
 }
 
-export function useChat(context: FanContext, errorText: string): UseChatResult {
+export function useChat(
+  context: FanContext,
+  errorText: string,
+  applyPatch: (patch: Partial<FanContext>) => void,
+): UseChatResult {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [mode, setMode] = useState<ChatMode>('unknown');
@@ -60,28 +54,28 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
   const nextId = () => `m${(idRef.current += 1)}`;
 
   const send = useCallback(
-    async (text: string) => {
+    async (text: string, image?: ChatImage) => {
       const trimmed = text.trim();
-      if (!trimmed || isStreaming) return;
+      if ((!trimmed && !image) || isStreaming) return;
 
       const history = messages.map((m) => ({ role: m.role, content: m.content }));
-      const userMessage: ChatMessage = { id: nextId(), role: 'user', content: trimmed };
+      const userMessage: ChatMessage = { id: nextId(), role: 'user', content: trimmed || '📷' };
       const assistantId = nextId();
-
       setMessages((prev) => [
         ...prev,
         userMessage,
-        { id: assistantId, role: 'assistant', content: '', pending: true },
+        { id: assistantId, role: 'assistant', content: '', cards: [], pending: true },
       ]);
       setIsStreaming(true);
 
-      const finishLocal = () => {
-        const parsed = parseAnswerCard(localAnswer(trimmed, context));
+      const runLocal = () => {
+        const ops = getOpsSnapshot(venue);
+        const { result } = answerOffline(trimmed || 'help', context, venue, ops);
         setMode('offline');
         setMessages((prev) =>
           patchMessage(prev, assistantId, {
-            content: parsed.text,
-            ...(parsed.card ? { card: parsed.card } : {}),
+            content: result.summary,
+            cards: result.card ? [result.card] : [],
             pending: false,
           }),
         );
@@ -89,14 +83,15 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
 
       let response: Response;
       try {
+        const request: ChatRequest = { message: trimmed || 'Scan my ticket.', context, history };
+        if (image) request.image = image;
         response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: trimmed, context, history } satisfies ChatRequest),
+          body: JSON.stringify(request),
         });
       } catch {
-        // Network unreachable → answer on-device.
-        finishLocal();
+        runLocal(); // network unreachable → answer on-device
         setIsStreaming(false);
         return;
       }
@@ -109,7 +104,7 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
-        let accumulated = '';
+        let content = '';
 
         for (;;) {
           const { done, value } = await reader.read();
@@ -119,20 +114,24 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
           buffer = rest;
           for (const event of events) {
             if (event.type === 'token') {
-              accumulated += event.value;
-              const { text } = parseAnswerCard(accumulated);
-              setMessages((prev) => patchMessage(prev, assistantId, { content: text, pending: true }));
+              content += event.value;
+              setMessages((prev) => patchMessage(prev, assistantId, { content, pending: true }));
+            } else if (event.type === 'tool_result') {
+              if (event.card) setMessages((prev) => appendCard(prev, assistantId, event.card as AnswerCard));
+            } else if (event.type === 'status') {
+              setMessages((prev) => patchMessage(prev, assistantId, { status: event.tool }));
+            } else if (event.type === 'context') {
+              applyPatch(event.patch);
             } else if (event.type === 'error') {
               throw new Error(event.message);
             }
           }
         }
 
-        const parsed = parseAnswerCard(accumulated);
         setMessages((prev) =>
           patchMessage(prev, assistantId, {
-            content: parsed.text || errorText,
-            ...(parsed.card ? { card: parsed.card } : {}),
+            content: content || errorText,
+            status: undefined,
             pending: false,
           }),
         );
@@ -144,7 +143,7 @@ export function useChat(context: FanContext, errorText: string): UseChatResult {
         setIsStreaming(false);
       }
     },
-    [messages, context, isStreaming, errorText],
+    [messages, context, isStreaming, errorText, applyPatch],
   );
 
   return { messages, isStreaming, mode, send };

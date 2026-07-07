@@ -10,6 +10,12 @@ const turnSchema = z.object({
   content: z.string().min(1).max(2000),
 });
 
+const imageSchema = z.object({
+  mimeType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+  // Base64 (no data: prefix); ~6M chars ≈ 4.5 MB binary.
+  data: z.string().min(1).max(6_000_000),
+});
+
 export const chatRequestSchema = z.object({
   message: z.string().trim().min(1).max(1000),
   context: z.object({
@@ -18,6 +24,7 @@ export const chatRequestSchema = z.object({
     location: z.string().max(120).default(''),
   }),
   history: z.array(turnSchema).max(20).default([]),
+  image: imageSchema.optional(),
 });
 
 export type ValidatedChatRequest = z.infer<typeof chatRequestSchema>;

@@ -3,10 +3,11 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
-import { mockChatResponse, cardBlock } from '../helpers/sse';
+import { mockChatResponse } from '../helpers/sse';
 import { markOnboarded } from '../helpers/render';
+import type { AnswerCard } from '../../src/lib/cards';
 
-const routeCard = {
+const routeCard: AnswerCard = {
   type: 'route',
   title: 'Directions to section 205',
   toLabel: '#205',
@@ -28,8 +29,9 @@ describe('App — end-to-end fan flow (mock fetch)', () => {
   it('sends a question and renders the streamed answer with a route card', async () => {
     const fetchMock = vi.fn(async () =>
       mockChatResponse([
+        { type: 'status', tool: 'planRoute' },
+        { type: 'tool_result', tool: 'planRoute', card: routeCard },
         { type: 'token', value: 'Head to Gate C.' },
-        { type: 'token', value: cardBlock(routeCard) },
         { type: 'done' },
       ]),
     );

@@ -78,7 +78,9 @@ export default defineConfig({
         'src/main.tsx',
         'src/**/*.d.ts',
         'server/index.ts',
+        'server/agent.ts', // live Gemini network integration — exercised manually
         'src/i18n/**',
+        'src/components/ui/**', // shadcn primitives (thin Radix wrappers)
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',
         'src/features/venue/types.ts',

@@ -6,6 +6,7 @@ import '@fontsource/bebas-neue/latin-400.css';
 import '@fontsource/source-sans-3/latin-400.css';
 import '@fontsource/source-sans-3/latin-600.css';
 import '@fontsource/source-sans-3/latin-700.css';
+import './styles/tailwind.css';
 import './styles/global.css';
 
 const rootElement = document.getElementById('root');

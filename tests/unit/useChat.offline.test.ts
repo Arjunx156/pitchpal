@@ -8,7 +8,7 @@ describe('useChat — offline fallback', () => {
 
   it('answers on-device with a grounded card when the network is unreachable', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
-    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error'));
+    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error', () => {}));
 
     await act(async () => {
       await result.current.send('How do I get to section 205?');
@@ -17,12 +17,12 @@ describe('useChat — offline fallback', () => {
     expect(result.current.mode).toBe('offline');
     const assistant = result.current.messages.find((m) => m.role === 'assistant');
     expect(assistant?.content.length ?? 0).toBeGreaterThan(0);
-    expect(assistant?.card?.type).toBe('route');
+    expect(assistant?.cards?.[0]?.type).toBe('route');
     expect(assistant?.error).toBeFalsy();
   });
 
   it('ignores empty input', async () => {
-    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error'));
+    const { result } = renderHook(() => useChat(DEFAULT_CONTEXT, 'error', () => {}));
     await act(async () => {
       await result.current.send('   ');
     });

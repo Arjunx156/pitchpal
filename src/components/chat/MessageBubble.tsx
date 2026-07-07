@@ -36,7 +36,9 @@ export function MessageBubble({ message, ui }: { message: ChatMessage; ui: UiStr
           <span className="dot" aria-hidden="true" />
         </p>
       ) : null}
-      {message.card ? <CardRenderer card={message.card} ui={ui} /> : null}
+      {message.cards?.map((card, i) => (
+        <CardRenderer key={i} card={card} ui={ui} />
+      ))}
     </li>
   );
 }
