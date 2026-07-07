@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { Command, Download, MessagesSquare, Map as MapIcon } from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
+import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
 import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider } from './features/chat/ChatProvider';
@@ -91,6 +93,8 @@ function Shell() {
           </div>
         </header>
 
+        <Scoreboard />
+
         <nav className="viewswitch" aria-label={ui.map.heading}>
           <button
             type="button"
@@ -139,14 +143,16 @@ function Shell() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <FanContextProvider>
-        <SpeechProvider>
-          <ChatProvider>
-            <Shell />
-          </ChatProvider>
-        </SpeechProvider>
-      </FanContextProvider>
-    </ThemeProvider>
+    <MotionConfig reducedMotion="user">
+      <ThemeProvider>
+        <FanContextProvider>
+          <SpeechProvider>
+            <ChatProvider>
+              <Shell />
+            </ChatProvider>
+          </SpeechProvider>
+        </FanContextProvider>
+      </ThemeProvider>
+    </MotionConfig>
   );
 }

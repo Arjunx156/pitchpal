@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Loader2, Volume2 } from 'lucide-react';
 import type { ChatMessage } from '../../features/chat/types';
 import { useFanContext } from '../../features/context/ContextProvider';
@@ -45,7 +46,14 @@ export function MessageBubble({ message, ui }: { message: ChatMessage; ui: UiStr
         </p>
       ) : null}
       {message.cards?.map((card, i) => (
-        <CardRenderer key={i} card={card} ui={ui} />
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05, type: 'spring', stiffness: 300, damping: 26 }}
+        >
+          <CardRenderer card={card} ui={ui} />
+        </motion.div>
       ))}
     </li>
   );
