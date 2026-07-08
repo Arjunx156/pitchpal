@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BellRing } from 'lucide-react';
+import { BellRing, Check } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useMapFocus } from '../../features/map/useMapFocus';
@@ -74,14 +74,26 @@ export function ItineraryPanel() {
       </div>
 
       <motion.ol className="itinerary__list" variants={staggerContainer} initial="hidden" animate="show">
-        {steps.map((step) => (
-          <motion.li key={step.kind} className="itinerary__step" variants={rowItem}>
-            <span className="itinerary__time tabular">{formatter.format(step.time)}</span>
-            <span className="itinerary__label">
-              {stepLabel(step.kind, strings, step.gateId, step.transportName)}
-            </span>
-          </motion.li>
-        ))}
+        {steps.map((step, i) => {
+          const isDone = step.time <= now;
+          const isCurrent = isDone && (steps[i + 1] ? steps[i + 1]!.time > now : false);
+          const cls = `itinerary__step${isDone ? ' is-done' : ''}${isCurrent ? ' is-current' : ''}`;
+          return (
+            <motion.li key={step.kind} className={cls} variants={rowItem}>
+              <span className="itinerary__marker" aria-hidden="true">
+                {isDone && !isCurrent ? (
+                  <Check size={11} strokeWidth={3} />
+                ) : (
+                  <span className="itinerary__marker-dot" />
+                )}
+              </span>
+              <span className="itinerary__time tabular">{formatter.format(step.time)}</span>
+              <span className="itinerary__label">
+                {stepLabel(step.kind, strings, step.gateId, step.transportName)}
+              </span>
+            </motion.li>
+          );
+        })}
       </motion.ol>
     </motion.section>
   );

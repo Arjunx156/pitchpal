@@ -81,6 +81,7 @@ export interface UiStrings {
     accessible: QuickAction;
     leave: QuickAction;
     firstAid: QuickAction;
+    score: QuickAction;
   };
   commandPalette: {
     open: string;
@@ -161,6 +162,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       accessible: { label: 'Step-free route', query: 'Show me a step-free route to my seat.' },
       leave: { label: 'Leave the stadium', query: 'How do I get downtown after the match?' },
       firstAid: { label: 'First aid', query: "Where's the nearest first aid station?" },
+      score: { label: 'Live score', query: "What's the score?" },
     },
     commandPalette: { open: 'Command palette', placeholder: 'Search actions…', empty: 'No matching actions', groupAsk: 'Ask PitchPal', groupSettings: 'Settings', changeLanguage: 'Change language', toggleTheme: 'Switch theme', toggleReadAloud: 'Toggle read-aloud', focusMap: 'Show stadium map' },
     onboarding: { title: 'Welcome to PitchPal', subtitle: 'Set up your match-day companion.', stepLanguage: 'Your language', stepAccess: 'Accessibility', stepSeat: 'Your seat or gate', next: 'Next', back: 'Back', finish: 'Start exploring', skip: 'Skip', step: 'Step {n} of {total}' },
@@ -205,6 +207,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       accessible: { label: 'Ruta sin escaleras', query: 'Muéstrame una ruta sin escaleras a mi asiento.' },
       leave: { label: 'Salir del estadio', query: '¿Cómo llego al centro después del partido?' },
       firstAid: { label: 'Primeros auxilios', query: '¿Dónde está el puesto de primeros auxilios más cercano?' },
+      score: { label: 'Marcador en vivo', query: '¿Cómo va el marcador?' },
     },
     commandPalette: { open: 'Paleta de comandos', placeholder: 'Buscar acciones…', empty: 'Sin acciones coincidentes', groupAsk: 'Preguntar a PitchPal', groupSettings: 'Ajustes', changeLanguage: 'Cambiar idioma', toggleTheme: 'Cambiar tema', toggleReadAloud: 'Alternar lectura en voz alta', focusMap: 'Ver mapa del estadio' },
     onboarding: { title: 'Bienvenido a PitchPal', subtitle: 'Configura tu asistente del partido.', stepLanguage: 'Tu idioma', stepAccess: 'Accesibilidad', stepSeat: 'Tu asiento o puerta', next: 'Siguiente', back: 'Atrás', finish: 'Empezar', skip: 'Omitir', step: 'Paso {n} de {total}' },
@@ -249,6 +252,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       accessible: { label: 'Itinéraire sans marches', query: 'Montrez-moi un itinéraire sans marches vers ma place.' },
       leave: { label: 'Quitter le stade', query: 'Comment rejoindre le centre-ville après le match ?' },
       firstAid: { label: 'Premiers secours', query: 'Où est le poste de premiers secours le plus proche ?' },
+      score: { label: 'Score en direct', query: 'Quel est le score ?' },
     },
     commandPalette: { open: 'Palette de commandes', placeholder: 'Rechercher des actions…', empty: 'Aucune action correspondante', groupAsk: 'Demander à PitchPal', groupSettings: 'Réglages', changeLanguage: 'Changer de langue', toggleTheme: 'Changer de thème', toggleReadAloud: 'Activer la lecture à voix haute', focusMap: 'Afficher le plan du stade' },
     onboarding: { title: 'Bienvenue sur PitchPal', subtitle: 'Configurez votre compagnon de match.', stepLanguage: 'Votre langue', stepAccess: 'Accessibilité', stepSeat: 'Votre place ou porte', next: 'Suivant', back: 'Retour', finish: 'Commencer', skip: 'Passer', step: 'Étape {n} sur {total}' },
@@ -293,6 +297,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       accessible: { label: 'Rota sem degraus', query: 'Mostre uma rota sem degraus até o meu lugar.' },
       leave: { label: 'Sair do estádio', query: 'Como chego ao centro depois do jogo?' },
       firstAid: { label: 'Primeiros socorros', query: 'Onde fica o posto de primeiros socorros mais próximo?' },
+      score: { label: 'Placar ao vivo', query: 'Como está o placar?' },
     },
     commandPalette: { open: 'Paleta de comandos', placeholder: 'Buscar ações…', empty: 'Nenhuma ação correspondente', groupAsk: 'Perguntar ao PitchPal', groupSettings: 'Configurações', changeLanguage: 'Mudar idioma', toggleTheme: 'Mudar tema', toggleReadAloud: 'Alternar leitura em voz alta', focusMap: 'Ver mapa do estádio' },
     onboarding: { title: 'Bem-vindo ao PitchPal', subtitle: 'Configure seu companheiro de jogo.', stepLanguage: 'Seu idioma', stepAccess: 'Acessibilidade', stepSeat: 'Seu lugar ou portão', next: 'Próximo', back: 'Voltar', finish: 'Começar', skip: 'Pular', step: 'Passo {n} de {total}' },
@@ -337,6 +342,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
       accessible: { label: 'مسار خالٍ من الدرج', query: 'أرني مسارًا خاليًا من الدرج إلى مقعدي.' },
       leave: { label: 'مغادرة الملعب', query: 'كيف أصل إلى وسط المدينة بعد المباراة؟' },
       firstAid: { label: 'إسعافات أولية', query: 'أين أقرب نقطة إسعافات أولية؟' },
+      score: { label: 'النتيجة مباشرة', query: 'ما النتيجة؟' },
     },
     commandPalette: { open: 'لوحة الأوامر', placeholder: 'ابحث عن إجراءات…', empty: 'لا توجد إجراءات مطابقة', groupAsk: 'اسأل PitchPal', groupSettings: 'الإعدادات', changeLanguage: 'تغيير اللغة', toggleTheme: 'تغيير المظهر', toggleReadAloud: 'تبديل القراءة الصوتية', focusMap: 'عرض خريطة الملعب' },
     onboarding: { title: 'مرحبًا بك في PitchPal', subtitle: 'اضبط رفيقك ليوم المباراة.', stepLanguage: 'لغتك', stepAccess: 'إمكانية الوصول', stepSeat: 'مقعدك أو بوابتك', next: 'التالي', back: 'السابق', finish: 'ابدأ', skip: 'تخطٍّ', step: 'الخطوة {n} من {total}' },
@@ -346,7 +352,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
 };
 
 /** Ordered quick-action keys for rendering. */
-export const QUICK_ACTION_KEYS = ['seat', 'food', 'restroom', 'accessible', 'leave', 'firstAid'] as const;
+export const QUICK_ACTION_KEYS = ['seat', 'score', 'food', 'restroom', 'accessible', 'leave', 'firstAid'] as const;
 export type QuickActionKey = (typeof QUICK_ACTION_KEYS)[number];
 
 /** Localized labels shown while the agent runs a tool (from `status` events). */
@@ -356,35 +362,50 @@ export const TOOL_STATUS: Record<LanguageCode, Record<string, string>> = {
     findAmenities: 'Finding places nearby…',
     getTransport: 'Checking transport…',
     getGateStatus: 'Checking gate queues…',
+    getMatchStatus: 'Checking the score…',
     setFanTicket: 'Reading your ticket…',
+    getSustainability: 'Finding the greenest route…',
+    bookAccessibilityService: 'Booking your service…',
   },
   es: {
     planRoute: 'Planificando tu ruta…',
     findAmenities: 'Buscando lugares cercanos…',
     getTransport: 'Consultando el transporte…',
     getGateStatus: 'Revisando las colas de las puertas…',
+    getMatchStatus: 'Consultando el marcador…',
     setFanTicket: 'Leyendo tu entrada…',
+    getSustainability: 'Buscando la ruta más ecológica…',
+    bookAccessibilityService: 'Reservando tu servicio…',
   },
   fr: {
     planRoute: 'Calcul de votre itinéraire…',
     findAmenities: 'Recherche de lieux à proximité…',
     getTransport: 'Vérification des transports…',
     getGateStatus: 'Vérification des files aux portes…',
+    getMatchStatus: 'Vérification du score…',
     setFanTicket: 'Lecture de votre billet…',
+    getSustainability: 'Recherche du trajet le plus vert…',
+    bookAccessibilityService: 'Réservation de votre service…',
   },
   pt: {
     planRoute: 'Planejando sua rota…',
     findAmenities: 'Procurando lugares próximos…',
     getTransport: 'Verificando o transporte…',
     getGateStatus: 'Verificando as filas dos portões…',
+    getMatchStatus: 'Verificando o placar…',
     setFanTicket: 'Lendo seu ingresso…',
+    getSustainability: 'Buscando a rota mais verde…',
+    bookAccessibilityService: 'Reservando seu serviço…',
   },
   ar: {
     planRoute: 'نخطط مسارك…',
     findAmenities: 'نبحث عن أماكن قريبة…',
     getTransport: 'نتحقق من المواصلات…',
     getGateStatus: 'نتحقق من طوابير البوابات…',
+    getMatchStatus: 'نتحقق من النتيجة…',
     setFanTicket: 'نقرأ تذكرتك…',
+    getSustainability: 'نبحث عن المسار الأكثر خضرة…',
+    bookAccessibilityService: 'نحجز خدمتك…',
   },
 };
 

@@ -1,15 +1,33 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { WifiOff, Sparkles, FlaskConical } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  WifiOff,
+  Sparkles,
+  FlaskConical,
+  Armchair,
+  Trophy,
+  Utensils,
+  LogOut,
+  type LucideIcon,
+} from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { useSpeech } from '../../features/voice/SpeechProvider';
 import { type ChatMode } from '../../features/chat/useChat';
 import type { UiStrings } from '../../i18n/ui';
+import { staggerContainer, panelItem } from '../../lib/motion';
 import { MessageList } from './MessageList';
 import { Composer } from './Composer';
 import { LiveRegion } from '../ui/LiveRegion';
 import { QuickActions } from '../quick-actions/QuickActions';
 import { TicketScan } from '../ticket-scan/TicketScan';
+
+const WELCOME_SUGGESTIONS: readonly { key: 'seat' | 'score' | 'food' | 'leave'; icon: LucideIcon }[] = [
+  { key: 'seat', icon: Armchair },
+  { key: 'score', icon: Trophy },
+  { key: 'food', icon: Utensils },
+  { key: 'leave', icon: LogOut },
+];
 
 function ModeBadge({ mode, ui }: { mode: ChatMode; ui: UiStrings }) {
   if (mode === 'unknown') return null;
@@ -71,6 +89,34 @@ export function ChatWindow() {
           <div className="chat__welcome">
             <p className="chat__welcome-title display">{ui.tagline}</p>
             <p className="chat__welcome-sub">{ui.suggestionsHeading}</p>
+            <motion.ul
+              className="welcome-grid"
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+            >
+              {WELCOME_SUGGESTIONS.map(({ key, icon: Icon }) => {
+                const action = ui.quickActions[key];
+                return (
+                  <motion.li key={key} variants={panelItem}>
+                    <motion.button
+                      type="button"
+                      className="welcome-card"
+                      disabled={isStreaming}
+                      onClick={() => void send(action.query)}
+                      whileHover={isStreaming ? undefined : { y: -3 }}
+                      whileTap={isStreaming ? undefined : { scale: 0.97 }}
+                    >
+                      <span className="welcome-card__icon" aria-hidden="true">
+                        <Icon size={18} />
+                      </span>
+                      <span className="welcome-card__label">{action.label}</span>
+                      <span className="welcome-card__query">{action.query}</span>
+                    </motion.button>
+                  </motion.li>
+                );
+              })}
+            </motion.ul>
           </div>
         ) : (
           <MessageList messages={messages} ui={ui} />

@@ -201,3 +201,27 @@ export const ACCESS_PHRASES: Record<
   pt: { booked: '{service} reservado (ref {ref}). A equipe vai recebê-lo{where}.', services: { wheelchair: 'Assistência em cadeira de rodas', 'sensory-room': 'Acesso à sala sensorial', 'meeting-point': 'Ponto de encontro acessível' } },
   ar: { booked: 'تم حجز {service} (المرجع {ref}). سيستقبلك الطاقم{where}.', services: { wheelchair: 'مساعدة الكرسي المتحرك', 'sensory-room': 'الدخول إلى الغرفة الحسية', 'meeting-point': 'نقطة لقاء مناسبة' } },
 };
+
+/** Match-status phrases for the getMatchStatus tool (score questions). */
+export const MATCH_PHRASES: Record<
+  LanguageCode,
+  { live: string; pre: string; post: string; latest: string }
+> = {
+  en: { live: "{home} {hs}–{as} {away}, {min}' and counting.", pre: '{home} vs {away} kicks off in {min} min — still 0–0.', post: 'Full time: {home} {hs}–{as} {away}.', latest: 'Latest: {event}.' },
+  es: { live: '{home} {hs}–{as} {away}, minuto {min}.', pre: '{home} vs {away} comienza en {min} min — aún 0–0.', post: 'Final: {home} {hs}–{as} {away}.', latest: 'Último: {event}.' },
+  fr: { live: '{home} {hs}–{as} {away}, {min}e minute.', pre: '{home} vs {away} commence dans {min} min — toujours 0–0.', post: 'Score final : {home} {hs}–{as} {away}.', latest: 'Dernier fait : {event}.' },
+  pt: { live: '{home} {hs}–{as} {away}, {min} minutos.', pre: '{home} vs {away} começa em {min} min — ainda 0–0.', post: 'Fim de jogo: {home} {hs}–{as} {away}.', latest: 'Último: {event}.' },
+  ar: { live: '{home} {hs}–{as} {away}، الدقيقة {min}.', pre: '{home} ضد {away} تبدأ بعد {min} دقيقة — لا تزال 0–0.', post: 'النتيجة النهائية: {home} {hs}–{as} {away}.', latest: 'آخر حدث: {event}.' },
+};
+
+/** Localized labels for match-moment kinds (ticker + assistant). */
+export const MOMENT_LABELS: Record<
+  LanguageCode,
+  Record<'kickoff' | 'goal' | 'yellow' | 'sub' | 'halftime' | 'fulltime', string>
+> = {
+  en: { kickoff: 'Kickoff', goal: 'GOAL', yellow: 'Yellow card', sub: 'Substitution', halftime: 'Half-time', fulltime: 'Full time' },
+  es: { kickoff: 'Inicio', goal: 'GOL', yellow: 'Tarjeta amarilla', sub: 'Cambio', halftime: 'Descanso', fulltime: 'Final' },
+  fr: { kickoff: 'Coup d’envoi', goal: 'BUT', yellow: 'Carton jaune', sub: 'Remplacement', halftime: 'Mi-temps', fulltime: 'Fin du match' },
+  pt: { kickoff: 'Início', goal: 'GOL', yellow: 'Cartão amarelo', sub: 'Substituição', halftime: 'Intervalo', fulltime: 'Fim de jogo' },
+  ar: { kickoff: 'انطلاق', goal: 'هدف', yellow: 'بطاقة صفراء', sub: 'تبديل', halftime: 'استراحة', fulltime: 'نهاية المباراة' },
+};

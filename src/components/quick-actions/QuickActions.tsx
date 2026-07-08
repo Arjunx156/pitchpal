@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Accessibility, Armchair, HeartPulse, LogOut, Toilet, Utensils } from 'lucide-react';
+import { Accessibility, Armchair, HeartPulse, LogOut, Toilet, Trophy, Utensils } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
@@ -7,6 +7,7 @@ import { QUICK_ACTION_KEYS, type QuickActionKey } from '../../i18n/ui';
 
 const ICONS: Record<QuickActionKey, LucideIcon> = {
   seat: Armchair,
+  score: Trophy,
   food: Utensils,
   restroom: Toilet,
   accessible: Accessibility,

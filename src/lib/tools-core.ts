@@ -5,7 +5,16 @@ import type { AnswerCard } from './cards';
 import { retrieveContext } from './retrieval';
 import { composeGroundedAnswer } from './compose';
 import { classifyIntent } from './intent';
-import { fmt, ECO_PHRASES, ACCESS_PHRASES, type AccessServiceKey } from '../i18n/answers';
+import { resolveFixture, liveScore } from '../features/tournament/fixture';
+import { latestMoments, type MatchMoment } from '../features/tournament/moments';
+import {
+  fmt,
+  ECO_PHRASES,
+  ACCESS_PHRASES,
+  MATCH_PHRASES,
+  MOMENT_LABELS,
+  type AccessServiceKey,
+} from '../i18n/answers';
 
 /**
  * Pure tool implementations shared by the live agent (Gemini function calls),
@@ -19,6 +28,7 @@ export type ToolName =
   | 'findAmenities'
   | 'getTransport'
   | 'getGateStatus'
+  | 'getMatchStatus'
   | 'setFanTicket'
   | 'getSustainability'
   | 'bookAccessibilityService';
@@ -94,6 +104,52 @@ export function getGateStatus(
   return {
     summary: `Live gate status — ${lines.join('; ')}. Kickoff ${ops.minutesToKickoff > 0 ? `in ${ops.minutesToKickoff} min` : 'has passed'}.`,
     data: { phase: ops.phase, minutesToKickoff: ops.minutesToKickoff, gates: ops.gates },
+  };
+}
+
+/** Render a moment as human text, e.g. "GOAL — BRA #9, 28'". */
+export function describeMoment(moment: MatchMoment, language: FanContext['language']): string {
+  const label = MOMENT_LABELS[language][moment.kind];
+  const who = [moment.teamCode, moment.detail].filter(Boolean).join(' ');
+  return who ? `${label} — ${who}, ${moment.minute}'` : `${label}, ${moment.minute}'`;
+}
+
+/** Live score + latest moments for the fan's selected match. */
+export function getMatchStatus(
+  _args: Record<string, unknown>,
+  context: FanContext,
+  _venue: Venue,
+  ops: OpsSnapshot,
+): ToolResult {
+  const p = MATCH_PHRASES[context.language];
+  const fixture = resolveFixture(context.matchId);
+  const score = liveScore(ops.matchClock);
+  const vars = {
+    home: fixture.home.name,
+    away: fixture.away.name,
+    hs: score.home,
+    as: score.away,
+    min: ops.phase === 'pre' ? Math.max(0, ops.minutesToKickoff) : (ops.matchClock ?? 0),
+  };
+  const base =
+    ops.phase === 'live' ? fmt(p.live, vars) : ops.phase === 'pre' ? fmt(p.pre, vars) : fmt(p.post, vars);
+
+  const recent = latestMoments(fixture, ops.matchClock, ops.phase, 1)[0];
+  const summary =
+    recent && ops.phase !== 'pre'
+      ? `${base} ${fmt(p.latest, { event: describeMoment(recent, context.language) })}`
+      : base;
+
+  return {
+    summary,
+    data: {
+      phase: ops.phase,
+      score,
+      matchClock: ops.matchClock,
+      moments: latestMoments(fixture, ops.matchClock, ops.phase, 4).map((m) =>
+        describeMoment(m, context.language),
+      ),
+    },
   };
 }
 
@@ -179,6 +235,7 @@ export const TOOL_IMPLS: Record<
   findAmenities,
   getTransport,
   getGateStatus,
+  getMatchStatus,
   setFanTicket,
   getSustainability,
   bookAccessibilityService,
@@ -201,6 +258,22 @@ export interface OfflineAnswer {
   result: ToolResult;
 }
 
+/** Score/match-status question detector (multilingual, shared-script langs). */
+const SCORE_KEYWORDS = [
+  'score', 'scored', 'winning', 'who is winning', "who's winning", 'match status',
+  'how is the match', "how's the match", 'any goals', 'full time result',
+  // es / fr / pt / ar
+  'marcador', 'resultado', 'quién va ganando', 'quien va ganando',
+  'quel est le score', 'qui gagne',
+  'placar', 'quem está ganhando', 'quem esta ganhando',
+  'النتيجة', 'من يفوز',
+];
+
+export function isScoreQuestion(message: string): boolean {
+  const text = message.toLowerCase();
+  return SCORE_KEYWORDS.some((kw) => text.includes(kw));
+}
+
 /**
  * Deterministic answer for the mock server and offline client: classify the
  * message, run the matching tool, and return a structured result identical in
@@ -212,6 +285,9 @@ export function answerOffline(
   venue: Venue,
   ops: OpsSnapshot,
 ): OfflineAnswer {
+  if (isScoreQuestion(message)) {
+    return { toolName: 'getMatchStatus', result: getMatchStatus({}, context, venue, ops) };
+  }
   const intent = classifyIntent(message);
   const slice = retrieveContext(message, context, venue);
   const { text, card } = composeGroundedAnswer(slice, context, venue, ops);

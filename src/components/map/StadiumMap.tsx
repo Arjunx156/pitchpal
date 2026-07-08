@@ -103,8 +103,17 @@ export function StadiumMap() {
             y2={geo.center.y + geo.ry * 0.3}
           />
 
-          {/* Route */}
-          {routePoints ? <polyline className="map-route" points={routePoints} /> : null}
+          {/* Route — draws itself in whenever a new route is highlighted */}
+          {routePoints ? (
+            <motion.polyline
+              key={routePoints}
+              className="map-route"
+              points={routePoints}
+              initial={{ pathLength: 0, opacity: 0.4 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ duration: 0.8, ease: 'easeInOut' }}
+            />
+          ) : null}
 
           {/* Sections */}
           {geo.sections.map((s) => {
@@ -124,6 +133,17 @@ export function StadiumMap() {
                 onKeyDown={onActivate(() => ask(query))}
               >
                 <title>{query}</title>
+                {isTarget ? (
+                  <motion.circle
+                    className="map-seat__pulse"
+                    cx={s.point.x}
+                    cy={s.point.y}
+                    r={14}
+                    initial={{ opacity: 0.7 }}
+                    animate={{ opacity: [0.7, 0.15, 0.7] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                ) : null}
                 <circle cx={s.point.x} cy={s.point.y} r={isTarget ? 9 : 6} />
                 <text x={s.point.x} y={s.point.y + 3} className="map-seat__label">
                   {s.id}

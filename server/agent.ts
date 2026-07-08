@@ -50,7 +50,7 @@ export async function* runAgent(input: AgentInput, env: AppEnv): AsyncGenerator<
   contents.push({ role: 'user', parts: userParts });
 
   const config = {
-    systemInstruction: buildAgentSystemInstruction(input.context, input.venue),
+    systemInstruction: buildAgentSystemInstruction(input.context, input.venue, input.ops),
     temperature: 0.4,
     maxOutputTokens: 900,
     tools: [{ functionDeclarations: FUNCTION_DECLARATIONS }],

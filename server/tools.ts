@@ -51,6 +51,12 @@ export const FUNCTION_DECLARATIONS = [
     parametersJsonSchema: { type: 'object', properties: {}, required: [] },
   },
   {
+    name: 'getMatchStatus',
+    description:
+      'AUTHORITATIVE live score, match clock and latest moments (goals, cards) for the fan’s selected match — the app tracks this in real time. ALWAYS call this for "what’s the score", "who’s winning", "any goals" or any match-status question; never claim you lack live score access.',
+    parametersJsonSchema: { type: 'object', properties: {}, required: [] },
+  },
+  {
     name: 'setFanTicket',
     description:
       'Record the section, seat and gate read from a ticket photo so the app can route the fan. Call this when the user sends a ticket image.',

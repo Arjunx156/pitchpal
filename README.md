@@ -12,8 +12,8 @@ input/output, a **live ops HUD + analytics strip**, a **"My Match Day" itinerary
 alerts**, and works **offline** as an installable PWA.
 
 The assistant is **agentic**: Google **Gemini** drives a **function-calling** loop over a typed tool
-registry (route planning, amenities, transport, live gate status, sustainability, accessibility
-service booking, ticket reading), and can **read a photo of your ticket** (multimodal) to auto-find
+registry (route planning, amenities, transport, live gate status, live match score & moments,
+sustainability, accessibility service booking, ticket reading), and can **read a photo of your ticket** (multimodal) to auto-find
 your seat. A deterministic **no-key fallback** runs the exact same tools, so everything works out of
 the box and offline.
 
@@ -39,7 +39,7 @@ during a global tournament.
 ## Signature features
 
 - **🤖 Agentic tool-calling** — Gemini decides which typed tools to call (`planRoute`,
-  `findAmenities`, `getTransport`, `getGateStatus`, `getSustainability`,
+  `findAmenities`, `getTransport`, `getGateStatus`, `getMatchStatus`, `getSustainability`,
   `bookAccessibilityService`, `setFanTicket`), the server runs them against the pure core, and
   structured **cards** stream back from tool results — the UI even shows the live tool it's running
   ("Planning your route…"). The same tools power the mock and offline paths.
@@ -47,6 +47,10 @@ during a global tournament.
   section, seat and gate and auto-fills your context to route you.
 - **🏟️ Multi-venue + fixtures** — 4 representative host venues and matches with a **match picker**;
   switching match swaps the venue, ops cycle, scoreboard, map and group **standings** together.
+- **⚽ Live match engine** — a deterministic moments timeline (goals, cards, subs) derived from the
+  virtual match clock powers the animated **scoreboard hero** (crest badges, score pop, 90' progress
+  bar, moment ticker) *and* the assistant's `getMatchStatus` tool — the score can never disagree
+  between UI and AI. Ask "What's the score?" in any of the 5 languages, even offline.
 - **🗓️ "My Match Day" itinerary** — a deterministic timeline (arrive → gate → seat → kickoff →
   half-time → leave, with a green-transport suggestion) plus an opt-in **on-device notification**
   that fires once your gate gets congested.
@@ -84,8 +88,8 @@ Fan context (language · accessibility · location · ticket · selected match)
   LIVE:  Gemini function-calling loop  (server/agent.ts)
          model → picks tool(s) → server runs them (src/lib/tools-core.ts) → cards + summary
          → model composes a short reply.   Tools: planRoute · findAmenities · getTransport
-         · getGateStatus · getSustainability · bookAccessibilityService · setFanTicket (reads
-         a ticket photo).
+         · getGateStatus · getMatchStatus (live score + moments) · getSustainability
+         · bookAccessibilityService · setFanTicket (reads a ticket photo).
   MOCK / OFFLINE:  deterministic router (answerOffline) runs the SAME tools → identical events.
         │
         ▼
@@ -128,7 +132,7 @@ npm start         # serves dist/ + /api/chat on http://localhost:8080
 
 ### Quality
 ```bash
-npm test          # 144 tests (Vitest + Testing Library + jest-axe)
+npm test          # 154 tests (Vitest + Testing Library + jest-axe)
 npm run coverage  # thresholds enforced at 80% (currently ~96% statements)
 npm run typecheck # strict TypeScript
 ```
@@ -191,7 +195,7 @@ src/
                    charts · ticket-scan · command · onboarding · quick-actions · ui (shadcn)
   i18n/            UI chrome + answer phrases (EN/ES/FR/PT/AR)
   styles/          Tailwind + design tokens + global + component CSS
-tests/             144 tests — unit · components · server
+tests/             154 tests — unit · components · server
 public/icons/      PWA + favicon assets
 ```
 
@@ -211,7 +215,7 @@ Framer Motion**. Both light and dark themes are intentional.
 - **Efficiency** — only the relevant venue slice is grounded into the prompt; streaming; ~135 KB
   gzipped JS (within the app-page budget); self-hosted subsetted fonts; ops/map/itinerary/standings
   all computed from pure functions, no extra network round-trips.
-- **Testing** — 144 tests across the pure core (incl. venues, fixtures, itinerary, gate alerts), the
+- **Testing** — 154 tests across the pure core (incl. venues, fixtures, itinerary, gate alerts), the
   server pipeline (HTTP adapter + mocked Gemini agent), and the React UI (map, ops, scoreboard,
   standings, palette, onboarding, voice, ticket scan, offline); coverage enforced at 80%
   (~96%/83%/90% statements/branches/functions).
