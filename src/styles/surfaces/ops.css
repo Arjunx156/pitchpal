@@ -1,0 +1,191 @@
+/* ================================================================== */
+/* Ops HUD                                                             */
+/* ================================================================== */
+.ops {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.ops__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ops__weather {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+.ops__clock {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+}
+.ops__clock-label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.ops__clock-value {
+  font-size: var(--display-sm);
+  color: var(--color-accent);
+}
+.ops__live {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-live);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.ops__live-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-live);
+  animation: pulse 1.4s infinite;
+}
+.ops__gates-heading {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+.ops__gates ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.ops__gate {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.ops__gate-id {
+  font-weight: 600;
+}
+.ops__gate-queue {
+  color: var(--color-text-muted);
+}
+.ops__gate-trend {
+  display: inline-flex;
+  align-items: center;
+}
+.ops__gate-trend--rising {
+  color: var(--color-jam);
+}
+.ops__gate-trend--falling {
+  color: var(--color-ok);
+}
+.ops__gate-trend--steady {
+  color: var(--color-text-muted);
+}
+.meter {
+  display: block;
+  height: 0.55rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+.meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width var(--duration-slow) var(--ease-out);
+}
+.meter--ok .meter__fill {
+  background: var(--color-ok);
+}
+.meter--busy .meter__fill {
+  background: var(--color-busy);
+}
+.meter--jam .meter__fill {
+  background: var(--color-jam);
+}
+
+/* ================================================================== */
+/* Predictive gate/queue risk panel                                    */
+/* ================================================================== */
+.risk-panel {
+  padding: var(--space-4);
+  gap: var(--space-3);
+}
+.risk-panel__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.risk-panel__row {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+.risk-panel__row.is-jam {
+  box-shadow: var(--risk-glow-jam);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+}
+.risk-panel__gate {
+  font-weight: 700;
+}
+.risk-panel__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: 0.15rem var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.risk-panel__badge--rising {
+  color: var(--color-jam);
+  border-color: color-mix(in oklch, var(--color-jam) 45%, var(--color-border));
+}
+.risk-panel__badge--falling {
+  color: var(--color-ok);
+  border-color: color-mix(in oklch, var(--color-ok) 45%, var(--color-border));
+}
+.risk-panel__badge--steady {
+  color: var(--color-text-muted);
+}
+.risk-panel__reroute {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  border: 1px solid color-mix(in oklch, var(--color-jam) 45%, var(--color-border));
+  background: color-mix(in oklch, var(--color-jam) 10%, transparent);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-emphasized);
+}
+.risk-panel__reroute:hover {
+  transform: translateY(-1px);
+}
+.risk-panel__reroute:active {
+  transform: scale(0.97);
+}

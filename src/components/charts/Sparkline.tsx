@@ -5,6 +5,8 @@ interface SparklineProps {
   ariaLabel: string;
   area?: boolean;
   className?: string;
+  /** Recolors the line/area/dot to a semantic congestion tone instead of the accent color. */
+  tone?: 'ok' | 'busy' | 'jam';
 }
 
 const W = 120;
@@ -12,7 +14,7 @@ const H = 36;
 const PAD = 3;
 
 /** Tiny accessible line/area chart. Exposes a text summary via aria-label. */
-export function Sparkline({ data, ariaLabel, area = false, className }: SparklineProps) {
+export function Sparkline({ data, ariaLabel, area = false, className, tone }: SparklineProps) {
   if (data.length === 0) return null;
 
   const max = Math.max(...data);
@@ -30,7 +32,7 @@ export function Sparkline({ data, ariaLabel, area = false, className }: Sparklin
 
   return (
     <svg
-      className={`spark${className ? ` ${className}` : ''}`}
+      className={`spark${tone ? ` spark--${tone}` : ''}${className ? ` ${className}` : ''}`}
       viewBox={`0 0 ${W} ${H}`}
       role="img"
       aria-label={ariaLabel}

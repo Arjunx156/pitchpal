@@ -178,3 +178,10 @@ export function busiestGate(snapshot: OpsSnapshot): GateStatus | undefined {
     undefined,
   );
 }
+
+/** Same thresholds as `congestionLevel`, exposed for queue-minute-based classification. */
+export function queueRiskLevel(queueMinutes: number): CongestionLevel {
+  if (queueMinutes < MAX_QUEUE_MIN * 0.5) return 'ok';
+  if (queueMinutes < MAX_QUEUE_MIN * 0.8) return 'busy';
+  return 'jam';
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
@@ -14,6 +14,9 @@ describe('ContextBar', () => {
 
   it('switches the whole UI language and sets RTL for Arabic', async () => {
     render(<App />);
+    const viewswitch = document.querySelector('.viewswitch');
+    if (!viewswitch) throw new Error('viewswitch nav not found');
+    await userEvent.click(within(viewswitch as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.chat}$`) }));
     expect(screen.getByText(UI.en.tagline)).toBeInTheDocument();
 
     await userEvent.selectOptions(screen.getByLabelText(UI.en.languageLabel), 'ar');

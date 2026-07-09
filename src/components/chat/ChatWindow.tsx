@@ -19,7 +19,7 @@ import { staggerContainer, panelItem } from '../../lib/motion';
 import { MessageList } from './MessageList';
 import { Composer } from './Composer';
 import { LiveRegion } from '../ui/LiveRegion';
-import { QuickActions } from '../quick-actions/QuickActions';
+import { SmartQuickActions } from '../quick-actions/SmartQuickActions';
 import { TicketScan } from '../ticket-scan/TicketScan';
 
 const WELCOME_SUGGESTIONS: readonly { key: 'seat' | 'score' | 'food' | 'leave'; icon: LucideIcon }[] = [
@@ -124,7 +124,7 @@ export function ChatWindow() {
         <div ref={endRef} />
       </div>
 
-      <QuickActions />
+      <SmartQuickActions />
       <div className="flex px-4 pb-2">
         <TicketScan />
       </div>

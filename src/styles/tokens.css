@@ -90,6 +90,56 @@
 
   /* Grain overlay (subtle broadcast texture) */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+
+  /* ---- Broadcast Editorial additions ---- */
+  /* Semantic: glass surfaces (light) */
+  --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 70%, transparent);
+  --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 55%, transparent);
+  --color-glass-border: color-mix(in oklch, var(--color-border-strong) 55%, transparent);
+  --color-scrim: oklch(10% 0.01 var(--h-charcoal) / 0.55);
+  --blur-glass: 18px;
+  --shadow-3: 0 24px 64px oklch(20% 0.02 var(--h-charcoal) / 0.22);
+
+  /* Semantic: typography */
+  --display-xl: clamp(3.4rem, 2.2rem + 6vw, 6.5rem);
+  --text-2xs: 0.68rem;
+  --tracking-tight: -0.01em;
+
+  /* Semantic: motion */
+  --duration-instant: 100ms;
+  --duration-hero: 600ms;
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Semantic: spacing / radius / z-index */
+  --space-12: 5rem;
+  --space-16: 6rem;
+  --radius-2xl: 32px;
+  --z-nav: 40;
+  --z-overlay: 50;
+  --z-modal: 60;
+
+  /* Component: bento tiles */
+  --bento-card-bg: var(--color-surface);
+  --bento-card-border: var(--color-border);
+  --bento-card-radius: var(--radius-2xl);
+  --bento-card-padding: var(--space-5);
+  --bento-card-shadow: var(--shadow-1);
+  --bento-card-shadow-hover: var(--shadow-3);
+
+  /* Component: glass panels */
+  --glass-panel-bg: var(--color-glass-surface-1);
+  --glass-panel-border: var(--color-glass-border);
+  --glass-panel-blur: var(--blur-glass);
+
+  /* Component: mobile bottom nav */
+  --nav-bottom-bg: var(--color-glass-surface-2);
+  --nav-bottom-border: var(--color-glass-border);
+  --nav-bottom-height: 64px;
+  --nav-bottom-blur: var(--blur-glass);
+
+  /* Component: dashboard hero score + risk glow */
+  --score-hero-size: var(--display-xl);
+  --risk-glow-jam: 0 0 0 4px color-mix(in oklch, var(--color-jam) 30%, transparent);
 }
 
 /* ---- Dark (hero broadcast) — system preference unless user chose light ---- */
@@ -118,6 +168,10 @@
 
     --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
     --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
+
+    --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 55%, transparent);
+    --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 45%, transparent);
+    --shadow-3: 0 28px 72px oklch(0% 0 0 / 0.55);
   }
 }
 
@@ -143,4 +197,8 @@
   --color-jam: oklch(70% 0.2 30);
   --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
   --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
+
+  --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 55%, transparent);
+  --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 45%, transparent);
+  --shadow-3: 0 28px 72px oklch(0% 0 0 / 0.55);
 }

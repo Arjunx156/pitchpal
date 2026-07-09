@@ -46,10 +46,22 @@ export default {
         ok: 'var(--color-ok)',
         busy: 'var(--color-busy)',
         jam: 'var(--color-jam)',
+        // Broadcast Editorial: glass surfaces
+        glass: 'var(--color-glass-surface-1)',
+        'glass-2': 'var(--color-glass-surface-2)',
+        'glass-border': 'var(--color-glass-border)',
+        scrim: 'var(--color-scrim)',
       },
       fontFamily: {
         display: 'var(--font-display)',
         sans: 'var(--font-sans)',
+      },
+      fontSize: {
+        '2xs': 'var(--text-2xs)',
+        hero: 'var(--score-hero-size)',
+      },
+      letterSpacing: {
+        tight: 'var(--tracking-tight)',
       },
       borderRadius: {
         xs: 'var(--radius-xs)',
@@ -57,15 +69,35 @@ export default {
         DEFAULT: 'var(--radius)',
         lg: 'var(--radius-lg)',
         xl: 'calc(var(--radius-lg) + 6px)',
+        '2xl': 'var(--radius-2xl)',
       },
       boxShadow: {
         1: 'var(--shadow-1)',
         2: 'var(--shadow-2)',
+        3: 'var(--shadow-3)',
         glow: 'var(--glow-gold)',
+        'risk-jam': 'var(--risk-glow-jam)',
+      },
+      spacing: {
+        'bento-lg': 'var(--space-12)',
+        'bento-xl': 'var(--space-16)',
+      },
+      backdropBlur: {
+        glass: 'var(--blur-glass)',
       },
       transitionTimingFunction: {
         out: 'var(--ease-out)',
         spring: 'var(--ease-spring)',
+        emphasized: 'var(--ease-emphasized)',
+      },
+      transitionDuration: {
+        instant: 'var(--duration-instant)',
+        hero: 'var(--duration-hero)',
+      },
+      zIndex: {
+        nav: 'var(--z-nav)',
+        overlay: 'var(--z-overlay)',
+        modal: 'var(--z-modal)',
       },
       keyframes: {
         'accordion-down': {

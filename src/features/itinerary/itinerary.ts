@@ -4,13 +4,16 @@ import type { Fixture } from '../tournament/fixture';
 
 const MIN_MS = 60_000;
 
-export type ItineraryStepKind = 'arrive' | 'gate' | 'seat' | 'kickoff' | 'halftime' | 'leave';
+export type ItineraryStepKind = 'arrive' | 'gate' | 'seat' | 'kickoff' | 'halftime' | 'leave' | 'custom';
 
 export interface ItineraryStep {
   kind: ItineraryStepKind;
   time: number; // epoch ms
   gateId?: string;
   transportName?: string;
+  /** Only set for `kind: 'custom'` steps — a stable id for reorder/remove, and the fan-entered label. */
+  id?: string;
+  label?: string;
 }
 
 /** Deterministic "My Match Day" timeline, derived from the venue and ops cycle. */

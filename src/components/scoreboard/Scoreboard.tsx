@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
@@ -7,65 +7,10 @@ import { liveScore } from '../../features/tournament/fixture';
 import { latestMoments, matchProgress, type MatchMoment } from '../../features/tournament/moments';
 import { MOMENT_LABELS } from '../../i18n/answers';
 import type { LanguageCode } from '../../features/context/types';
+import { ScoreDigit, TeamBlock } from './ScoreDigit';
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
-}
-
-/** Deterministic crest gradient per team code — no invented assets. */
-function crestStyle(code: string): CSSProperties {
-  const a = ((code.charCodeAt(0) * 47) % 360 + 360) % 360;
-  const b = (a + 40) % 360;
-  return {
-    background: `linear-gradient(135deg, oklch(58% 0.16 ${a}), oklch(40% 0.14 ${b}))`,
-  };
-}
-
-function Crest({ code }: { code: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={crestStyle(code)}
-      className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-border-strong font-display text-base leading-none text-white shadow-1 sm:h-14 sm:w-14 sm:text-xl"
-    >
-      {code.slice(0, 2)}
-    </span>
-  );
-}
-
-function TeamBlock({ code, name, align }: { code: string; name: string; align: 'start' | 'end' }) {
-  const row = align === 'end' ? 'flex-row-reverse' : 'flex-row';
-  return (
-    <div className={`flex min-w-0 items-center gap-2 sm:gap-3 ${row} ${align === 'end' ? 'justify-start' : ''}`}>
-      <Crest code={code} />
-      <div className={`flex min-w-0 flex-col gap-1 ${align === 'end' ? 'items-end text-end' : 'items-start'}`}>
-        <span className="font-display text-3xl leading-[0.85] tracking-wide text-foreground sm:text-6xl">
-          {code}
-        </span>
-        <span className="max-w-full truncate text-[0.68rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground sm:text-xs">
-          {name}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-/** Score digit that pops when the value changes (goal!). */
-function ScoreDigit({ value }: { value: number }) {
-  return (
-    <AnimatePresence mode="popLayout" initial={false}>
-      <motion.span
-        key={value}
-        className="inline-block text-brand"
-        initial={{ scale: 1.6, opacity: 0, y: -8 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.7, opacity: 0, y: 8 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 20 }}
-      >
-        {value}
-      </motion.span>
-    </AnimatePresence>
-  );
 }
 
 function momentText(moment: MatchMoment, language: LanguageCode): string {

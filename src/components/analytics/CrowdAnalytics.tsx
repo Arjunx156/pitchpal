@@ -12,7 +12,7 @@ import { fmt } from '../../i18n/answers';
 import { Sparkline } from '../charts/Sparkline';
 import { panelItem } from '../../lib/motion';
 
-export function CrowdAnalytics() {
+export function CrowdAnalytics({ idPrefix = '' }: { idPrefix?: string }) {
   const { context, venue } = useFanContext();
   const a = ANALYTICS[context.language];
   const [now, setNow] = useState(() => Date.now());
@@ -29,8 +29,8 @@ export function CrowdAnalytics() {
   const queue = busiest ? gateQueueSeries(venue, busiest.gateId, now) : [];
 
   return (
-    <motion.section className="analytics" aria-labelledby="analytics-heading" variants={panelItem}>
-      <h2 id="analytics-heading" className="analytics__heading">
+    <motion.section className="analytics" aria-labelledby={`${idPrefix}analytics-heading`} variants={panelItem}>
+      <h2 id={`${idPrefix}analytics-heading`} className="analytics__heading">
         {a.heading}
       </h2>
       <div className="analytics__grid">

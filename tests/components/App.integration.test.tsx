@@ -38,6 +38,9 @@ describe('App — end-to-end fan flow (mock fetch)', () => {
     vi.stubGlobal('fetch', fetchMock as unknown as typeof fetch);
 
     render(<App />);
+    const viewswitch1 = document.querySelector('.viewswitch');
+    if (!viewswitch1) throw new Error('viewswitch nav not found');
+    await userEvent.click(within(viewswitch1 as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.chat}$`) }));
     const input = screen.getByLabelText(UI.en.composerLabel);
     await userEvent.type(input, 'How do I get to section 205?');
     await userEvent.click(screen.getByRole('button', { name: UI.en.send }));
@@ -66,6 +69,9 @@ describe('App — end-to-end fan flow (mock fetch)', () => {
     );
 
     render(<App />);
+    const viewswitch2 = document.querySelector('.viewswitch');
+    if (!viewswitch2) throw new Error('viewswitch nav not found');
+    await userEvent.click(within(viewswitch2 as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.chat}$`) }));
     await userEvent.type(screen.getByLabelText(UI.en.composerLabel), 'hello');
     await userEvent.click(screen.getByRole('button', { name: UI.en.send }));
 

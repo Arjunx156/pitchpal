@@ -112,6 +112,39 @@ export interface UiStrings {
     played: string;
     points: string;
   };
+  nav: {
+    heading: string;
+    switcherHeading: string;
+    home: string;
+    chat: string;
+    map: string;
+    itinerary: string;
+    more: string;
+  };
+  dashboard: {
+    heading: string;
+    heroLabel: string;
+    riskHeading: string;
+    suggestedHeading: string;
+    seeAll: string;
+  };
+  risk: {
+    heading: string;
+    rising: string;
+    falling: string;
+    steady: string;
+    rerouteAsk: string; // {gate}
+    rerouteCta: string;
+    projectedIn: string; // {min}
+  };
+  suggestions: {
+    kickoffSoonReason: string;
+    kickoffSoonQuery: string;
+    gateJamReason: string; // {gate}
+    postMatchReason: string;
+    postMatchQuery: string;
+    accessibleRouteReason: string;
+  };
 }
 
 /** Endonyms — shown the same in every UI language. */
@@ -168,6 +201,17 @@ export const UI: Record<LanguageCode, UiStrings> = {
     onboarding: { title: 'Welcome to PitchPal', subtitle: 'Set up your match-day companion.', stepLanguage: 'Your language', stepAccess: 'Accessibility', stepSeat: 'Your seat or gate', next: 'Next', back: 'Back', finish: 'Start exploring', skip: 'Skip', step: 'Step {n} of {total}' },
     dataNote: 'Uses representative sample venue data — not official FIFA information.',
     standings: { heading: 'Group standings', played: 'P', points: 'Pts' },
+    nav: { heading: 'Main navigation', switcherHeading: 'Switch view', home: 'Home', chat: 'Chat', map: 'Map', itinerary: 'Itinerary', more: 'More' },
+    dashboard: { heading: 'Match day', heroLabel: 'Live score', riskHeading: 'Gate risk', suggestedHeading: 'Suggested for you', seeAll: 'See full itinerary' },
+    risk: { heading: 'Gate risk forecast', rising: 'Rising', falling: 'Falling', steady: 'Steady', rerouteAsk: 'Gate {gate} looks like it will be busy — suggest a reroute.', rerouteCta: 'Ask AI to reroute', projectedIn: 'in {min} min' },
+    suggestions: {
+      kickoffSoonReason: 'Kickoff is soon — grab anything you need now.',
+      kickoffSoonQuery: 'What amenities are close to my seat before kickoff?',
+      gateJamReason: 'Gate {gate} is getting congested.',
+      postMatchReason: 'The match has ended — plan your way home.',
+      postMatchQuery: 'How do I get downtown after the match?',
+      accessibleRouteReason: "Here's a quieter, step-free route.",
+    },
   },
   es: {
     title: 'PitchPal',
@@ -213,6 +257,17 @@ export const UI: Record<LanguageCode, UiStrings> = {
     onboarding: { title: 'Bienvenido a PitchPal', subtitle: 'Configura tu asistente del partido.', stepLanguage: 'Tu idioma', stepAccess: 'Accesibilidad', stepSeat: 'Tu asiento o puerta', next: 'Siguiente', back: 'Atrás', finish: 'Empezar', skip: 'Omitir', step: 'Paso {n} de {total}' },
     dataNote: 'Usa datos de ejemplo del estadio, no información oficial de la FIFA.',
     standings: { heading: 'Clasificación del grupo', played: 'PJ', points: 'Pts' },
+    nav: { heading: 'Navegación principal', switcherHeading: 'Cambiar vista', home: 'Inicio', chat: 'Chat', map: 'Mapa', itinerary: 'Itinerario', more: 'Más' },
+    dashboard: { heading: 'Día de partido', heroLabel: 'Marcador en vivo', riskHeading: 'Riesgo en puertas', suggestedHeading: 'Sugerido para ti', seeAll: 'Ver itinerario completo' },
+    risk: { heading: 'Pronóstico de riesgo en puertas', rising: 'Aumentando', falling: 'Bajando', steady: 'Estable', rerouteAsk: 'La Puerta {gate} parece que estará concurrida — sugiere una ruta alternativa.', rerouteCta: 'Pedir a la IA una ruta alternativa', projectedIn: 'en {min} min' },
+    suggestions: {
+      kickoffSoonReason: 'El inicio es pronto — consigue lo que necesites ahora.',
+      kickoffSoonQuery: '¿Qué servicios hay cerca de mi asiento antes del inicio?',
+      gateJamReason: 'La Puerta {gate} se está congestionando.',
+      postMatchReason: 'El partido terminó — planifica tu regreso.',
+      postMatchQuery: '¿Cómo llego al centro después del partido?',
+      accessibleRouteReason: 'Aquí tienes una ruta más tranquila y sin escaleras.',
+    },
   },
   fr: {
     title: 'PitchPal',
@@ -258,6 +313,17 @@ export const UI: Record<LanguageCode, UiStrings> = {
     onboarding: { title: 'Bienvenue sur PitchPal', subtitle: 'Configurez votre compagnon de match.', stepLanguage: 'Votre langue', stepAccess: 'Accessibilité', stepSeat: 'Votre place ou porte', next: 'Suivant', back: 'Retour', finish: 'Commencer', skip: 'Passer', step: 'Étape {n} sur {total}' },
     dataNote: "Utilise des données de stade d'exemple, pas d'informations officielles FIFA.",
     standings: { heading: 'Classement du groupe', played: 'J', points: 'Pts' },
+    nav: { heading: 'Navigation principale', switcherHeading: 'Changer de vue', home: 'Accueil', chat: 'Chat', map: 'Plan', itinerary: 'Itinéraire', more: 'Plus' },
+    dashboard: { heading: 'Jour de match', heroLabel: 'Score en direct', riskHeading: 'Risque aux portes', suggestedHeading: 'Suggéré pour vous', seeAll: "Voir l'itinéraire complet" },
+    risk: { heading: 'Prévision de risque aux portes', rising: 'En hausse', falling: 'En baisse', steady: 'Stable', rerouteAsk: 'La Porte {gate} semble sur le point de se remplir — suggérez un autre itinéraire.', rerouteCta: 'Demander un autre itinéraire à l’IA', projectedIn: 'dans {min} min' },
+    suggestions: {
+      kickoffSoonReason: "Le coup d'envoi approche — prenez ce qu'il vous faut maintenant.",
+      kickoffSoonQuery: "Quels services se trouvent près de ma place avant le coup d'envoi ?",
+      gateJamReason: 'La Porte {gate} devient encombrée.',
+      postMatchReason: 'Le match est terminé — planifiez votre retour.',
+      postMatchQuery: 'Comment rejoindre le centre-ville après le match ?',
+      accessibleRouteReason: 'Voici un itinéraire plus calme et sans marches.',
+    },
   },
   pt: {
     title: 'PitchPal',
@@ -303,6 +369,17 @@ export const UI: Record<LanguageCode, UiStrings> = {
     onboarding: { title: 'Bem-vindo ao PitchPal', subtitle: 'Configure seu companheiro de jogo.', stepLanguage: 'Seu idioma', stepAccess: 'Acessibilidade', stepSeat: 'Seu lugar ou portão', next: 'Próximo', back: 'Voltar', finish: 'Começar', skip: 'Pular', step: 'Passo {n} de {total}' },
     dataNote: 'Usa dados de exemplo do estádio, não informações oficiais da FIFA.',
     standings: { heading: 'Classificação do grupo', played: 'J', points: 'Pts' },
+    nav: { heading: 'Navegação principal', switcherHeading: 'Mudar de vista', home: 'Início', chat: 'Chat', map: 'Mapa', itinerary: 'Itinerário', more: 'Mais' },
+    dashboard: { heading: 'Dia de jogo', heroLabel: 'Placar ao vivo', riskHeading: 'Risco nos portões', suggestedHeading: 'Sugerido para você', seeAll: 'Ver itinerário completo' },
+    risk: { heading: 'Previsão de risco nos portões', rising: 'Subindo', falling: 'Caindo', steady: 'Estável', rerouteAsk: 'O Portão {gate} parece que vai ficar cheio — sugira uma rota alternativa.', rerouteCta: 'Pedir à IA uma rota alternativa', projectedIn: 'em {min} min' },
+    suggestions: {
+      kickoffSoonReason: 'O início é em breve — resolva o que precisar agora.',
+      kickoffSoonQuery: 'Quais comodidades ficam perto do meu lugar antes do início?',
+      gateJamReason: 'O Portão {gate} está ficando congestionado.',
+      postMatchReason: 'O jogo terminou — planeje sua volta.',
+      postMatchQuery: 'Como chego ao centro depois do jogo?',
+      accessibleRouteReason: 'Aqui está uma rota mais tranquila e sem degraus.',
+    },
   },
   ar: {
     title: 'PitchPal',
@@ -348,6 +425,17 @@ export const UI: Record<LanguageCode, UiStrings> = {
     onboarding: { title: 'مرحبًا بك في PitchPal', subtitle: 'اضبط رفيقك ليوم المباراة.', stepLanguage: 'لغتك', stepAccess: 'إمكانية الوصول', stepSeat: 'مقعدك أو بوابتك', next: 'التالي', back: 'السابق', finish: 'ابدأ', skip: 'تخطٍّ', step: 'الخطوة {n} من {total}' },
     dataNote: 'يستخدم بيانات ملعب نموذجية، وليست معلومات رسمية من الفيفا.',
     standings: { heading: 'ترتيب المجموعة', played: 'لعب', points: 'نقاط' },
+    nav: { heading: 'التنقل الرئيسي', switcherHeading: 'تبديل العرض', home: 'الرئيسية', chat: 'المحادثة', map: 'الخريطة', itinerary: 'خطة اليوم', more: 'المزيد' },
+    dashboard: { heading: 'يوم المباراة', heroLabel: 'النتيجة مباشرة', riskHeading: 'مخاطر البوابات', suggestedHeading: 'مقترح لك', seeAll: 'عرض خطة اليوم كاملة' },
+    risk: { heading: 'توقعات مخاطر البوابات', rising: 'في ازدياد', falling: 'في انخفاض', steady: 'مستقرة', rerouteAsk: 'يبدو أن البوابة {gate} ستكون مزدحمة — اقترح مسارًا بديلًا.', rerouteCta: 'اطلب من الذكاء الاصطناعي مسارًا بديلًا', projectedIn: 'خلال {min} دقيقة' },
+    suggestions: {
+      kickoffSoonReason: 'الانطلاق قريب — احصل على ما تحتاجه الآن.',
+      kickoffSoonQuery: 'ما المرافق القريبة من مقعدي قبل الانطلاق؟',
+      gateJamReason: 'البوابة {gate} أصبحت مزدحمة.',
+      postMatchReason: 'انتهت المباراة — خطط لعودتك.',
+      postMatchQuery: 'كيف أصل إلى وسط المدينة بعد المباراة؟',
+      accessibleRouteReason: 'إليك مسارًا أكثر هدوءًا وخاليًا من الدرج.',
+    },
   },
 };
 
@@ -431,6 +519,12 @@ export interface ItineraryStrings {
   alertsUnsupported: string;
   alertTitle: string;
   alertBody: string; // {gate}
+  reorderHint: string;
+  addStep: string;
+  removeStep: string;
+  dragHandleLabel: string; // {step}
+  reminderToggle: string; // {step}
+  reminderOn: string; // {step}
 }
 
 export interface AnalyticsStrings {
@@ -469,6 +563,12 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     alertsUnsupported: 'Notifications are not supported on this device.',
     alertTitle: 'PitchPal — gate alert',
     alertBody: 'Gate {gate} is getting busy. Consider heading over now.',
+    reorderHint: 'Drag, or use arrow keys, to reorder your match-day steps.',
+    addStep: 'Add a step',
+    removeStep: 'Remove step',
+    dragHandleLabel: 'Reorder {step}',
+    reminderToggle: 'Remind me before {step}',
+    reminderOn: 'Reminder set for {step}',
   },
   es: {
     heading: 'Mi día de partido',
@@ -483,6 +583,12 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     alertsUnsupported: 'Las notificaciones no son compatibles con este dispositivo.',
     alertTitle: 'PitchPal — alerta de puerta',
     alertBody: 'La Puerta {gate} se está llenando. Considera dirigirte ahora.',
+    reorderHint: 'Arrastra, o usa las flechas del teclado, para reordenar tu día de partido.',
+    addStep: 'Añadir un paso',
+    removeStep: 'Eliminar paso',
+    dragHandleLabel: 'Reordenar {step}',
+    reminderToggle: 'Avísame antes de {step}',
+    reminderOn: 'Recordatorio activado para {step}',
   },
   fr: {
     heading: 'Mon jour de match',
@@ -497,6 +603,12 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     alertsUnsupported: "Les notifications ne sont pas prises en charge sur cet appareil.",
     alertTitle: 'PitchPal — alerte de porte',
     alertBody: 'La Porte {gate} se remplit. Pensez à vous y rendre maintenant.',
+    reorderHint: 'Faites glisser, ou utilisez les flèches du clavier, pour réorganiser votre jour de match.',
+    addStep: 'Ajouter une étape',
+    removeStep: "Supprimer l'étape",
+    dragHandleLabel: 'Réorganiser {step}',
+    reminderToggle: 'Me rappeler avant {step}',
+    reminderOn: 'Rappel activé pour {step}',
   },
   pt: {
     heading: 'Meu dia de jogo',
@@ -511,6 +623,12 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     alertsUnsupported: 'Notificações não são compatíveis com este dispositivo.',
     alertTitle: 'PitchPal — alerta de portão',
     alertBody: 'O Portão {gate} está enchendo. Considere ir para lá agora.',
+    reorderHint: 'Arraste, ou use as setas do teclado, para reordenar seu dia de jogo.',
+    addStep: 'Adicionar uma etapa',
+    removeStep: 'Remover etapa',
+    dragHandleLabel: 'Reordenar {step}',
+    reminderToggle: 'Lembrar antes de {step}',
+    reminderOn: 'Lembrete definido para {step}',
   },
   ar: {
     heading: 'يوم مباراتي',
@@ -525,6 +643,12 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     alertsUnsupported: 'الإشعارات غير مدعومة على هذا الجهاز.',
     alertTitle: 'PitchPal — تنبيه بوابة',
     alertBody: 'البوابة {gate} أصبحت مزدحمة. فكر في التوجه إليها الآن.',
+    reorderHint: 'اسحب، أو استخدم أسهم لوحة المفاتيح، لإعادة ترتيب خطوات يوم مباراتك.',
+    addStep: 'إضافة خطوة',
+    removeStep: 'إزالة الخطوة',
+    dragHandleLabel: 'إعادة ترتيب {step}',
+    reminderToggle: 'ذكّرني قبل {step}',
+    reminderOn: 'تم ضبط تذكير لـ {step}',
   },
 };
 

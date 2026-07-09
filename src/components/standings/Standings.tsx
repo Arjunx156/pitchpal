@@ -3,13 +3,13 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { GROUP_STANDINGS } from '../../features/tournament/standings';
 import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
 
-export function Standings() {
+export function Standings({ idPrefix = '' }: { idPrefix?: string }) {
   const { ui, fixture } = useFanContext();
   const rows = GROUP_STANDINGS[fixture.group] ?? [];
 
   return (
-    <motion.section className="standings" aria-labelledby="standings-heading" variants={panelItem}>
-      <h2 id="standings-heading" className="standings__heading">
+    <motion.section className="standings" aria-labelledby={`${idPrefix}standings-heading`} variants={panelItem}>
+      <h2 id={`${idPrefix}standings-heading`} className="standings__heading">
         {ui.standings.heading} — {fixture.group}
       </h2>
       <table className="standings__table">

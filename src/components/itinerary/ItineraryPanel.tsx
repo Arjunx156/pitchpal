@@ -1,25 +1,43 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BellRing, Check } from 'lucide-react';
+import { BellRing } from 'lucide-react';
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useMapFocus } from '../../features/map/useMapFocus';
 import { useGateAlerts } from '../../features/notifications/useGateAlerts';
+import { useItineraryOrder } from '../../features/itinerary/useItineraryOrder';
 import { buildItinerary, type ItineraryStepKind } from '../../features/itinerary/itinerary';
 import { SPEECH_LOCALE } from '../../features/voice/locale';
 import { ITINERARY } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
-import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
+import { panelItem, staggerContainer } from '../../lib/motion';
+import { ItineraryStepRow } from './ItineraryStepRow';
 
 function stepLabel(
   kind: ItineraryStepKind,
   strings: (typeof ITINERARY)['en'],
   gateId: string | undefined,
   transportName: string | undefined,
+  customLabel: string | undefined,
 ): string {
+  if (kind === 'custom') return customLabel ?? '';
   if (kind === 'gate') return fmt(strings.gate, { id: gateId ?? '' });
   if (kind === 'leave') return fmt(strings.leave, { transport: transportName ?? '' });
   return strings[kind];
+}
+
+function stepKey(kind: ItineraryStepKind, id: string | undefined): string {
+  return kind === 'custom' ? (id ?? '') : kind;
 }
 
 export function ItineraryPanel() {
@@ -34,10 +52,12 @@ export function ItineraryPanel() {
   }, []);
 
   const ops = useMemo(() => getOpsSnapshot(venue, now), [venue, now]);
-  const steps = useMemo(
+  const baseSteps = useMemo(
     () => buildItinerary(venue, ops, focus.originGateId),
     [venue, ops, focus.originGateId],
   );
+  const { steps, reorder } = useItineraryOrder(context.matchId, baseSteps);
+
   const gateStep = steps.find((s) => s.kind === 'gate');
   const alerts = useGateAlerts(
     ops,
@@ -50,6 +70,22 @@ export function ItineraryPanel() {
     () => new Intl.DateTimeFormat(SPEECH_LOCALE[context.language], { hour: 'numeric', minute: '2-digit' }),
     [context.language],
   );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const itemIds = steps.map((s) => stepKey(s.kind, s.id));
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const fromIndex = itemIds.indexOf(String(active.id));
+    const toIndex = itemIds.indexOf(String(over.id));
+    if (fromIndex === -1 || toIndex === -1) return;
+    reorder(fromIndex, toIndex);
+  };
 
   return (
     <motion.section className="itinerary" aria-labelledby="itinerary-heading" variants={panelItem}>
@@ -72,29 +108,32 @@ export function ItineraryPanel() {
           <p className="itinerary__unsupported">{strings.alertsUnsupported}</p>
         )}
       </div>
+      <p className="visually-hidden">{strings.reorderHint}</p>
 
-      <motion.ol className="itinerary__list" variants={staggerContainer} initial="hidden" animate="show">
-        {steps.map((step, i) => {
-          const isDone = step.time <= now;
-          const isCurrent = isDone && (steps[i + 1] ? steps[i + 1]!.time > now : false);
-          const cls = `itinerary__step${isDone ? ' is-done' : ''}${isCurrent ? ' is-current' : ''}`;
-          return (
-            <motion.li key={step.kind} className={cls} variants={rowItem}>
-              <span className="itinerary__marker" aria-hidden="true">
-                {isDone && !isCurrent ? (
-                  <Check size={11} strokeWidth={3} />
-                ) : (
-                  <span className="itinerary__marker-dot" />
-                )}
-              </span>
-              <span className="itinerary__time tabular">{formatter.format(step.time)}</span>
-              <span className="itinerary__label">
-                {stepLabel(step.kind, strings, step.gateId, step.transportName)}
-              </span>
-            </motion.li>
-          );
-        })}
-      </motion.ol>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+          <motion.ol className="itinerary__list" variants={staggerContainer} initial="hidden" animate="show">
+            {steps.map((step, i) => {
+              const isDone = step.time <= now;
+              const isCurrent = isDone && (steps[i + 1] ? steps[i + 1]!.time > now : false);
+              const label = stepLabel(step.kind, strings, step.gateId, step.transportName, step.label);
+              return (
+                <ItineraryStepRow
+                  key={stepKey(step.kind, step.id)}
+                  id={stepKey(step.kind, step.id)}
+                  step={step}
+                  label={label}
+                  timeLabel={formatter.format(step.time)}
+                  isDone={isDone}
+                  isCurrent={isCurrent}
+                  permission={alerts.permission}
+                  strings={strings}
+                />
+              );
+            })}
+          </motion.ol>
+        </SortableContext>
+      </DndContext>
     </motion.section>
   );
 }

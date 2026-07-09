@@ -1,14 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Cloud, CloudRain, Sun } from 'lucide-react';
+import { Cloud, CloudRain, Sun, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import {
   getOpsSnapshot,
   type CongestionLevel,
   type Weather,
 } from '../../features/ops/opsFeed';
+import { forecastGateRisk, type RiskTrend } from '../../features/ops/riskForecast';
 import { useFanContext } from '../../features/context/ContextProvider';
 import type { UiStrings } from '../../i18n/ui';
 import { panelItem } from '../../lib/motion';
+
+function TrendIcon({ trend }: { trend: RiskTrend }) {
+  if (trend === 'rising') return <TrendingUp size={12} aria-hidden="true" />;
+  if (trend === 'falling') return <TrendingDown size={12} aria-hidden="true" />;
+  return <Minus size={12} aria-hidden="true" />;
+}
 
 function WeatherIcon({ weather }: { weather: Weather }) {
   if (weather === 'rain') return <CloudRain size={16} aria-hidden="true" />;
@@ -32,7 +39,7 @@ function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
 
-export function OpsHud() {
+export function OpsHud({ idPrefix = '' }: { idPrefix?: string }) {
   const { ui, venue } = useFanContext();
   const [now, setNow] = useState(() => Date.now());
 
@@ -44,11 +51,13 @@ export function OpsHud() {
   const ops = getOpsSnapshot(venue, now);
   const remainingMs = Math.max(0, ops.kickoffAt - now);
   const countdown = `${Math.floor(remainingMs / 60000)}:${pad(Math.floor((remainingMs % 60000) / 1000))}`;
+  const risk = useMemo(() => forecastGateRisk(venue, now), [venue, now]);
+  const trendByGate = useMemo(() => new Map(risk.map((r) => [r.gateId, r.trend])), [risk]);
 
   return (
-    <motion.section className="ops" aria-labelledby="ops-heading" variants={panelItem}>
+    <motion.section className="ops" aria-labelledby={`${idPrefix}ops-heading`} variants={panelItem}>
       <div className="ops__top">
-        <h2 id="ops-heading" className="ops__heading">
+        <h2 id={`${idPrefix}ops-heading`} className="ops__heading">
           {ui.ops.heading}
         </h2>
         <span className="ops__weather">
@@ -82,6 +91,7 @@ export function OpsHud() {
         <ul>
           {ops.gates.map((gate) => {
             const pct = Math.round(gate.occupancy * 100);
+            const trend = trendByGate.get(gate.gateId) ?? 'steady';
             return (
               <li key={gate.gateId} className="ops__gate">
                 <span className="ops__gate-id">
@@ -99,6 +109,9 @@ export function OpsHud() {
                 </span>
                 <span className="ops__gate-queue tabular">
                   {ui.ops.queue.replace('{min}', String(gate.queueMinutes))}
+                </span>
+                <span className={`ops__gate-trend ops__gate-trend--${trend}`} aria-hidden="true">
+                  <TrendIcon trend={trend} />
                 </span>
               </li>
             );

@@ -1,0 +1,298 @@
+/* ================================================================== */
+/* Shell layout — app frame, topbar, view switch, workspace grid       */
+/* ================================================================== */
+.app {
+  max-width: var(--maxw-app);
+  margin-inline: auto;
+  padding: var(--space-5) var(--space-5) calc(var(--nav-bottom-height) + var(--space-6));
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.app > * {
+  min-width: 0;
+  max-width: 100%;
+}
+@media (min-width: 721px) {
+  .app {
+    padding-bottom: var(--space-6);
+  }
+}
+@media (max-width: 720px) {
+  .app {
+    padding: var(--space-3) var(--space-3) calc(var(--nav-bottom-height) + var(--space-4));
+    gap: var(--space-4);
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.brand__mark {
+  border-radius: 10px;
+  box-shadow: var(--shadow-1);
+}
+.brand__title {
+  font-size: var(--display-sm);
+  color: var(--color-text);
+  line-height: 1;
+}
+@media (max-width: 480px) {
+  .brand__title {
+    font-size: 1.5rem;
+  }
+  .topbar__install span {
+    display: none;
+  }
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  position: sticky;
+  top: var(--space-3);
+  z-index: var(--z-nav);
+}
+.topbar__actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- View switch (desktop: Home / Chat / Map) ---- */
+.viewswitch {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-1);
+  align-self: flex-start;
+  background: var(--color-glass-surface-2);
+  backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-pill);
+}
+@media (max-width: 720px) {
+  .viewswitch {
+    display: none;
+  }
+}
+.viewswitch__btn {
+  position: relative;
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  letter-spacing: var(--tracking-tight);
+  cursor: pointer;
+  transition: color var(--duration-fast);
+}
+.viewswitch__label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.viewswitch__pill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-1);
+}
+.viewswitch__btn.is-active {
+  color: var(--color-text);
+}
+
+/* ---- Workspace grid ---- */
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr) var(--map-w);
+  gap: var(--space-5);
+  align-items: start;
+  min-height: 0;
+}
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+.workspace__chat {
+  min-width: 0;
+}
+.workspace__chat:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-lg);
+}
+.app__footer {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 1180px) {
+  .workspace {
+    grid-template-columns: minmax(0, 1fr) var(--map-w);
+    grid-template-areas:
+      'chat right'
+      'left right';
+  }
+  .rail--left {
+    grid-area: left;
+  }
+  .rail--right {
+    grid-area: right;
+  }
+  .workspace__chat {
+    grid-area: chat;
+    position: static;
+  }
+}
+@media (max-width: 860px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'chat' 'left' 'right';
+  }
+}
+@media (max-width: 720px) {
+  .workspace {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'chat' 'left' 'right';
+  }
+  .app[data-view='chat'] .rail--left,
+  .app[data-view='chat'] .rail--right,
+  .app[data-view='home'] .rail--left,
+  .app[data-view='home'] .rail--right {
+    display: none;
+  }
+  .app[data-view='map'] .workspace__chat,
+  .app[data-view='map'] .rail--left {
+    display: none;
+  }
+  .app[data-view='itinerary'] .workspace__chat,
+  .app[data-view='itinerary'] .rail--right {
+    display: none;
+  }
+}
+
+/* ---- Panels — unified surface + header anatomy ---- */
+.context-bar,
+.ops,
+.analytics,
+.standings,
+.itinerary,
+.risk-panel {
+  background: var(--bento-card-bg);
+  border: 1px solid var(--bento-card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--bento-card-shadow);
+  transition: border-color var(--duration-normal) var(--ease-emphasized),
+    box-shadow var(--duration-normal) var(--ease-emphasized);
+}
+.context-bar:hover,
+.ops:hover,
+.analytics:hover,
+.standings:hover,
+.itinerary:hover,
+.risk-panel:hover {
+  border-color: color-mix(in oklch, var(--color-accent) 30%, var(--bento-card-border));
+  box-shadow: var(--bento-card-shadow-hover);
+}
+.chat,
+.map {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+}
+
+.context-bar__heading,
+.ops__heading,
+.analytics__heading,
+.standings__heading,
+.itinerary__heading,
+.risk-panel__heading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.context-bar__heading::before,
+.ops__heading::before,
+.analytics__heading::before,
+.standings__heading::before,
+.itinerary__heading::before,
+.risk-panel__heading::before {
+  content: '';
+  width: 3px;
+  height: 0.85em;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+/* Context bar fields */
+.context-bar {
+  gap: var(--space-3);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.field label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.field select,
+.field input {
+  height: 2.75rem;
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+}
+.field input {
+  padding-block: var(--space-2);
+}
+.field select:hover,
+.field input:hover {
+  border-color: var(--color-border-strong);
+}
+.field select:focus-visible,
+.field input:focus-visible {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 22%, transparent);
+}

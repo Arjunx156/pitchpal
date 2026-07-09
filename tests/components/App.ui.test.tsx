@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
@@ -27,7 +27,9 @@ describe('App shell interactions', () => {
 
   it('switches to the stadium map view', async () => {
     render(<App />);
-    await userEvent.click(screen.getByRole('button', { name: new RegExp(`^${UI.en.map.tabMap}$`) }));
+    const viewswitch = document.querySelector('.viewswitch');
+    if (!viewswitch) throw new Error('viewswitch nav not found');
+    await userEvent.click(within(viewswitch as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.map}$`) }));
     expect(document.querySelector('.app')?.getAttribute('data-view')).toBe('map');
   });
 });
