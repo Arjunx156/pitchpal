@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
 import { Command, Download, MessagesSquare, Map as MapIcon, LayoutGrid } from 'lucide-react';
 import { staggerContainer } from './lib/motion';
@@ -12,16 +12,35 @@ import { ContextBar } from './components/context-bar/ContextBar';
 import { OpsHud } from './components/ops/OpsHud';
 import { CrowdAnalytics } from './components/analytics/CrowdAnalytics';
 import { Standings } from './components/standings/Standings';
-import { ItineraryPanel } from './components/itinerary/ItineraryPanel';
 import { ChatWindow } from './components/chat/ChatWindow';
 import { StadiumMap } from './components/map/StadiumMap';
 import { DashboardHome } from './components/dashboard/DashboardHome';
 import { ThemeToggle } from './components/ui/ThemeToggle';
-import { CommandPalette } from './components/command/CommandPalette';
-import { Onboarding } from './components/onboarding/Onboarding';
+import { Skeleton } from './components/ui/skeleton';
 import { BottomNav, type Surface } from './components/nav/BottomNav';
-import { MoreSheet } from './components/nav/MoreSheet';
 import './styles/index.css';
+
+// Secondary surfaces load on demand: the itinerary pulls in dnd-kit, and the
+// overlays are invisible until opened — none of them belong in the first paint.
+const ItineraryPanel = lazy(() =>
+  import('./components/itinerary/ItineraryPanel').then((m) => ({ default: m.ItineraryPanel })),
+);
+const CommandPalette = lazy(() =>
+  import('./components/command/CommandPalette').then((m) => ({ default: m.CommandPalette })),
+);
+const Onboarding = lazy(() =>
+  import('./components/onboarding/Onboarding').then((m) => ({ default: m.Onboarding })),
+);
+const MoreSheet = lazy(() => import('./components/nav/MoreSheet').then((m) => ({ default: m.MoreSheet })));
+
+function PanelSkeleton() {
+  return (
+    <div className="glass-panel" style={{ borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' }}>
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="mt-3 h-20 w-full" />
+    </div>
+  );
+}
 
 const ONBOARDED_KEY = 'pitchpal.onboarded';
 
@@ -145,7 +164,9 @@ function Shell() {
               animate="show"
             >
               <ContextBar />
-              <ItineraryPanel />
+              <Suspense fallback={<PanelSkeleton />}>
+                <ItineraryPanel />
+              </Suspense>
               <Standings />
             </motion.aside>
             <div id="chat-main" tabIndex={-1} className="workspace__chat">
@@ -171,9 +192,21 @@ function Shell() {
       </div>
 
       <BottomNav surface={view} onChange={setView} onMore={() => setMoreOpen(true)} />
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onFocusMap={focusMap} />
-      <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
+      {moreOpen ? (
+        <Suspense fallback={null}>
+          <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+        </Suspense>
+      ) : null}
+      {paletteOpen ? (
+        <Suspense fallback={null}>
+          <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onFocusMap={focusMap} />
+        </Suspense>
+      ) : null}
+      {onboardingOpen ? (
+        <Suspense fallback={null}>
+          <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
+        </Suspense>
+      ) : null}
     </>
   );
 }

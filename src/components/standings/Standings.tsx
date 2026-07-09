@@ -1,9 +1,10 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { GROUP_STANDINGS } from '../../features/tournament/standings';
 import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
 
-export function Standings({ idPrefix = '' }: { idPrefix?: string }) {
+export const Standings = memo(function Standings({ idPrefix = '' }: { idPrefix?: string }) {
   const { ui, fixture } = useFanContext();
   const rows = GROUP_STANDINGS[fixture.group] ?? [];
 
@@ -45,4 +46,4 @@ export function Standings({ idPrefix = '' }: { idPrefix?: string }) {
       </table>
     </motion.section>
   );
-}
+});

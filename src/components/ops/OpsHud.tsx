@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, CloudRain, Sun, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import {
@@ -10,6 +10,7 @@ import { forecastGateRisk, type RiskTrend } from '../../features/ops/riskForecas
 import { useFanContext } from '../../features/context/ContextProvider';
 import type { UiStrings } from '../../i18n/ui';
 import { panelItem } from '../../lib/motion';
+import { useNow } from '../../lib/useNow';
 
 function TrendIcon({ trend }: { trend: RiskTrend }) {
   if (trend === 'rising') return <TrendingUp size={12} aria-hidden="true" />;
@@ -41,12 +42,7 @@ function pad(n: number): string {
 
 export function OpsHud({ idPrefix = '' }: { idPrefix?: string }) {
   const { ui, venue } = useFanContext();
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow(1000);
 
   const ops = getOpsSnapshot(venue, now);
   const remainingMs = Math.max(0, ops.kickoffAt - now);

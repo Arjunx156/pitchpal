@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingDown, TrendingUp, Minus, Navigation } from 'lucide-react';
 import { getOpsSnapshot, type CongestionLevel } from '../../features/ops/opsFeed';
@@ -9,6 +9,7 @@ import { useChatContext } from '../../features/chat/ChatProvider';
 import { useMapFocus } from '../../features/map/useMapFocus';
 import { fmt } from '../../i18n/answers';
 import { panelItem, rowItem, staggerContainer } from '../../lib/motion';
+import { useNow } from '../../lib/useNow';
 
 const HORIZON_MIN = 15;
 
@@ -24,12 +25,7 @@ export function GateRiskPanel() {
   const { ui, venue } = useFanContext();
   const { send, isStreaming } = useChatContext();
   const focus = useMapFocus();
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow(30_000);
 
   const ops = useMemo(() => getOpsSnapshot(venue, now), [venue, now]);
   const forecasts = useMemo(() => forecastGateRisk(venue, now, HORIZON_MIN), [venue, now]);

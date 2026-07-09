@@ -50,12 +50,23 @@ function ModeBadge({ mode, ui }: { mode: ChatMode; ui: UiStrings }) {
 
 export function ChatWindow() {
   const { context, ui } = useFanContext();
-  const { messages, isStreaming, mode, send } = useChatContext();
+  const { messages, isStreaming, mode, send, stop } = useChatContext();
   const { autoRead, output } = useSpeech();
   const endRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const spokenRef = useRef<string | null>(null);
+  // Follow the stream only while the user is at (or near) the bottom — a fan
+  // scrolled up to re-read an answer shouldn't have the viewport yanked away.
+  const stickToBottomRef = useRef(true);
+
+  const handleScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    stickToBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+  };
 
   useEffect(() => {
+    if (!stickToBottomRef.current) return;
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages]);
 
@@ -84,7 +95,7 @@ export function ChatWindow() {
         <ModeBadge mode={mode} ui={ui} />
       </div>
 
-      <div className="chat__scroll">
+      <div className="chat__scroll" ref={scrollRef} onScroll={handleScroll}>
         {messages.length === 0 ? (
           <div className="chat__welcome">
             <p className="chat__welcome-title display">{ui.tagline}</p>
@@ -128,7 +139,7 @@ export function ChatWindow() {
       <div className="flex px-4 pb-2">
         <TicketScan />
       </div>
-      <Composer onSend={send} disabled={isStreaming} />
+      <Composer onSend={send} onStop={stop} streaming={isStreaming} />
       <LiveRegion message={liveMessage} />
     </section>
   );

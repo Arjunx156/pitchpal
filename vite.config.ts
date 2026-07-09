@@ -76,11 +76,15 @@ export default defineConfig({
       output: {
         // Stable vendor chunks: the app code changes every deploy, the
         // frameworks don't — split them so returning fans hit warm caches
-        // and secondary surfaces (dnd-kit et al) stay out of the first paint.
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          motion: ['framer-motion'],
-          dnd: ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+        // and secondary surfaces (dnd-kit) stay out of the first paint.
+        // Function form so subpath modules (react/jsx-runtime …) match too.
+        manualChunks(id: string) {
+          const normalized = id.replace(/\\/g, '/');
+          if (!normalized.includes('node_modules')) return undefined;
+          if (/\/(react|react-dom|scheduler)\//.test(normalized)) return 'react';
+          if (normalized.includes('framer-motion')) return 'motion';
+          if (normalized.includes('@dnd-kit')) return 'dnd';
+          return undefined;
         },
       },
     },

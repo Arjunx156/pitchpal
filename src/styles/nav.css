@@ -40,6 +40,9 @@
   cursor: pointer;
   min-height: 44px;
 }
+.bottom-nav__btn:hover {
+  color: var(--color-text);
+}
 .bottom-nav__btn.is-active {
   color: var(--color-accent);
 }

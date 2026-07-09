@@ -40,6 +40,10 @@ export interface UseChatResult {
   isStreaming: boolean;
   mode: ChatMode;
   send: (text: string, image?: ChatImage) => Promise<void>;
+  /** Cancel the in-flight response, keeping whatever text already streamed. */
+  stop: () => void;
+  /** Resend the last request after a failed turn. */
+  retry: () => void;
 }
 
 export function useChat(
@@ -53,13 +57,23 @@ export function useChat(
   const [mode, setMode] = useState<ChatMode>('unknown');
   const idRef = useRef(0);
   const nextId = () => `m${(idRef.current += 1)}`;
+  // Mirror of `messages` so send/retry always read the freshest history
+  // (retry trims the failed turn synchronously before resending).
+  const messagesRef = useRef<ChatMessage[]>(messages);
+  messagesRef.current = messages;
+  const abortRef = useRef<AbortController | null>(null);
+  const lastRequestRef = useRef<{ text: string; image?: ChatImage } | null>(null);
 
   const send = useCallback(
     async (text: string, image?: ChatImage) => {
       const trimmed = text.trim();
       if ((!trimmed && !image) || isStreaming) return;
 
-      const history = messages.map((m) => ({ role: m.role, content: m.content }));
+      const controller = new AbortController();
+      abortRef.current = controller;
+      lastRequestRef.current = image ? { text: trimmed, image } : { text: trimmed };
+
+      const history = messagesRef.current.map((m) => ({ role: m.role, content: m.content }));
       const userMessage: ChatMessage = { id: nextId(), role: 'user', content: trimmed || '📷' };
       const assistantId = nextId();
       setMessages((prev) => [
@@ -82,6 +96,19 @@ export function useChat(
         );
       };
 
+      // Finalize an aborted turn: keep the partial answer, or drop the empty
+      // bubble entirely if nothing had streamed yet.
+      const finalizeAborted = (content: string) => {
+        setMessages((prev) =>
+          content
+            ? patchMessage(prev, assistantId, { content, status: undefined, pending: false })
+            : prev.filter((m) => m.id !== assistantId),
+        );
+      };
+
+      let content = '';
+      let gotCard = false;
+
       let response: Response;
       try {
         const request: ChatRequest = { message: trimmed || 'Scan my ticket.', context, history };
@@ -90,9 +117,14 @@ export function useChat(
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(request),
+          signal: controller.signal,
         });
       } catch {
-        runLocal(); // network unreachable → answer on-device
+        if (controller.signal.aborted) {
+          finalizeAborted(content);
+        } else {
+          runLocal(); // network unreachable → answer on-device
+        }
         setIsStreaming(false);
         return;
       }
@@ -105,7 +137,6 @@ export function useChat(
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
-        let content = '';
 
         for (;;) {
           const { done, value } = await reader.read();
@@ -118,7 +149,10 @@ export function useChat(
               content += event.value;
               setMessages((prev) => patchMessage(prev, assistantId, { content, pending: true }));
             } else if (event.type === 'tool_result') {
-              if (event.card) setMessages((prev) => appendCard(prev, assistantId, event.card as AnswerCard));
+              if (event.card) {
+                gotCard = true;
+                setMessages((prev) => appendCard(prev, assistantId, event.card as AnswerCard));
+              }
             } else if (event.type === 'status') {
               setMessages((prev) => patchMessage(prev, assistantId, { status: event.tool }));
             } else if (event.type === 'context') {
@@ -129,23 +163,53 @@ export function useChat(
           }
         }
 
+        // A card-only turn is a legitimate answer — only a truly empty stream
+        // (no text, no cards) is treated as a failure the user can retry.
+        if (!content && !gotCard) throw new Error('empty stream');
         setMessages((prev) =>
-          patchMessage(prev, assistantId, {
-            content: content || errorText,
-            status: undefined,
-            pending: false,
-          }),
+          patchMessage(prev, assistantId, { content, status: undefined, pending: false }),
         );
       } catch {
-        setMessages((prev) =>
-          patchMessage(prev, assistantId, { content: errorText, pending: false, error: true }),
-        );
+        if (controller.signal.aborted) {
+          finalizeAborted(content);
+        } else {
+          setMessages((prev) =>
+            patchMessage(prev, assistantId, {
+              content: content || errorText,
+              status: undefined,
+              pending: false,
+              error: true,
+            }),
+          );
+        }
       } finally {
+        abortRef.current = null;
         setIsStreaming(false);
       }
     },
-    [messages, context, venue, isStreaming, errorText, applyPatch],
+    [context, venue, isStreaming, errorText, applyPatch],
   );
 
-  return { messages, isStreaming, mode, send };
+  const stop = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
+
+  const retry = useCallback(() => {
+    const request = lastRequestRef.current;
+    if (!request || isStreaming) return;
+    // Trim the failed assistant turn (and its user turn) so the resent request
+    // doesn't carry the failure in its history or duplicate the bubbles.
+    const base = messagesRef.current;
+    let trimmed = base;
+    const last = base[base.length - 1];
+    if (last?.role === 'assistant' && last.error) {
+      trimmed = base.slice(0, -1);
+      if (trimmed[trimmed.length - 1]?.role === 'user') trimmed = trimmed.slice(0, -1);
+    }
+    messagesRef.current = trimmed;
+    setMessages(trimmed);
+    void send(request.text, request.image);
+  }, [isStreaming, send]);
+
+  return { messages, isStreaming, mode, send, stop, retry };
 }

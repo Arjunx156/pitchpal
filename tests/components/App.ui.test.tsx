@@ -14,7 +14,8 @@ describe('App shell interactions', () => {
   it('opens the command palette via the toolbar button and closes on Escape', async () => {
     render(<App />);
     await userEvent.click(screen.getByRole('button', { name: UI.en.commandPalette.open }));
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    // The palette is code-split — it mounts once its chunk resolves.
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   });
@@ -22,7 +23,7 @@ describe('App shell interactions', () => {
   it('opens the command palette with Ctrl+K', async () => {
     render(<App />);
     await userEvent.keyboard('{Control>}k{/Control}');
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
   });
 
   it('switches to the stadium map view', async () => {

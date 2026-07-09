@@ -29,6 +29,7 @@ export interface UiStrings {
   modeMockHint: string;
   errorGeneric: string;
   retry: string;
+  stop: string;
   install: string;
   card: {
     from: string;
@@ -180,6 +181,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     modeMockHint: 'Running with built-in sample answers. Add a Gemini API key for live responses.',
     errorGeneric: 'Something went wrong. Please try again.',
     retry: 'Retry',
+    stop: 'Stop',
     install: 'Install app',
     card: { from: 'From', to: 'To', walk: '{min} min walk', stepFree: 'Step-free', notStepFree: 'Not step-free', accessible: 'Accessible', hours: 'Hours', frequency: 'Frequency' },
     theme: { label: 'Theme', system: 'System', light: 'Light', dark: 'Dark' },
@@ -236,6 +238,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     modeMockHint: 'Funciona con respuestas de ejemplo. Añade una clave de Gemini para respuestas en vivo.',
     errorGeneric: 'Algo salió mal. Inténtalo de nuevo.',
     retry: 'Reintentar',
+    stop: 'Detener',
     install: 'Instalar app',
     card: { from: 'Desde', to: 'Hasta', walk: '{min} min a pie', stepFree: 'Sin escaleras', notStepFree: 'Con escaleras', accessible: 'Accesible', hours: 'Horario', frequency: 'Frecuencia' },
     theme: { label: 'Tema', system: 'Sistema', light: 'Claro', dark: 'Oscuro' },
@@ -292,6 +295,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     modeMockHint: "Fonctionne avec des réponses d'exemple. Ajoutez une clé Gemini pour des réponses en direct.",
     errorGeneric: "Une erreur s'est produite. Veuillez réessayer.",
     retry: 'Réessayer',
+    stop: 'Arrêter',
     install: "Installer l'app",
     card: { from: 'De', to: 'À', walk: '{min} min à pied', stepFree: 'Sans marches', notStepFree: 'Avec marches', accessible: 'Accessible', hours: 'Horaires', frequency: 'Fréquence' },
     theme: { label: 'Thème', system: 'Système', light: 'Clair', dark: 'Sombre' },
@@ -348,6 +352,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     modeMockHint: 'Funciona com respostas de exemplo. Adicione uma chave Gemini para respostas ao vivo.',
     errorGeneric: 'Algo deu errado. Tente novamente.',
     retry: 'Tentar novamente',
+    stop: 'Parar',
     install: 'Instalar app',
     card: { from: 'De', to: 'Para', walk: '{min} min a pé', stepFree: 'Sem degraus', notStepFree: 'Com degraus', accessible: 'Acessível', hours: 'Horário', frequency: 'Frequência' },
     theme: { label: 'Tema', system: 'Sistema', light: 'Claro', dark: 'Escuro' },
@@ -404,6 +409,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     modeMockHint: 'يعمل بإجابات نموذجية. أضف مفتاح Gemini للحصول على إجابات مباشرة.',
     errorGeneric: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
     retry: 'إعادة المحاولة',
+    stop: 'إيقاف',
     install: 'تثبيت التطبيق',
     card: { from: 'من', to: 'إلى', walk: '{min} دقيقة سيرًا', stepFree: 'خالٍ من الدرج', notStepFree: 'به درج', accessible: 'مناسب لذوي الإعاقة', hours: 'ساعات العمل', frequency: 'التكرار' },
     theme: { label: 'المظهر', system: 'النظام', light: 'فاتح', dark: 'داكن' },
@@ -499,6 +505,8 @@ export const TOOL_STATUS: Record<LanguageCode, Record<string, string>> = {
 
 export interface ScanStrings {
   button: string;
+  query: string;
+  invalid: string;
   scanning: string;
   hint: string;
   retake: string;
@@ -654,9 +662,9 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
 
 /** Localized strings for the ticket-scan flow. */
 export const SCAN_STRINGS: Record<LanguageCode, ScanStrings> = {
-  en: { button: 'Scan ticket', scanning: 'Reading your ticket…', hint: 'Snap or upload your ticket to auto-find your seat.', retake: 'Choose another', use: 'Find my seat', cancel: 'Cancel' },
-  es: { button: 'Escanear entrada', scanning: 'Leyendo tu entrada…', hint: 'Haz una foto o sube tu entrada para encontrar tu asiento.', retake: 'Elegir otra', use: 'Encontrar mi asiento', cancel: 'Cancelar' },
-  fr: { button: 'Scanner le billet', scanning: 'Lecture de votre billet…', hint: 'Prenez ou importez votre billet pour trouver votre place.', retake: 'En choisir un autre', use: 'Trouver ma place', cancel: 'Annuler' },
-  pt: { button: 'Escanear ingresso', scanning: 'Lendo seu ingresso…', hint: 'Tire uma foto ou envie seu ingresso para achar seu lugar.', retake: 'Escolher outro', use: 'Encontrar meu lugar', cancel: 'Cancelar' },
-  ar: { button: 'مسح التذكرة', scanning: 'نقرأ تذكرتك…', hint: 'صوّر أو ارفع تذكرتك للعثور على مقعدك تلقائيًا.', retake: 'اختر أخرى', use: 'اعثر على مقعدي', cancel: 'إلغاء' },
+  en: { query: 'Scan my ticket and find my seat.', invalid: "We couldn't read that image — try a clear JPEG or PNG photo of your ticket.", button: 'Scan ticket', scanning: 'Reading your ticket…', hint: 'Snap or upload your ticket to auto-find your seat.', retake: 'Choose another', use: 'Find my seat', cancel: 'Cancel' },
+  es: { query: 'Escanea mi entrada y encuentra mi asiento.', invalid: 'No pudimos leer esa imagen. Prueba con una foto clara de tu entrada en JPEG o PNG.', button: 'Escanear entrada', scanning: 'Leyendo tu entrada…', hint: 'Haz una foto o sube tu entrada para encontrar tu asiento.', retake: 'Elegir otra', use: 'Encontrar mi asiento', cancel: 'Cancelar' },
+  fr: { query: 'Scanne mon billet et trouve ma place.', invalid: "Impossible de lire cette image — essayez une photo nette de votre billet en JPEG ou PNG.", button: 'Scanner le billet', scanning: 'Lecture de votre billet…', hint: 'Prenez ou importez votre billet pour trouver votre place.', retake: 'En choisir un autre', use: 'Trouver ma place', cancel: 'Annuler' },
+  pt: { query: 'Escaneie meu ingresso e encontre meu lugar.', invalid: 'Não conseguimos ler essa imagem. Tente uma foto nítida do seu ingresso em JPEG ou PNG.', button: 'Escanear ingresso', scanning: 'Lendo seu ingresso…', hint: 'Tire uma foto ou envie seu ingresso para achar seu lugar.', retake: 'Escolher outro', use: 'Encontrar meu lugar', cancel: 'Cancelar' },
+  ar: { query: 'امسح تذكرتي واعثر على مقعدي.', invalid: 'تعذّرت قراءة هذه الصورة — جرّب صورة واضحة لتذكرتك بصيغة JPEG أو PNG.', button: 'مسح التذكرة', scanning: 'نقرأ تذكرتك…', hint: 'صوّر أو ارفع تذكرتك للعثور على مقعدك تلقائيًا.', retake: 'اختر أخرى', use: 'اعثر على مقعدي', cancel: 'إلغاء' },
 };

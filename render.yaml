@@ -24,3 +24,7 @@ services:
         value: gemini-2.5-flash
       - key: NODE_VERSION
         value: "22"
+      # Render's proxy sets x-forwarded-for reliably — let the rate limiter
+      # key on the real client IP instead of the proxy's address.
+      - key: TRUST_PROXY
+        value: "1"

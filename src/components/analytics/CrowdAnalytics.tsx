@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   busiestGate,
@@ -11,16 +10,12 @@ import { ANALYTICS } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { Sparkline } from '../charts/Sparkline';
 import { panelItem } from '../../lib/motion';
+import { useNow } from '../../lib/useNow';
 
 export function CrowdAnalytics({ idPrefix = '' }: { idPrefix?: string }) {
   const { context, venue } = useFanContext();
   const a = ANALYTICS[context.language];
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 10_000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow(10_000);
 
   const snapshot = getOpsSnapshot(venue, now);
   const busiest = busiestGate(snapshot);

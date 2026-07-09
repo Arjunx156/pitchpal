@@ -10,7 +10,7 @@ describe('Composer', () => {
 
   it('sends on Enter and clears the input', async () => {
     const onSend = vi.fn();
-    renderWithProviders(<Composer onSend={onSend} disabled={false} />);
+    renderWithProviders(<Composer onSend={onSend} onStop={vi.fn()} streaming={false} />);
     const input = screen.getByLabelText(UI.en.composerLabel);
 
     await userEvent.type(input, 'where is section 205');
@@ -22,7 +22,7 @@ describe('Composer', () => {
 
   it('inserts a newline on Shift+Enter without sending', async () => {
     const onSend = vi.fn();
-    renderWithProviders(<Composer onSend={onSend} disabled={false} />);
+    renderWithProviders(<Composer onSend={onSend} onStop={vi.fn()} streaming={false} />);
     const input = screen.getByLabelText(UI.en.composerLabel);
 
     await userEvent.type(input, 'line one');
@@ -34,7 +34,7 @@ describe('Composer', () => {
 
   it('disables the send button when empty and enables it after typing', async () => {
     const onSend = vi.fn();
-    renderWithProviders(<Composer onSend={onSend} disabled={false} />);
+    renderWithProviders(<Composer onSend={onSend} onStop={vi.fn()} streaming={false} />);
     const button = screen.getByRole('button', { name: UI.en.send });
     expect(button).toBeDisabled();
 
@@ -42,8 +42,24 @@ describe('Composer', () => {
     expect(button).toBeEnabled();
   });
 
-  it('disables the send button while streaming', () => {
-    renderWithProviders(<Composer onSend={vi.fn()} disabled={true} />);
-    expect(screen.getByRole('button', { name: UI.en.send })).toBeDisabled();
+  it('swaps send for a stop button while streaming and calls onStop', async () => {
+    const onStop = vi.fn();
+    renderWithProviders(<Composer onSend={vi.fn()} onStop={onStop} streaming={true} />);
+
+    expect(screen.queryByRole('button', { name: UI.en.send })).not.toBeInTheDocument();
+    const stopButton = screen.getByRole('button', { name: UI.en.stop });
+    await userEvent.click(stopButton);
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not send on Enter while streaming', async () => {
+    const onSend = vi.fn();
+    renderWithProviders(<Composer onSend={onSend} onStop={vi.fn()} streaming={true} />);
+    const input = screen.getByLabelText(UI.en.composerLabel);
+
+    await userEvent.type(input, 'question');
+    await userEvent.keyboard('{Enter}');
+
+    expect(onSend).not.toHaveBeenCalled();
   });
 });

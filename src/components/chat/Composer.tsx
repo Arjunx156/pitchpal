@@ -5,10 +5,12 @@ import { useSpeechInput } from '../../features/voice/useSpeechInput';
 
 interface ComposerProps {
   onSend: (text: string) => void;
-  disabled: boolean;
+  onStop: () => void;
+  /** True while an answer is streaming — the send button becomes a stop button. */
+  streaming: boolean;
 }
 
-export function Composer({ onSend, disabled }: ComposerProps) {
+export function Composer({ onSend, onStop, streaming }: ComposerProps) {
   const { context, ui } = useFanContext();
   const [value, setValue] = useState('');
   const speech = useSpeechInput(context.language, (final) => setValue(final));
@@ -20,7 +22,7 @@ export function Composer({ onSend, disabled }: ComposerProps) {
 
   const submit = () => {
     const text = value.trim();
-    if (!text || disabled) return;
+    if (!text || streaming) return;
     onSend(text);
     setValue('');
   };
@@ -63,10 +65,17 @@ export function Composer({ onSend, disabled }: ComposerProps) {
           {speech.listening ? <Square size={16} aria-hidden="true" /> : <Mic size={18} aria-hidden="true" />}
         </button>
       ) : null}
-      <button type="submit" className="composer__send" disabled={disabled || value.trim().length === 0}>
-        <Send size={16} aria-hidden="true" />
-        <span>{ui.send}</span>
-      </button>
+      {streaming ? (
+        <button type="button" className="composer__send composer__send--stop" onClick={onStop}>
+          <Square size={14} aria-hidden="true" />
+          <span>{ui.stop}</span>
+        </button>
+      ) : (
+        <button type="submit" className="composer__send" disabled={value.trim().length === 0}>
+          <Send size={16} aria-hidden="true" />
+          <span>{ui.send}</span>
+        </button>
+      )}
     </form>
   );
 }

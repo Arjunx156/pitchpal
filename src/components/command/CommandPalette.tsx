@@ -40,6 +40,19 @@ export function CommandPalette({ open, onClose, onFocusMap }: CommandPaletteProp
     return undefined;
   }, [open]);
 
+  // Return focus to whatever opened the palette when it closes.
+  useEffect(() => {
+    if (!open) return undefined;
+    const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    return () => previous?.focus();
+  }, [open]);
+
+  // Keep the highlighted option visible while arrowing through a long list.
+  useEffect(() => {
+    if (!open) return;
+    document.getElementById(`palette-opt-${active}`)?.scrollIntoView({ block: 'nearest' });
+  }, [open, active]);
+
   // Close on Escape regardless of where focus currently sits.
   useEffect(() => {
     if (!open) return undefined;

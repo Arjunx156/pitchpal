@@ -27,6 +27,7 @@ describe('accessibility (axe)', () => {
   it('the onboarding dialog has no automatically-detectable violations', async () => {
     localStorage.clear(); // force first-run onboarding
     const { container } = render(<App />);
+    await screen.findByRole('dialog'); // onboarding is code-split — wait for its chunk
     const results = await axe(container, axeOptions);
     expect(results).toHaveNoViolations();
   });
@@ -34,6 +35,7 @@ describe('accessibility (axe)', () => {
   it('the open More sheet has no violations (components are mounted in both rail and sheet)', async () => {
     render(<App />);
     await userEvent.click(screen.getByRole('button', { name: new RegExp(`^${UI.en.nav.more}`) }));
+    await screen.findByRole('dialog'); // sheet is code-split — wait for its chunk
     // Radix portals the sheet to document.body, and the rail copies stay in
     // the DOM — audit the whole document to catch duplicate-id regressions.
     const results = await axe(document.body, axeOptions);

@@ -117,6 +117,12 @@
   border-color: color-mix(in oklch, var(--color-accent) 55%, var(--color-border));
   background: color-mix(in oklch, var(--color-accent) 10%, var(--color-surface-2));
 }
+.chip-btn__reason {
+  display: block;
+  font-size: var(--text-2xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
 
 .cmdk-btn {
   display: inline-flex;

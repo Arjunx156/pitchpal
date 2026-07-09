@@ -1,4 +1,4 @@
-import { useMemo, useState, type KeyboardEvent } from 'react';
+import { memo, useMemo, useState, type KeyboardEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Flame } from 'lucide-react';
 import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
@@ -19,7 +19,7 @@ function onActivate(handler: () => void) {
   };
 }
 
-export function StadiumMap() {
+export const StadiumMap = memo(function StadiumMap() {
   const { ui, context, venue } = useFanContext();
   const { send, isStreaming } = useChatContext();
   const focus = useMapFocus();
@@ -198,4 +198,4 @@ export function StadiumMap() {
       <p className="map__hint">{context.location ? summary : ui.map.summaryIdle}</p>
     </motion.section>
   );
-}
+});

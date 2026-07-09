@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useMapFocus } from '../../features/map/useMapFocus';
@@ -7,6 +7,7 @@ import { buildItinerary, type ItineraryStepKind } from '../../features/itinerary
 import { SPEECH_LOCALE } from '../../features/voice/locale';
 import { ITINERARY } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
+import { useNow } from '../../lib/useNow';
 
 const PREVIEW_COUNT = 3;
 
@@ -26,13 +27,8 @@ function stepLabel(
 export function ItineraryPreviewTile({ onSeeAll }: { onSeeAll: () => void }) {
   const { ui, context, venue } = useFanContext();
   const focus = useMapFocus();
-  const [now, setNow] = useState(() => Date.now());
+  const now = useNow(30_000);
   const strings = ITINERARY[context.language];
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(id);
-  }, []);
 
   const ops = useMemo(() => getOpsSnapshot(venue, now), [venue, now]);
   const baseSteps = useMemo(

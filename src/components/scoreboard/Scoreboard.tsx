@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
@@ -8,6 +7,7 @@ import { latestMoments, matchProgress, type MatchMoment } from '../../features/t
 import { MOMENT_LABELS } from '../../i18n/answers';
 import type { LanguageCode } from '../../features/context/types';
 import { ScoreDigit, TeamBlock } from './ScoreDigit';
+import { useNow } from '../../lib/useNow';
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
@@ -21,12 +21,7 @@ function momentText(moment: MatchMoment, language: LanguageCode): string {
 
 export function Scoreboard() {
   const { ui, context, venue, fixture } = useFanContext();
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow(1000);
 
   const ops = getOpsSnapshot(venue, now);
   const score = liveScore(ops.matchClock);

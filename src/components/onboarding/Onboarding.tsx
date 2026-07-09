@@ -31,11 +31,37 @@ export function Onboarding({ open, onClose }: { open: boolean; onClose: () => vo
   const isLast = step === TOTAL - 1;
 
   const onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
+    if (e.key === 'Escape') {
+      onClose();
+      return;
+    }
+    // Focus trap: keep Tab cycling inside the dialog while it is modal.
+    if (e.key !== 'Tab') return;
+    const panel = panelRef.current;
+    if (!panel) return;
+    const focusables = panel.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (!first || !last) return;
+    if (e.shiftKey && (document.activeElement === first || document.activeElement === panel)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   };
 
   return (
-    <div className="onb-overlay" onKeyDown={onKeyDown}>
+    <div
+      className="onb-overlay"
+      onKeyDown={onKeyDown}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div
         className="onb"
         role="dialog"

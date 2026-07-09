@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
-import { Loader2, Volume2 } from 'lucide-react';
+import { Loader2, RotateCcw, Volume2 } from 'lucide-react';
 import type { ChatMessage } from '../../features/chat/types';
 import { useFanContext } from '../../features/context/ContextProvider';
+import { useChatContext } from '../../features/chat/ChatProvider';
 import { useSpeech } from '../../features/voice/SpeechProvider';
 import { TOOL_STATUS, type UiStrings } from '../../i18n/ui';
 import { CardRenderer } from '../cards/CardRenderer';
 
 export function MessageBubble({ message, ui }: { message: ChatMessage; ui: UiStrings }) {
   const { context } = useFanContext();
+  const { retry, isStreaming } = useChatContext();
   const { output } = useSpeech();
   const speaker = message.role === 'user' ? ui.you : ui.assistant;
   const toolLabel =
@@ -38,6 +40,12 @@ export function MessageBubble({ message, ui }: { message: ChatMessage; ui: UiStr
         </p>
       ) : null}
       {message.content ? <p className="bubble__text">{message.content}</p> : null}
+      {message.error && !isStreaming ? (
+        <button type="button" className="bubble__retry" onClick={retry}>
+          <RotateCcw size={13} aria-hidden="true" />
+          {ui.retry}
+        </button>
+      ) : null}
       {showTyping ? (
         <p className="bubble__typing" aria-label={ui.thinking}>
           <span className="dot" aria-hidden="true" />

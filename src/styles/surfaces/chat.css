@@ -175,12 +175,6 @@
   scrollbar-width: thin;
   padding-bottom: var(--space-1);
 }
-.quick-actions__reason {
-  display: block;
-  font-size: var(--text-2xs);
-  color: var(--color-text-muted);
-  font-weight: 400;
-}
 
 /* Messages */
 .messages {
@@ -212,6 +206,30 @@
 }
 .bubble--error {
   border-color: var(--color-danger);
+  background: color-mix(in oklch, var(--color-danger) 6%, var(--color-surface-2));
+}
+.bubble__retry {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--duration-fast), color var(--duration-fast);
+}
+.bubble__retry:hover {
+  background: var(--color-danger);
+  color: var(--color-on-accent);
+}
+.bubble__retry:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 .bubble__speaker {
   display: inline-flex;
@@ -322,6 +340,18 @@
 .composer__send:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+/* While streaming the send button flips into a stop control — quieter surface,
+   same footprint, so the composer doesn't jump. */
+.composer__send--stop {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+}
+.composer__send--stop:hover:not(:disabled) {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  transform: none;
 }
 
 /* ---- Tool-result cards ---- */

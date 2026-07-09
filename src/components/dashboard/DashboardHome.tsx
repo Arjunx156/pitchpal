@@ -1,38 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Accessibility, Armchair, Clock3, LogOut, MapPinned, Navigation, Sparkles, Ticket, Trophy } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import { Armchair, Clock3, MapPinned, Ticket, Trophy } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { useMapFocus } from '../../features/map/useMapFocus';
 import { useItineraryOrder } from '../../features/itinerary/useItineraryOrder';
 import { buildItinerary } from '../../features/itinerary/itinerary';
-import { suggestNextActions, type SuggestionKind } from '../../features/suggestions/suggestNextActions';
+import { suggestNextActions } from '../../features/suggestions/suggestNextActions';
 import { staggerContainer, panelItem } from '../../lib/motion';
 import { ItineraryPreviewTile } from './ItineraryPreviewTile';
 import { GateRiskPanel } from '../risk/GateRiskPanel';
 import { StadiumMap } from '../map/StadiumMap';
 import { CrowdAnalytics } from '../analytics/CrowdAnalytics';
 import { Standings } from '../standings/Standings';
-
-const SUGGESTION_ICONS: Record<SuggestionKind, LucideIcon> = {
-  amenity: Sparkles,
-  reroute: Navigation,
-  leave: LogOut,
-  accessible: Accessibility,
-};
+import { SuggestionChip } from '../quick-actions/SuggestionChip';
+import { useNow } from '../../lib/useNow';
 
 export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void }) {
   const { ui, context, venue } = useFanContext();
   const { send, isStreaming } = useChatContext();
   const focus = useMapFocus();
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow(30_000);
 
   const ops = useMemo(() => getOpsSnapshot(venue, now), [venue, now]);
   const baseSteps = useMemo(
@@ -139,22 +128,16 @@ export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void
                   ))
                 )
               : null}
-            {suggestions.map((suggestion) => {
-              const Icon = SUGGESTION_ICONS[suggestion.kind];
-              return (
-                <li key={suggestion.id}>
-                  <button
-                    type="button"
-                    className="chip-btn chip-btn--suggested"
-                    disabled={isStreaming}
-                    onClick={() => void send(suggestion.query)}
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                    <span>{suggestion.reason}</span>
-                  </button>
-                </li>
-              );
-            })}
+            {suggestions.map((suggestion) => (
+              <li key={suggestion.id}>
+                <SuggestionChip
+                  suggestion={suggestion}
+                  ui={ui}
+                  disabled={isStreaming}
+                  onRun={(query) => void send(query)}
+                />
+              </li>
+            ))}
           </ul>
         </motion.section>
 

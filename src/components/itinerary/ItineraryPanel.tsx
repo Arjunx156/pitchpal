@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { BellRing } from 'lucide-react';
 import {
@@ -22,6 +22,7 @@ import { ITINERARY } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { panelItem, staggerContainer } from '../../lib/motion';
 import { ItineraryStepRow } from './ItineraryStepRow';
+import { useNow } from '../../lib/useNow';
 
 function stepLabel(
   kind: ItineraryStepKind,
@@ -43,13 +44,8 @@ function stepKey(kind: ItineraryStepKind, id: string | undefined): string {
 export function ItineraryPanel() {
   const { context, venue } = useFanContext();
   const focus = useMapFocus();
-  const [now, setNow] = useState(() => Date.now());
+  const now = useNow(30_000);
   const strings = ITINERARY[context.language];
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
-    return () => clearInterval(id);
-  }, []);
 
   const ops = useMemo(() => getOpsSnapshot(venue, now), [venue, now]);
   const baseSteps = useMemo(
