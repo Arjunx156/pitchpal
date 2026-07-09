@@ -59,12 +59,32 @@ export default defineConfig({
           { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png,woff2}'] },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Never let the SPA navigation fallback swallow the SSE endpoint.
+        navigateFallbackDenylist: [/^\/api\//],
+      },
       devOptions: { enabled: false },
     }),
   ],
   server: { port: 5173 },
-  build: { outDir: 'dist', sourcemap: false, target: 'es2022' },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    target: 'es2022',
+    rollupOptions: {
+      output: {
+        // Stable vendor chunks: the app code changes every deploy, the
+        // frameworks don't — split them so returning fans hit warm caches
+        // and secondary surfaces (dnd-kit et al) stay out of the first paint.
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          motion: ['framer-motion'],
+          dnd: ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities'],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
@@ -78,7 +98,6 @@ export default defineConfig({
         'src/main.tsx',
         'src/**/*.d.ts',
         'server/index.ts',
-        'server/agent.ts', // live Gemini network integration — exercised manually
         'src/i18n/**',
         'src/components/ui/**', // shadcn primitives (thin Radix wrappers)
         // Type-only modules (interfaces/unions) — no runtime to cover.

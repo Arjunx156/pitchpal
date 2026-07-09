@@ -3,6 +3,8 @@ export type GenerationMode = 'live' | 'mock';
 export interface AppEnv {
   GEMINI_API_KEY?: string | undefined;
   GEMINI_MODEL?: string | undefined;
+  /** Set to '1'/'true' when a trusted proxy fronts the app; enables x-forwarded-for. */
+  TRUST_PROXY?: string | undefined;
 }
 
 /** Live when a non-empty API key is present, otherwise the offline mock. */

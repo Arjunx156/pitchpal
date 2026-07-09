@@ -49,8 +49,14 @@ export interface RateLimitResult {
 }
 
 export function rateLimit(ip: string, now: number = Date.now()): RateLimitResult {
-  // Opportunistic cap to keep memory bounded on a long-running instance.
-  if (hits.size > MAX_TRACKED_IPS) hits.clear();
+  // Opportunistic sweep to keep memory bounded on a long-running instance —
+  // evict only IPs whose window has fully expired, never active ones.
+  if (hits.size > MAX_TRACKED_IPS) {
+    for (const [key, times] of hits) {
+      const last = times[times.length - 1];
+      if (last === undefined || now - last >= WINDOW_MS) hits.delete(key);
+    }
+  }
 
   const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
 
