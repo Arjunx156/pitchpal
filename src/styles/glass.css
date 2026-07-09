@@ -163,22 +163,45 @@
 }
 
 /* ---- Bento tiles ---- */
-/* Grid-breaking editorial composition: tiles vary in span, not a uniform
-   card wall. Each tile gets scale-contrast via --bento-tile-* modifiers
-   set inline by the consuming component (col/row span). */
+/* Grid-breaking editorial composition: the map centerpiece spans 2x2 while
+   support tiles fill around it — deliberate scale contrast, not a uniform
+   card wall. Cells stretch their single child to full height so every row
+   reads as one clean band. */
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-flow: dense;
+  gap: var(--space-5);
+  align-items: stretch;
 }
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   .bento-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .bento-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+.bento-cell {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bento-cell > * {
+  flex: 1;
+  min-height: 0;
+}
+.bento-cell--map {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+@media (max-width: 640px) {
+  .bento-cell--map {
+    grid-column: span 1;
+    grid-row: span 1;
   }
 }
 .bento-tile {
@@ -210,23 +233,8 @@
 .bento-tile--span-2 {
   grid-column: span 2;
 }
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .bento-tile--span-2 {
-    grid-column: span 1;
-  }
-}
-.bento-tile--hero {
-  grid-column: span 2;
-  grid-row: span 2;
-}
-@media (max-width: 860px) {
-  .bento-tile--hero {
-    grid-column: span 2;
-    grid-row: span 1;
-  }
-}
-@media (max-width: 480px) {
-  .bento-tile--hero {
     grid-column: span 1;
   }
 }

@@ -131,33 +131,39 @@ function Shell() {
           ))}
         </nav>
 
-        <main className="workspace">
-          <motion.aside
-            className="rail rail--left"
-            aria-label={ui.settingsHeading}
-            variants={staggerContainer}
-            initial="hidden"
-            animate="show"
-          >
-            <ContextBar />
-            <ItineraryPanel />
-            <Standings />
-          </motion.aside>
-          <div id="chat-main" tabIndex={-1} className="workspace__chat">
-            {view === 'home' ? <DashboardHome onOpenItinerary={openItinerary} /> : <ChatWindow />}
-          </div>
-          <motion.aside
-            className="rail rail--right workspace__map"
-            aria-label={ui.map.heading}
-            variants={staggerContainer}
-            initial="hidden"
-            animate="show"
-          >
-            <StadiumMap />
-            <OpsHud />
-            <CrowdAnalytics />
-          </motion.aside>
-        </main>
+        {view === 'home' ? (
+          <main id="chat-main" tabIndex={-1} className="workspace workspace--home">
+            <DashboardHome onOpenItinerary={openItinerary} />
+          </main>
+        ) : (
+          <main className="workspace">
+            <motion.aside
+              className="rail rail--left"
+              aria-label={ui.settingsHeading}
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+            >
+              <ContextBar />
+              <ItineraryPanel />
+              <Standings />
+            </motion.aside>
+            <div id="chat-main" tabIndex={-1} className="workspace__chat">
+              <ChatWindow />
+            </div>
+            <motion.aside
+              className="rail rail--right workspace__map"
+              aria-label={ui.map.heading}
+              variants={staggerContainer}
+              initial="hidden"
+              animate="show"
+            >
+              <StadiumMap />
+              <OpsHud />
+              <CrowdAnalytics />
+            </motion.aside>
+          </main>
+        )}
 
         <footer className="app__footer">
           <p>{ui.dataNote}</p>

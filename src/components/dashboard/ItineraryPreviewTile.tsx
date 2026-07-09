@@ -8,7 +8,7 @@ import { SPEECH_LOCALE } from '../../features/voice/locale';
 import { ITINERARY } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 
-const PREVIEW_COUNT = 2;
+const PREVIEW_COUNT = 3;
 
 function stepLabel(
   kind: ItineraryStepKind,
@@ -50,7 +50,7 @@ export function ItineraryPreviewTile({ onSeeAll }: { onSeeAll: () => void }) {
   const preview = upcoming.length > 0 ? upcoming : steps.slice(-PREVIEW_COUNT);
 
   return (
-    <div className="bento-tile bento-tile--span-2">
+    <div className="bento-tile">
       <span className="bento-tile__eyebrow">{strings.heading}</span>
       <ul className="dashboard-itinerary-preview__list">
         {preview.map((step) => (

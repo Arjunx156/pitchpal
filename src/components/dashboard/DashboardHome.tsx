@@ -9,11 +9,12 @@ import { useMapFocus } from '../../features/map/useMapFocus';
 import { useItineraryOrder } from '../../features/itinerary/useItineraryOrder';
 import { buildItinerary } from '../../features/itinerary/itinerary';
 import { suggestNextActions, type SuggestionKind } from '../../features/suggestions/suggestNextActions';
-import { GROUP_STANDINGS } from '../../features/tournament/standings';
 import { staggerContainer, panelItem } from '../../lib/motion';
-import { DashboardHeroCard } from './DashboardHeroCard';
 import { ItineraryPreviewTile } from './ItineraryPreviewTile';
 import { GateRiskPanel } from '../risk/GateRiskPanel';
+import { StadiumMap } from '../map/StadiumMap';
+import { CrowdAnalytics } from '../analytics/CrowdAnalytics';
+import { Standings } from '../standings/Standings';
 
 const SUGGESTION_ICONS: Record<SuggestionKind, LucideIcon> = {
   amenity: Sparkles,
@@ -23,7 +24,7 @@ const SUGGESTION_ICONS: Record<SuggestionKind, LucideIcon> = {
 };
 
 export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void }) {
-  const { ui, context, venue, fixture } = useFanContext();
+  const { ui, context, venue } = useFanContext();
   const { send, isStreaming } = useChatContext();
   const focus = useMapFocus();
   const [now, setNow] = useState(() => Date.now());
@@ -40,25 +41,27 @@ export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void
   );
   const { steps } = useItineraryOrder(context.matchId, baseSteps);
   const suggestions = useMemo(() => suggestNextActions(context, ops, steps, ui), [context, ops, steps, ui]);
-  const standingsRows = GROUP_STANDINGS[fixture.group] ?? [];
 
   return (
     <div className="dashboard">
       <div className="dashboard__heading">
         <h1 className="dashboard__title display">{ui.dashboard.heading}</h1>
-        <p className="dashboard__subtitle">{fixture.group}</p>
+        <p className="dashboard__subtitle">{venue.name}</p>
       </div>
 
       <motion.div className="bento-grid" variants={staggerContainer} initial="hidden" animate="show">
-        <DashboardHeroCard />
+        {/* Centerpiece: the live stadium map anchors the whole composition. */}
+        <motion.div variants={panelItem} className="bento-cell bento-cell--map">
+          <StadiumMap />
+        </motion.div>
 
-        <motion.div variants={panelItem}>
+        <motion.div variants={panelItem} className="bento-cell">
           <GateRiskPanel />
         </motion.div>
 
         <motion.section
           variants={panelItem}
-          className="bento-tile dashboard-suggested"
+          className="bento-cell bento-tile dashboard-suggested"
           aria-labelledby="dashboard-suggested-heading"
         >
           <span className="bento-tile__eyebrow" id="dashboard-suggested-heading">
@@ -104,26 +107,17 @@ export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void
           </ul>
         </motion.section>
 
-        <motion.div variants={panelItem}>
+        <motion.div variants={panelItem} className="bento-cell">
           <ItineraryPreviewTile onSeeAll={onOpenItinerary} />
         </motion.div>
 
-        <motion.section variants={panelItem} className="bento-tile" aria-labelledby="dashboard-standings-heading">
-          <span className="bento-tile__eyebrow" id="dashboard-standings-heading">
-            {ui.standings.heading}
-          </span>
-          <ul className="dashboard-itinerary-preview__list">
-            {standingsRows.slice(0, 4).map((row) => (
-              <li key={row.code} className="dashboard-itinerary-preview__row">
-                <span className="standings__code">{row.code}</span>
-                <span>{row.name}</span>
-                <span className="standings__pts tabular" style={{ marginInlineStart: 'auto' }}>
-                  {row.points}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </motion.section>
+        <motion.div variants={panelItem} className="bento-cell">
+          <CrowdAnalytics />
+        </motion.div>
+
+        <motion.div variants={panelItem} className="bento-cell">
+          <Standings />
+        </motion.div>
       </motion.div>
     </div>
   );

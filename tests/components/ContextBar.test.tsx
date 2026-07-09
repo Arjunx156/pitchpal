@@ -5,6 +5,15 @@ import App from '../../src/App';
 import { UI } from '../../src/i18n/ui';
 import { markOnboarded } from '../helpers/render';
 
+/** The context bar lives in the chat view's rail — switch there first. */
+async function openChatView() {
+  const viewswitch = document.querySelector('.viewswitch');
+  if (!viewswitch) throw new Error('viewswitch nav not found');
+  await userEvent.click(
+    within(viewswitch as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.chat}$`) }),
+  );
+}
+
 describe('ContextBar', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -14,9 +23,7 @@ describe('ContextBar', () => {
 
   it('switches the whole UI language and sets RTL for Arabic', async () => {
     render(<App />);
-    const viewswitch = document.querySelector('.viewswitch');
-    if (!viewswitch) throw new Error('viewswitch nav not found');
-    await userEvent.click(within(viewswitch as HTMLElement).getByRole('button', { name: new RegExp(`^${UI.en.nav.chat}$`) }));
+    await openChatView();
     expect(screen.getByText(UI.en.tagline)).toBeInTheDocument();
 
     await userEvent.selectOptions(screen.getByLabelText(UI.en.languageLabel), 'ar');
@@ -28,6 +35,7 @@ describe('ContextBar', () => {
 
   it('persists the fan location to storage', async () => {
     render(<App />);
+    await openChatView();
     await userEvent.type(screen.getByLabelText(UI.en.locationLabel), 'Gate B');
 
     const saved = JSON.parse(localStorage.getItem('pitchpal.context') ?? '{}');
@@ -36,6 +44,7 @@ describe('ContextBar', () => {
 
   it('updates the accessibility profile', async () => {
     render(<App />);
+    await openChatView();
     await userEvent.selectOptions(
       screen.getByLabelText(UI.en.accessibilityLabel),
       UI.en.accessibility.wheelchair,
@@ -46,6 +55,7 @@ describe('ContextBar', () => {
 
   it('switches match, venue and standings group together', async () => {
     render(<App />);
+    await openChatView();
     expect(screen.getByLabelText(/Brazil.*Argentina/)).toBeInTheDocument();
 
     await userEvent.selectOptions(screen.getByLabelText(UI.en.matchLabel), 'usa-mex');
