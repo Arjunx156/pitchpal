@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Accessibility, LogOut, Navigation, Sparkles } from 'lucide-react';
+import { Accessibility, Armchair, LogOut, Navigation, Sparkles, Trophy } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
@@ -65,9 +65,26 @@ export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void
             {ui.dashboard.suggestedHeading}
           </span>
           <ul className="dashboard-suggested__list">
-            {suggestions.length === 0 ? (
-              <li className="text-sm text-muted-foreground">{ui.quickActions.heading}</li>
-            ) : null}
+            {suggestions.length === 0
+              ? (
+                  [
+                    { key: 'seat' as const, icon: Armchair },
+                    { key: 'score' as const, icon: Trophy },
+                  ].map(({ key, icon: Icon }) => (
+                    <li key={key}>
+                      <button
+                        type="button"
+                        className="chip-btn"
+                        disabled={isStreaming}
+                        onClick={() => void send(ui.quickActions[key].query)}
+                      >
+                        <Icon size={16} aria-hidden="true" />
+                        <span>{ui.quickActions[key].label}</span>
+                      </button>
+                    </li>
+                  ))
+                )
+              : null}
             {suggestions.map((suggestion) => {
               const Icon = SUGGESTION_ICONS[suggestion.kind];
               return (

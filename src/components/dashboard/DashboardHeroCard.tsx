@@ -42,9 +42,11 @@ export function DashboardHeroCard() {
 
       <div className="dashboard-hero__score">
         <TeamBlock code={home.code} name={home.name} align="start" size="lg" />
-        <span className="dashboard-hero__sep tabular">
+        <span className="dashboard-hero__scoreline tabular">
           <ScoreDigit value={score.home} className="dashboard-hero__digit" />
-          <span className="px-1.5 text-border-strong sm:px-3">:</span>
+          <span className="dashboard-hero__sep" aria-hidden="true">
+            :
+          </span>
           <ScoreDigit value={score.away} className="dashboard-hero__digit" />
         </span>
         <TeamBlock code={away.code} name={away.name} align="end" size="lg" />

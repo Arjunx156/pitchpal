@@ -83,6 +83,11 @@
     display: none;
   }
 }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .viewswitch {
+    background: var(--color-surface-2);
+  }
+}
 .viewswitch__btn {
   position: relative;
   flex: 1;
