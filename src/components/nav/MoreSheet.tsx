@@ -35,17 +35,18 @@ export function MoreSheet({ open, onClose }: MoreSheetProps) {
             ) : null}
           </div>
 
+          {/* idPrefix keeps ids unique — these components are also mounted in the desktop rails. */}
           <div className="more-sheet__section">
-            <ContextBar />
+            <ContextBar idPrefix="sheet-" />
           </div>
           <div className="more-sheet__section">
-            <OpsHud />
+            <OpsHud idPrefix="sheet-" />
           </div>
           <div className="more-sheet__section">
-            <CrowdAnalytics />
+            <CrowdAnalytics idPrefix="sheet-" />
           </div>
           <div className="more-sheet__section">
-            <Standings />
+            <Standings idPrefix="sheet-" />
           </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

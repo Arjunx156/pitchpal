@@ -154,7 +154,10 @@
   border: 1px solid var(--glass-panel-border);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass-panel {
+  .glass-panel,
+  .btn-secondary,
+  .icon-btn,
+  .cmdk-btn {
     background: var(--color-surface-2);
   }
 }

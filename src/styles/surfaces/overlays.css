@@ -26,6 +26,11 @@
   flex-direction: column;
   animation: rise var(--duration-normal) var(--ease-emphasized);
 }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .palette {
+    background: var(--color-elevated);
+  }
+}
 .palette__search {
   display: flex;
   align-items: center;

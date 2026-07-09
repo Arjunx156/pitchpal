@@ -86,6 +86,15 @@
   gap: var(--space-4);
   animation: rise var(--duration-normal) var(--ease-emphasized);
 }
+/* Solid fallback when backdrop-filter is unsupported — translucent glass
+   over the page gradient would otherwise hurt text contrast. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bottom-nav,
+  .more-sheet__content {
+    background: var(--color-surface-2);
+  }
+}
+
 .more-sheet__grabber {
   width: 2.5rem;
   height: 4px;
