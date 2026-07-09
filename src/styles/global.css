@@ -24,8 +24,11 @@ body {
   color: var(--color-text);
   background-color: var(--color-bg);
   background-image:
-    radial-gradient(120% 80% at 100% -10%, color-mix(in oklch, var(--color-accent) 16%, transparent), transparent 55%),
-    radial-gradient(100% 70% at -10% 110%, color-mix(in oklch, var(--color-pitch) 12%, transparent), transparent 55%);
+    linear-gradient(115deg, color-mix(in oklch, var(--color-surface-2) 78%, transparent) 0 1px, transparent 1px 100%),
+    radial-gradient(90% 70% at 86% -12%, color-mix(in oklch, var(--color-accent) 18%, transparent), transparent 56%),
+    radial-gradient(80% 64% at -8% 108%, color-mix(in oklch, var(--color-pitch) 12%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in oklch, var(--color-bg) 78%, var(--color-surface-2)), var(--color-bg));
+  background-size: 54px 54px, auto, auto, auto;
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -64,6 +67,7 @@ figure {
   letter-spacing: var(--tracking-display);
   line-height: 0.95;
   text-transform: uppercase;
+  text-wrap: balance;
 }
 
 /* Tabular figures for timers/scores to avoid layout shift */

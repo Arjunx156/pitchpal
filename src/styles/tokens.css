@@ -11,14 +11,14 @@
   --h-pitch: 152;
 
   /* ---- Light (premium) — default ---- */
-  --color-bg: oklch(96.5% 0.008 var(--h-gold));
-  --color-surface: oklch(100% 0 0);
-  --color-surface-2: oklch(97% 0.006 var(--h-gold));
-  --color-elevated: oklch(99% 0.004 var(--h-gold));
-  --color-border: oklch(88% 0.012 var(--h-gold));
-  --color-border-strong: oklch(80% 0.015 var(--h-gold));
-  --color-text: oklch(24% 0.018 var(--h-charcoal));
-  --color-text-muted: oklch(46% 0.02 var(--h-charcoal));
+  --color-bg: oklch(94% 0.011 105);
+  --color-surface: oklch(99% 0.004 100);
+  --color-surface-2: oklch(96% 0.009 105);
+  --color-elevated: oklch(98% 0.006 105);
+  --color-border: oklch(86% 0.014 105);
+  --color-border-strong: oklch(76% 0.018 105);
+  --color-text: oklch(21% 0.018 var(--h-charcoal));
+  --color-text-muted: oklch(43% 0.019 var(--h-charcoal));
 
   /* Gold: darker for text/contrast on light, bright for fills */
   --color-accent: oklch(52% 0.13 var(--h-gold));
@@ -39,9 +39,9 @@
   --color-jam: oklch(58% 0.2 30);
 
   /* ---- Typography ---- */
-  --font-display: 'Bebas Neue', 'Arial Narrow', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Bebas Neue', 'Arial Narrow', 'Source Sans 3', system-ui, sans-serif;
   --font-sans: 'Source Sans 3', 'Segoe UI', 'Noto Sans Arabic', system-ui, -apple-system,
-    Roboto, sans-serif, 'Apple Color Emoji';
+    sans-serif, 'Apple Color Emoji';
 
   --text-xs: 0.75rem;
   --text-sm: clamp(0.82rem, 0.8rem + 0.1vw, 0.9rem);
@@ -69,9 +69,9 @@
   --radius: 16px;
   --radius-lg: 24px;
   --radius-pill: 999px;
-  --shadow-1: 0 1px 2px oklch(20% 0.02 var(--h-charcoal) / 0.1),
-    0 6px 20px oklch(20% 0.02 var(--h-charcoal) / 0.08);
-  --shadow-2: 0 10px 40px oklch(20% 0.02 var(--h-charcoal) / 0.16);
+  --shadow-1: 0 1px 2px oklch(20% 0.02 var(--h-charcoal) / 0.08),
+    0 14px 34px oklch(20% 0.02 var(--h-charcoal) / 0.1);
+  --shadow-2: 0 18px 52px oklch(20% 0.02 var(--h-charcoal) / 0.18);
   --glow-gold: 0 0 0 1px oklch(80% 0.15 var(--h-gold) / 0.4),
     0 0 24px oklch(80% 0.15 var(--h-gold) / 0.25);
   --glow-live: 0 0 0 4px oklch(58% 0.2 20 / 0.18);
@@ -121,7 +121,7 @@
   /* Component: bento tiles */
   --bento-card-bg: var(--color-surface);
   --bento-card-border: var(--color-border);
-  --bento-card-radius: var(--radius-2xl);
+  --bento-card-radius: 28px;
   --bento-card-padding: var(--space-5);
   --bento-card-shadow: var(--shadow-1);
   --bento-card-shadow-hover: var(--shadow-3);

@@ -11,22 +11,23 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
+  min-height: 2.65rem;
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-pill);
   font-weight: 600;
   letter-spacing: var(--tracking-tight);
   cursor: pointer;
   border: 1px solid transparent;
-  transition: transform var(--duration-fast) var(--ease-emphasized), background var(--duration-fast),
-    border-color var(--duration-fast), box-shadow var(--duration-fast);
+  transition: transform var(--duration-normal) var(--ease-emphasized), background var(--duration-normal),
+    border-color var(--duration-normal), box-shadow var(--duration-normal), color var(--duration-normal);
 }
 .btn-primary {
-  background: var(--color-accent);
+  background: linear-gradient(135deg, var(--color-accent-bright), var(--color-accent));
   color: var(--color-on-accent);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-1), inset 0 1px 0 color-mix(in oklch, white 38%, transparent);
 }
 .btn-primary:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   background: var(--color-accent-strong);
   box-shadow: var(--glow-gold);
 }
@@ -87,7 +88,7 @@
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
+  background: color-mix(in oklch, var(--color-surface-2) 88%, var(--color-accent) 12%);
   border: 1px solid var(--color-border);
   color: var(--color-text);
   font-size: var(--text-sm);
@@ -128,7 +129,7 @@
   border: 1px solid var(--color-glass-border);
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: border-color var(--duration-fast), color var(--duration-fast);
+  transition: border-color var(--duration-fast), color var(--duration-fast), transform var(--duration-fast);
 }
 .cmdk-btn kbd {
   font-family: var(--font-sans);
@@ -142,6 +143,7 @@
 .cmdk-btn:hover {
   border-color: var(--color-accent);
   color: var(--color-text);
+  transform: translateY(-1px);
 }
 
 /* ---- Glass panels ---- */
@@ -152,6 +154,7 @@
   backdrop-filter: blur(var(--glass-panel-blur));
   -webkit-backdrop-filter: blur(var(--glass-panel-blur));
   border: 1px solid var(--glass-panel-border);
+  box-shadow: var(--shadow-1), inset 0 1px 0 color-mix(in oklch, white 28%, transparent);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass-panel,
@@ -169,7 +172,7 @@
    reads as one clean band. */
 .bento-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1.1fr 0.9fr 1fr;
   grid-auto-flow: dense;
   gap: var(--space-5);
   align-items: stretch;
@@ -206,7 +209,8 @@
 }
 .bento-tile {
   position: relative;
-  background: var(--bento-card-bg);
+  background:
+    linear-gradient(145deg, color-mix(in oklch, var(--color-surface) 92%, var(--color-accent) 8%), var(--bento-card-bg));
   border: 1px solid var(--bento-card-border);
   border-radius: var(--bento-card-radius);
   padding: var(--bento-card-padding);
@@ -222,7 +226,9 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, color-mix(in oklch, var(--color-accent) 6%, transparent), transparent 45%);
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 50%),
+    linear-gradient(160deg, color-mix(in oklch, var(--color-accent) 6%, transparent), transparent 45%);
   pointer-events: none;
 }
 .bento-tile:hover {

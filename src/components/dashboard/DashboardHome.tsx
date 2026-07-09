@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Accessibility, Armchair, LogOut, Navigation, Sparkles, Trophy } from 'lucide-react';
+import { Accessibility, Armchair, Clock3, LogOut, MapPinned, Navigation, Sparkles, Ticket, Trophy } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
@@ -41,13 +41,64 @@ export function DashboardHome({ onOpenItinerary }: { onOpenItinerary: () => void
   );
   const { steps } = useItineraryOrder(context.matchId, baseSteps);
   const suggestions = useMemo(() => suggestNextActions(context, ops, steps, ui), [context, ops, steps, ui]);
+  const gateStatus = ops.gates.find((gate) => gate.gateId === focus.originGateId) ?? ops.gates[0];
+  const minutesToKickoff = Math.max(0, Math.ceil((ops.kickoffAt - now) / 60000));
+  const phaseLabel = ops.phase === 'pre' ? `${minutesToKickoff}m` : ops.phase === 'live' ? ui.ops.live : ui.ops.postMatch;
+  const gateLabel = gateStatus
+    ? `${ui.ops.gate} ${gateStatus.gateId} / ${ui.ops.queue.replace('{min}', String(gateStatus.queueMinutes))}`
+    : venue.name;
+  const seatLabel = context.location.trim() || ui.quickActions.seat.label;
 
   return (
     <div className="dashboard">
-      <div className="dashboard__heading">
-        <h1 className="dashboard__title display">{ui.dashboard.heading}</h1>
-        <p className="dashboard__subtitle">{venue.name}</p>
-      </div>
+      <section className="dashboard-hero" aria-labelledby="dashboard-heading">
+        <div className="dashboard-hero__copy">
+          <span className="dashboard-hero__kicker">{venue.city}</span>
+          <h1 id="dashboard-heading" className="dashboard-hero__title display">
+            {ui.dashboard.heading}
+          </h1>
+          <p className="dashboard-hero__subtitle">{ui.tagline}</p>
+          <div className="dashboard-hero__actions">
+            <button
+              type="button"
+              className="btn-primary dashboard-hero__cta"
+              disabled={isStreaming}
+              onClick={() => void send(ui.quickActions.seat.query)}
+            >
+              <Ticket size={17} aria-hidden="true" />
+              <span>{ui.quickActions.seat.label}</span>
+            </button>
+            <button type="button" className="btn-secondary dashboard-hero__cta" onClick={onOpenItinerary}>
+              <Clock3 size={17} aria-hidden="true" />
+              <span>{ui.dashboard.seeAll}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="dashboard-hero__status" aria-label={venue.name}>
+          <div className="match-card">
+            <div>
+              <span className="match-card__label">{ui.matchLabel}</span>
+              <strong>{venue.name}</strong>
+            </div>
+            <MapPinned size={20} aria-hidden="true" />
+          </div>
+          <dl className="dashboard-hero__metrics">
+            <div>
+              <dt>{ui.ops.preMatch}</dt>
+              <dd className="tabular">{phaseLabel}</dd>
+            </div>
+            <div>
+              <dt>{ui.ops.gatesHeading}</dt>
+              <dd>{gateLabel}</dd>
+            </div>
+            <div>
+              <dt>{ui.map.legendSeat}</dt>
+              <dd>{seatLabel}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
 
       <motion.div className="bento-grid" variants={staggerContainer} initial="hidden" animate="show">
         {/* Centerpiece: the live stadium map anchors the whole composition. */}

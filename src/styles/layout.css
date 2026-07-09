@@ -4,7 +4,7 @@
 .app {
   max-width: var(--maxw-app);
   margin-inline: auto;
-  padding: var(--space-5) var(--space-5) calc(var(--nav-bottom-height) + var(--space-6));
+  padding: var(--space-4) var(--space-5) calc(var(--nav-bottom-height) + var(--space-6));
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -54,8 +54,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
+  padding: 0.65rem var(--space-3) 0.65rem var(--space-4);
+  border-radius: var(--radius-pill);
   position: sticky;
   top: var(--space-3);
   z-index: var(--z-nav);
@@ -71,7 +71,7 @@
 .viewswitch {
   display: flex;
   gap: var(--space-2);
-  padding: var(--space-1);
+  padding: 0.3rem;
   align-self: center;
   background: var(--color-glass-surface-2);
   backdrop-filter: blur(var(--blur-glass));
@@ -102,7 +102,10 @@
   font-weight: 600;
   letter-spacing: var(--tracking-tight);
   cursor: pointer;
-  transition: color var(--duration-fast);
+  transition: color var(--duration-fast), transform var(--duration-fast) var(--ease-emphasized);
+}
+.viewswitch__btn:hover {
+  transform: translateY(-1px);
 }
 .viewswitch__label {
   position: relative;
@@ -215,14 +218,29 @@
 .risk-panel {
   background: var(--bento-card-bg);
   border: 1px solid var(--bento-card-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--bento-card-radius);
   padding: var(--space-4);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   box-shadow: var(--bento-card-shadow);
+  position: relative;
+  overflow: hidden;
   transition: border-color var(--duration-normal) var(--ease-emphasized),
-    box-shadow var(--duration-normal) var(--ease-emphasized);
+    box-shadow var(--duration-normal) var(--ease-emphasized), transform var(--duration-normal) var(--ease-emphasized);
+}
+.context-bar::before,
+.ops::before,
+.analytics::before,
+.standings::before,
+.itinerary::before,
+.risk-panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: calc(var(--bento-card-radius) - 2px);
+  pointer-events: none;
+  box-shadow: inset 0 1px 0 color-mix(in oklch, white 32%, transparent);
 }
 .context-bar:hover,
 .ops:hover,
@@ -232,13 +250,15 @@
 .risk-panel:hover {
   border-color: color-mix(in oklch, var(--color-accent) 30%, var(--bento-card-border));
   box-shadow: var(--bento-card-shadow-hover);
+  transform: translateY(-2px);
 }
 .chat,
 .map {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--bento-card-radius);
   box-shadow: var(--shadow-1);
+  overflow: hidden;
 }
 
 .context-bar__heading,
