@@ -10,19 +10,19 @@ import { FIXTURES } from '../../features/tournament/fixture';
 import { LANGUAGE_NAMES } from '../../i18n/ui';
 import { panelItem } from '../../lib/motion';
 
-export function ContextBar() {
+export function ContextBar({ idPrefix = '' }: { idPrefix?: string }) {
   const { context, ui, update } = useFanContext();
 
   return (
-    <motion.section className="context-bar" aria-labelledby="context-heading" variants={panelItem}>
-      <h2 id="context-heading" className="context-bar__heading">
+    <motion.section className="context-bar" aria-labelledby={`${idPrefix}context-heading`} variants={panelItem}>
+      <h2 id={`${idPrefix}context-heading`} className="context-bar__heading">
         {ui.settingsHeading}
       </h2>
 
       <div className="field">
-        <label htmlFor="ctx-match">{ui.matchLabel}</label>
+        <label htmlFor={`${idPrefix}ctx-match`}>{ui.matchLabel}</label>
         <select
-          id="ctx-match"
+          id={`${idPrefix}ctx-match`}
           value={context.matchId}
           onChange={(e) => update({ matchId: e.target.value })}
         >
@@ -35,9 +35,9 @@ export function ContextBar() {
       </div>
 
       <div className="field">
-        <label htmlFor="ctx-language">{ui.languageLabel}</label>
+        <label htmlFor={`${idPrefix}ctx-language`}>{ui.languageLabel}</label>
         <select
-          id="ctx-language"
+          id={`${idPrefix}ctx-language`}
           value={context.language}
           onChange={(e) => update({ language: e.target.value as LanguageCode })}
         >
@@ -50,9 +50,9 @@ export function ContextBar() {
       </div>
 
       <div className="field">
-        <label htmlFor="ctx-access">{ui.accessibilityLabel}</label>
+        <label htmlFor={`${idPrefix}ctx-access`}>{ui.accessibilityLabel}</label>
         <select
-          id="ctx-access"
+          id={`${idPrefix}ctx-access`}
           value={context.accessibility}
           onChange={(e) => update({ accessibility: e.target.value as AccessibilityProfile })}
         >
@@ -65,9 +65,9 @@ export function ContextBar() {
       </div>
 
       <div className="field">
-        <label htmlFor="ctx-location">{ui.locationLabel}</label>
+        <label htmlFor={`${idPrefix}ctx-location`}>{ui.locationLabel}</label>
         <input
-          id="ctx-location"
+          id={`${idPrefix}ctx-location`}
           type="text"
           value={context.location}
           maxLength={120}
