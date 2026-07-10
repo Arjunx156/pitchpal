@@ -125,7 +125,7 @@ src/
     standings/ itinerary/ context-bar/ command/ onboarding/ charts/ ui/
   styles/          design tokens · broadcast HUD layer · Tailwind
 
-tests/             145 tests — pure core · server pipeline · UI components
+tests/             187 tests — pure core · server pipeline · UI components · axe a11y
 ```
 
 A redesign of the interface touches only `components/` and `styles/`; the brain, the AI contract, and the multilingual answers are untouched.
@@ -137,7 +137,7 @@ A redesign of the interface touches only `components/` and `styles/`; the brain,
 - **Code quality** — small, feature-oriented modules; strict TypeScript with explicit public contracts; pure functions for all logic; immutable state updates; shared providers instead of prop-drilling.
 - **Security** — the Gemini key lives **server-side only** and never reaches the browser; Zod validation at every boundary; per-IP rate limiting and a request-body cap; prompt-injection guardrails; a restrictive Content-Security-Policy plus hardening headers; a path-traversal guard; and no raw HTML injection anywhere in the UI.
 - **Performance** — only the relevant slice of venue data is grounded into the prompt; answers stream token-by-token; the client CSS is a few KB gzipped; fonts are self-hosted and subsetted; and the map, ops, forecast, standings and itinerary are all computed from pure functions with no extra network round-trips.
-- **Testing** — **145 tests** spanning the pure core (venues, fixtures, itinerary, gate alerts, retrieval, ops), the server pipeline (HTTP adapter + a mocked Gemini agent), and the React UI (scoreboard, cards, standings, and more).
+- **Testing** — **187 tests** (~96% statement coverage, enforced at 80%) spanning the pure core (venues, fixtures, itinerary, gate alerts, retrieval, ops), the server pipeline (HTTP adapter + a mocked Gemini agent), the React UI (every surface — scoreboard, chat, map, ops, itinerary, overlays), an end-to-end App integration flow, and automated **axe** accessibility checks. Enforced by a strict ESLint + TypeScript gate.
 - **Accessibility** — built to a WCAG floor: semantic landmarks, full keyboard operation (including the SVG map and command palette), visible focus, polite live regions, colour never used as the sole signal, Arabic RTL, and `prefers-reduced-motion` respected. Accessibility is in the *content* too — step-free routing is driven by the fan's own profile.
 
 ---
@@ -156,7 +156,7 @@ A redesign of the interface touches only `components/` and `styles/`; the brain,
 **Intelligence** Google Gemini (`@google/genai`, function-calling + vision) · a pure, deterministic tool core shared across live/mock/offline
 **Backend** Node (native `http`, esbuild-bundled) · Zod · server-side prompt + security layer
 **Design** Archivo Expanded · Hanken Grotesk · Martian Mono · IBM Plex Sans Arabic (self-hosted) · Lucide icons
-**Quality** Vitest · Testing Library
+**Quality** Vitest · Testing Library · jest-axe · ESLint (typescript-eslint) · strict TypeScript
 
 ---
 
