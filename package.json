@@ -23,6 +23,10 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@fontsource-variable/archivo": "^5.2.8",
+    "@fontsource-variable/hanken-grotesk": "^5.2.8",
+    "@fontsource-variable/martian-mono": "^5.2.7",
+    "@fontsource/ibm-plex-sans-arabic": "^5.2.9",
     "@google/genai": "^2.10.0",
     "zod": "^3.23.8"
   },

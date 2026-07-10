@@ -1,67 +1,99 @@
-import * as React from 'react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { type ReactNode } from 'react';
+import * as RD from '@radix-ui/react-dialog';
+import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { dialogIn, overlayIn } from '../../lib/motion';
 import { cn } from '../../lib/utils';
 
-export const Dialog = DialogPrimitive.Root;
-export const DialogTrigger = DialogPrimitive.Trigger;
-export const DialogClose = DialogPrimitive.Close;
+interface DialogProps {
+  open: boolean;
+  onClose: () => void;
+  title: string;
+  description?: string;
+  /** Hide the visible title row (title still announced to screen readers). */
+  hideHeader?: boolean;
+  closeLabel?: string;
+  /** 'center' modal or 'sheet' sliding from the bottom (mobile-friendly). */
+  variant?: 'center' | 'sheet';
+  className?: string;
+  children: ReactNode;
+}
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    className={cn(
-      'fixed inset-0 z-[200] bg-black/55 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-      className,
-    )}
-    {...props}
-  />
-));
-DialogOverlay.displayName = 'DialogOverlay';
-
-export const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DialogPrimitive.Portal>
-    <DialogOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        'fixed left-1/2 top-1/2 z-[201] w-[min(480px,94vw)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border-strong bg-elevated p-6 shadow-2 focus:outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-        className,
-      )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute end-4 top-4 rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <X size={18} />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </DialogPrimitive.Portal>
-));
-DialogContent.displayName = 'DialogContent';
-
-export const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn('font-display text-2xl uppercase tracking-wide', className)}
-    {...props}
-  />
-));
-DialogTitle.displayName = 'DialogTitle';
-
-export const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
-));
-DialogDescription.displayName = 'DialogDescription';
+/**
+ * Animated modal built on Radix (focus trap, ESC, scroll lock, ARIA) with a
+ * broadcast glass skin and framer entrance. forceMount + AnimatePresence lets
+ * the exit animation play before Radix unmounts.
+ */
+export function Dialog({
+  open,
+  onClose,
+  title,
+  description,
+  hideHeader = false,
+  closeLabel = 'Close',
+  variant = 'center',
+  className,
+  children,
+}: DialogProps) {
+  return (
+    <RD.Root open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
+      <AnimatePresence>
+        {open ? (
+          <RD.Portal forceMount>
+            <RD.Overlay asChild forceMount>
+              <motion.div
+                variants={overlayIn}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                className="fixed inset-0 z-[var(--z-overlay)] bg-scrim backdrop-blur-[2px]"
+              />
+            </RD.Overlay>
+            <RD.Content
+              asChild
+              forceMount
+              onOpenAutoFocus={(e) => e.preventDefault()}
+              className="fixed z-[var(--z-modal)]"
+            >
+              <motion.div
+                variants={dialogIn}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                className={cn(
+                  'glass scanlines fixed left-1/2 -translate-x-1/2 overflow-hidden shadow-3',
+                  variant === 'center'
+                    ? 'top-1/2 w-[min(92vw,540px)] -translate-y-1/2 rounded-2xl'
+                    : 'bottom-0 w-full max-w-[640px] rounded-t-2xl sm:bottom-6 sm:rounded-2xl',
+                  className,
+                )}
+              >
+                <span aria-hidden className="brand-rule absolute inset-x-0 top-0" />
+                <div className="p-5 sm:p-6">
+                  <div className={cn('flex items-start justify-between gap-4', hideHeader && 'sr-only')}>
+                    <div>
+                      <RD.Title className="display text-xl text-foreground">{title}</RD.Title>
+                      {description ? (
+                        <RD.Description className="mt-1 text-sm text-muted-foreground">
+                          {description}
+                        </RD.Description>
+                      ) : null}
+                    </div>
+                  </div>
+                  {!hideHeader && description === undefined ? null : null}
+                  <div className={cn(!hideHeader && 'mt-4')}>{children}</div>
+                </div>
+                <RD.Close
+                  aria-label={closeLabel}
+                  className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground"
+                >
+                  <X size={18} aria-hidden />
+                </RD.Close>
+              </motion.div>
+            </RD.Content>
+          </RD.Portal>
+        ) : null}
+      </AnimatePresence>
+    </RD.Root>
+  );
+}

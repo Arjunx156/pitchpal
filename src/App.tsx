@@ -1,122 +1,91 @@
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import { useState, type ComponentType } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
-import { Command, Download, MessagesSquare, Map as MapIcon, LayoutGrid } from 'lucide-react';
-import { staggerContainer } from './lib/motion';
+import { Command, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
-import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
 import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider } from './features/chat/ChatProvider';
-import { useInstallPrompt } from './features/pwa/useInstallPrompt';
-import { ContextBar } from './components/context-bar/ContextBar';
-import { OpsHud } from './components/ops/OpsHud';
-import { CrowdAnalytics } from './components/analytics/CrowdAnalytics';
-import { Standings } from './components/standings/Standings';
-import { ChatWindow } from './components/chat/ChatWindow';
-import { StadiumMap } from './components/map/StadiumMap';
-import { DashboardHome } from './components/dashboard/DashboardHome';
+import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { ThemeToggle } from './components/ui/ThemeToggle';
-import { Skeleton } from './components/ui/skeleton';
-import { BottomNav, type Surface } from './components/nav/BottomNav';
-import './styles/index.css';
+import { Panel } from './components/ui/Panel';
+import { staggerContainer } from './lib/motion';
+import { cn } from './lib/utils';
 
-// Secondary surfaces load on demand: the itinerary pulls in dnd-kit, and the
-// overlays are invisible until opened — none of them belong in the first paint.
-const ItineraryPanel = lazy(() =>
-  import('./components/itinerary/ItineraryPanel').then((m) => ({ default: m.ItineraryPanel })),
-);
-const CommandPalette = lazy(() =>
-  import('./components/command/CommandPalette').then((m) => ({ default: m.CommandPalette })),
-);
-const Onboarding = lazy(() =>
-  import('./components/onboarding/Onboarding').then((m) => ({ default: m.Onboarding })),
-);
-const MoreSheet = lazy(() => import('./components/nav/MoreSheet').then((m) => ({ default: m.MoreSheet })));
+type Surface = 'home' | 'chat' | 'map';
 
-function PanelSkeleton() {
-  return (
-    <div className="glass-panel" style={{ borderRadius: 'var(--radius-lg)', padding: 'var(--space-4)' }}>
-      <Skeleton className="h-4 w-24" />
-      <Skeleton className="mt-3 h-20 w-full" />
-    </div>
-  );
+interface NavDef {
+  surface: Surface;
+  label: string;
+  icon: ComponentType<{ size?: number | string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
 }
 
-const ONBOARDED_KEY = 'pitchpal.onboarded';
-
-function hasOnboarded(): boolean {
-  try {
-    return localStorage.getItem(ONBOARDED_KEY) === '1';
-  } catch {
-    return true;
-  }
+/** Temporary surface placeholder — replaced by real surfaces in the next passes. */
+function StagePlaceholder({ title }: { title: string }) {
+  return (
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid gap-3">
+      <Panel eyebrow="Surface" heading={title}>
+        <p className="text-sm text-muted-foreground">
+          Rebuilding this surface on the broadcast HUD system.
+        </p>
+      </Panel>
+    </motion.div>
+  );
 }
 
 function Shell() {
   const { ui } = useFanContext();
-  const [paletteOpen, setPaletteOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [view, setView] = useState<Surface>('home');
-  const [onboardingOpen, setOnboardingOpen] = useState(() => !hasOnboarded());
-  const { canInstall, promptInstall } = useInstallPrompt();
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setPaletteOpen((o) => !o);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  const closeOnboarding = useCallback(() => {
-    try {
-      localStorage.setItem(ONBOARDED_KEY, '1');
-    } catch {
-      /* ignore */
-    }
-    setOnboardingOpen(false);
-  }, []);
-
-  const focusMap = useCallback(() => {
-    setView('map');
-    requestAnimationFrame(() => document.getElementById('map-heading')?.scrollIntoView({ block: 'nearest' }));
-  }, []);
-
-  const openItinerary = useCallback(() => {
-    setView('itinerary');
-    requestAnimationFrame(() => document.getElementById('itinerary-heading')?.scrollIntoView({ block: 'nearest' }));
-  }, []);
+  const navs: NavDef[] = [
+    { surface: 'home', label: ui.nav.home, icon: LayoutGrid },
+    { surface: 'chat', label: ui.nav.chat, icon: MessagesSquare },
+    { surface: 'map', label: ui.nav.map, icon: MapIcon },
+  ];
 
   return (
     <>
-      <a href="#chat-main" className="skip-link">
+      <a href="#stage" className="skip-link">
         {ui.skipToChat}
       </a>
 
-      <div className="app" data-view={view}>
-        <header className="topbar glass-panel">
+      <div className="app">
+        <header className="hud-topbar glass">
           <div className="brand">
-            <img className="brand__mark" src="/icons/favicon.svg" alt="" width={34} height={34} />
-            <span className="brand__title display">{ui.title}</span>
+            <img className="brand__mark" src="/icons/favicon.svg" alt="" width={30} height={30} />
+            <span className="brand__title">{ui.title}</span>
           </div>
-          <div className="topbar__actions">
-            {canInstall ? (
-              <button type="button" className="btn-secondary topbar__install" onClick={() => void promptInstall()}>
-                <Download size={16} aria-hidden="true" />
-                <span>{ui.install}</span>
-              </button>
-            ) : null}
+
+          <nav className="viewswitch glass" aria-label={ui.nav.switcherHeading}>
+            {navs.map(({ surface, label, icon: Icon }) => {
+              const active = view === surface;
+              return (
+                <button
+                  key={surface}
+                  type="button"
+                  className={cn('viewswitch__btn', active && 'is-active')}
+                  aria-current={active ? 'page' : undefined}
+                  onClick={() => setView(surface)}
+                >
+                  {active ? (
+                    <motion.span layoutId="viewswitch-pill" className="viewswitch__pill" aria-hidden />
+                  ) : null}
+                  <span className="viewswitch__label">
+                    <Icon size={16} aria-hidden />
+                    <span className="hidden sm:inline">{label}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-1">
             <button
               type="button"
-              className="cmdk-btn"
-              onClick={() => setPaletteOpen(true)}
+              className="hidden h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
               aria-label={ui.commandPalette.open}
             >
-              <Command size={15} aria-hidden="true" />
-              <kbd>K</kbd>
+              <Command size={14} aria-hidden />
+              <kbd className="tabular text-[0.65rem]">K</kbd>
             </button>
             <ThemeToggle ui={ui} />
           </div>
@@ -124,89 +93,40 @@ function Shell() {
 
         <Scoreboard />
 
-        <nav className="viewswitch" aria-label={ui.nav.switcherHeading}>
-          {(
-            [
-              { surface: 'home' as const, label: ui.nav.home, icon: LayoutGrid },
-              { surface: 'chat' as const, label: ui.nav.chat, icon: MessagesSquare },
-              { surface: 'map' as const, label: ui.nav.map, icon: MapIcon },
-            ]
-          ).map(({ surface, label, icon: Icon }) => (
-            <button
-              key={surface}
-              type="button"
-              className={`viewswitch__btn${view === surface ? ' is-active' : ''}`}
-              aria-current={view === surface ? 'page' : undefined}
-              onClick={() => setView(surface)}
-            >
-              {view === surface ? (
-                <motion.span layoutId="viewswitch-pill" className="viewswitch__pill" aria-hidden="true" />
-              ) : null}
-              <span className="viewswitch__label">
-                <Icon size={16} aria-hidden="true" />
-                {label}
-              </span>
-            </button>
-          ))}
-        </nav>
-
-        {view === 'home' ? (
-          <main id="chat-main" tabIndex={-1} className="workspace workspace--home">
-            <DashboardHome onOpenItinerary={openItinerary} />
-          </main>
-        ) : (
-          <main className="workspace">
-            <motion.aside
-              className="rail rail--left"
-              aria-label={ui.settingsHeading}
-              variants={staggerContainer}
-              initial="hidden"
-              animate="show"
-            >
-              <ContextBar />
-              <Suspense fallback={<PanelSkeleton />}>
-                <ItineraryPanel />
-              </Suspense>
-              <Standings />
-            </motion.aside>
-            <div id="chat-main" tabIndex={-1} className="workspace__chat">
-              <ChatWindow />
-            </div>
-            <motion.aside
-              className="rail rail--right workspace__map"
-              aria-label={ui.map.heading}
-              variants={staggerContainer}
-              initial="hidden"
-              animate="show"
-            >
-              <StadiumMap />
-              <OpsHud />
-              <CrowdAnalytics />
-            </motion.aside>
-          </main>
-        )}
+        <main id="stage" tabIndex={-1} className="workspace">
+          {view === 'home' ? (
+            <StagePlaceholder title={ui.nav.home} />
+          ) : view === 'chat' ? (
+            <StagePlaceholder title={ui.nav.chat} />
+          ) : (
+            <StagePlaceholder title={ui.map.heading} />
+          )}
+        </main>
 
         <footer className="app__footer">
           <p>{ui.dataNote}</p>
         </footer>
       </div>
 
-      <BottomNav surface={view} onChange={setView} onMore={() => setMoreOpen(true)} />
-      {moreOpen ? (
-        <Suspense fallback={null}>
-          <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
-        </Suspense>
-      ) : null}
-      {paletteOpen ? (
-        <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onFocusMap={focusMap} />
-        </Suspense>
-      ) : null}
-      {onboardingOpen ? (
-        <Suspense fallback={null}>
-          <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
-        </Suspense>
-      ) : null}
+      {/* mobile bottom nav */}
+      <nav className="bottom-nav glass" aria-label={ui.nav.heading}>
+        {navs.map(({ surface, label, icon: Icon }) => (
+          <button
+            key={surface}
+            type="button"
+            className={cn('bottom-nav__btn', view === surface && 'is-active')}
+            aria-current={view === surface ? 'page' : undefined}
+            onClick={() => setView(surface)}
+          >
+            <Icon size={18} aria-hidden />
+            {label}
+          </button>
+        ))}
+        <button type="button" className="bottom-nav__btn" aria-label={ui.nav.more}>
+          <MoreHorizontal size={18} aria-hidden />
+          {ui.nav.more}
+        </button>
+      </nav>
     </>
   );
 }

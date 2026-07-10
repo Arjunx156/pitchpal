@@ -1,42 +1,46 @@
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+/**
+ * Broadcast control. Gold is the signature action; glass and ghost stay quiet
+ * so the one gold button per view carries the weight. Press feedback is a
+ * compositor-only scale, safe under reduced-motion (transition is near-instant).
+ */
+const button = cva(
+  'relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold ' +
+    'transition-[transform,background-color,color,box-shadow] duration-fast ease-out ' +
+    'active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 select-none',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-1 hover:-translate-y-0.5 hover:brightness-110',
-        secondary: 'bg-surface border border-border-strong text-foreground hover:border-brand',
-        ghost: 'text-muted-foreground hover:bg-secondary hover:text-foreground',
-        outline: 'border border-border bg-transparent hover:border-brand hover:text-brand',
-        destructive: 'bg-destructive text-destructive-foreground hover:brightness-110',
+        primary:
+          'bg-accent text-on-accent shadow-[var(--glow-gold)] hover:bg-accent-strong hover:-translate-y-px',
+        secondary:
+          'glass text-foreground hover:border-[color-mix(in_oklab,var(--color-text)_20%,transparent)]',
+        ghost: 'text-muted-foreground hover:bg-surface-2 hover:text-foreground',
+        danger:
+          'bg-[color-mix(in_oklab,var(--color-danger)_16%,transparent)] text-[var(--color-danger)] ' +
+          'border border-[color-mix(in_oklab,var(--color-danger)_40%,transparent)] hover:bg-[color-mix(in_oklab,var(--color-danger)_24%,transparent)]',
       },
       size: {
-        default: 'h-10 px-5 py-2',
-        sm: 'h-9 px-3',
+        sm: 'h-8 px-3 text-sm',
+        md: 'h-10 px-4 text-sm',
         lg: 'h-12 px-6 text-base',
-        icon: 'h-10 w-10',
+        icon: 'h-10 w-10 p-0',
       },
     },
-    defaultVariants: { variant: 'default', size: 'default' },
+    defaultVariants: { variant: 'primary', size: 'md' },
   },
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean;
-}
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof button> {}
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : 'button';
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
-  },
-);
-Button.displayName = 'Button';
-
-export { buttonVariants };
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { className, variant, size, type = 'button', ...props },
+  ref,
+) {
+  return <button ref={ref} type={type} className={cn(button({ variant, size }), className)} {...props} />;
+});

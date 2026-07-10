@@ -1,204 +1,214 @@
 /*
- * PitchPal design tokens — "Match Day" broadcast system.
- * Charcoal base · gold accent · pitch-green as the live/positive/accessible signal.
- * Dark is the hero broadcast look; light is a clean premium variant. Both are
- * intentional and meet WCAG 2.2 AA for text pairs. Colors in oklch.
+ * PitchPal — Broadcast Match-Day HUD · design tokens
+ * -------------------------------------------------------------
+ * One source of truth for color, type, space, motion. Tailwind's semantic
+ * names (tailwind.config.ts) map onto these CSS variables, so theming is
+ * driven entirely here — dark is the hero (broadcast graphics over a night
+ * stadium), light is a deliberate "day match / studio" counterpart.
+ *
+ * Theme resolution:
+ *   :root                      → light baseline
+ *   @media (dark)              → system dark
+ *   :root[data-theme="light"]  → forced light
+ *   :root[data-theme="dark"]   → forced dark
  */
+
 :root {
-  /* ---- Brand constants (hue anchors) ---- */
-  --h-charcoal: 60;
-  --h-gold: 85;
-  --h-pitch: 152;
+  /* ---- type families ---- */
+  --font-display: 'Archivo Variable', 'IBM Plex Sans Arabic', 'Arial Narrow', system-ui, sans-serif;
+  --font-sans: 'Hanken Grotesk Variable', 'IBM Plex Sans Arabic', system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'Martian Mono Variable', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  /* ---- Light (premium) — default ---- */
-  --color-bg: oklch(94% 0.011 105);
-  --color-surface: oklch(99% 0.004 100);
-  --color-surface-2: oklch(96% 0.009 105);
-  --color-elevated: oklch(98% 0.006 105);
-  --color-border: oklch(86% 0.014 105);
-  --color-border-strong: oklch(76% 0.018 105);
-  --color-text: oklch(21% 0.018 var(--h-charcoal));
-  --color-text-muted: oklch(43% 0.019 var(--h-charcoal));
+  /* Width/weight instances for the broadcast display face */
+  --display-wide: 'wght' 820, 'wdth' 125;
+  --display-mid: 'wght' 680, 'wdth' 112;
 
-  /* Gold: darker for text/contrast on light, bright for fills */
-  --color-accent: oklch(52% 0.13 var(--h-gold));
-  --color-accent-strong: oklch(46% 0.13 var(--h-gold));
-  --color-accent-bright: oklch(80% 0.15 var(--h-gold));
-  --color-on-accent: oklch(20% 0.02 var(--h-gold));
-
-  --color-pitch: oklch(50% 0.15 var(--h-pitch));
-  --color-pitch-bright: oklch(72% 0.16 var(--h-pitch));
-  --color-live: oklch(58% 0.2 20);
-  --color-danger: oklch(53% 0.2 25);
-  --color-warn: oklch(62% 0.16 65);
-  --color-focus: oklch(55% 0.2 250);
-
-  /* Congestion scale (meters) — not color-only; always paired with text/icon */
-  --color-ok: oklch(58% 0.15 var(--h-pitch));
-  --color-busy: oklch(70% 0.16 75);
-  --color-jam: oklch(58% 0.2 30);
-
-  /* ---- Typography ---- */
-  --font-display: 'Bebas Neue', 'Arial Narrow', 'Source Sans 3', system-ui, sans-serif;
-  --font-sans: 'Source Sans 3', 'Segoe UI', 'Noto Sans Arabic', system-ui, -apple-system,
-    sans-serif, 'Apple Color Emoji';
-
+  /* ---- type scale (fluid) ---- */
+  --text-2xs: 0.6875rem; /* 11px */
   --text-xs: 0.75rem;
-  --text-sm: clamp(0.82rem, 0.8rem + 0.1vw, 0.9rem);
-  --text-base: clamp(0.95rem, 0.9rem + 0.2vw, 1.05rem);
-  --text-lg: clamp(1.1rem, 1rem + 0.4vw, 1.3rem);
-  --display-sm: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
-  --display-md: clamp(2rem, 1.4rem + 2.6vw, 3.2rem);
-  --display-lg: clamp(2.6rem, 1.6rem + 4.6vw, 5rem);
-  --leading: 1.55;
-  --tracking-display: 0.02em;
+  --text-sm: 0.8125rem;
+  --text-base: clamp(0.9rem, 0.86rem + 0.2vw, 1rem);
+  --text-lg: clamp(1.05rem, 0.98rem + 0.35vw, 1.2rem);
+  --text-xl: clamp(1.3rem, 1.15rem + 0.7vw, 1.6rem);
+  --text-2xl: clamp(1.7rem, 1.4rem + 1.4vw, 2.4rem);
+  --text-3xl: clamp(2.3rem, 1.7rem + 2.8vw, 3.6rem);
+  --text-display: clamp(2.8rem, 1.6rem + 5.6vw, 6rem);
+  --score-hero-size: clamp(3.4rem, 2rem + 8vw, 7.5rem);
 
-  /* ---- Spacing (4/8 rhythm) ---- */
+  --tracking-tight: -0.02em;
+  --tracking-hud: 0.16em; /* broadcast eyebrow tracking */
+
+  /* ---- radius ---- */
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-2xl: 26px;
+
+  /* ---- space scale (4px base) ---- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
   --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-8: 3rem;
-  --space-10: 4rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
 
-  /* ---- Radius / elevation ---- */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius: 16px;
-  --radius-lg: 24px;
-  --radius-pill: 999px;
-  --shadow-1: 0 1px 2px oklch(20% 0.02 var(--h-charcoal) / 0.08),
-    0 14px 34px oklch(20% 0.02 var(--h-charcoal) / 0.1);
-  --shadow-2: 0 18px 52px oklch(20% 0.02 var(--h-charcoal) / 0.18);
-  --glow-gold: 0 0 0 1px oklch(80% 0.15 var(--h-gold) / 0.4),
-    0 0 24px oklch(80% 0.15 var(--h-gold) / 0.25);
-  --glow-live: 0 0 0 4px oklch(58% 0.2 20 / 0.18);
-
-  /* ---- Motion ---- */
-  --duration-fast: 150ms;
-  --duration-normal: 260ms;
-  --duration-slow: 400ms;
+  /* ---- motion ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-
-  /* ---- Layout ---- */
-  --maxw-app: 1440px;
-  --rail-w: 304px;
-  --map-w: 396px;
-
-  /* Grain overlay (subtle broadcast texture) */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-
-  /* ---- Broadcast Editorial additions ---- */
-  /* Semantic: glass surfaces (light) */
-  --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 70%, transparent);
-  --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 55%, transparent);
-  --color-glass-border: color-mix(in oklch, var(--color-border-strong) 55%, transparent);
-  --color-scrim: oklch(10% 0.01 var(--h-charcoal) / 0.55);
-  --blur-glass: 18px;
-  --shadow-3: 0 24px 64px oklch(20% 0.02 var(--h-charcoal) / 0.22);
-
-  /* Semantic: typography */
-  --display-xl: clamp(3.4rem, 2.2rem + 6vw, 6.5rem);
-  --text-2xs: 0.68rem;
-  --tracking-tight: -0.01em;
-
-  /* Semantic: motion */
-  --duration-instant: 100ms;
-  --duration-hero: 600ms;
   --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --duration-instant: 90ms;
+  --duration-fast: 160ms;
+  --duration-normal: 280ms;
+  --duration-hero: 620ms;
 
-  /* Semantic: spacing / radius / z-index */
-  --space-12: 5rem;
-  --space-16: 6rem;
-  --radius-2xl: 32px;
+  /* ---- blur ---- */
+  --blur-glass: 18px;
+
+  /* ---- z-index ---- */
   --z-nav: 40;
-  --z-overlay: 50;
-  --z-modal: 60;
+  --z-overlay: 60;
+  --z-modal: 80;
 
-  /* Component: bento tiles */
-  --bento-card-bg: var(--color-surface);
-  --bento-card-border: var(--color-border);
-  --bento-card-radius: 28px;
-  --bento-card-padding: var(--space-5);
-  --bento-card-shadow: var(--shadow-1);
-  --bento-card-shadow-hover: var(--shadow-3);
+  /* =========================================================
+   *  LIGHT — "day match / broadcast studio"
+   * ========================================================= */
+  --color-bg: #eef3ef;
+  --color-surface: #ffffff;
+  --color-surface-2: #e6ede8;
+  --color-elevated: #ffffff;
+  --color-text: #0a140f;
+  --color-text-muted: #51665b;
 
-  /* Component: glass panels */
-  --glass-panel-bg: var(--color-glass-surface-1);
-  --glass-panel-border: var(--color-glass-border);
-  --glass-panel-blur: var(--blur-glass);
+  --color-border: #d5e0d9;
+  --color-border-strong: #bcccc2;
+  --color-focus: #0e9e5b;
 
-  /* Component: mobile bottom nav */
-  --nav-bottom-bg: var(--color-glass-surface-2);
-  --nav-bottom-border: var(--color-glass-border);
-  --nav-bottom-height: 64px;
-  --nav-bottom-blur: var(--blur-glass);
+  --color-accent: #b8860a; /* readable gold for light */
+  --color-accent-strong: #8f6800;
+  --color-on-accent: #0a140f;
 
-  /* Component: dashboard hero score + risk glow */
-  --score-hero-size: var(--display-xl);
-  --risk-glow-jam: 0 0 0 4px color-mix(in oklch, var(--color-jam) 30%, transparent);
+  --color-pitch: #0e9e5b;
+  --color-pitch-bright: #12b76a;
+  --color-live: #e5093b;
+  --color-warn: #c26a00;
+  --color-ok: #0e9e5b;
+  --color-busy: #c26a00;
+  --color-jam: #e5093b;
+  --color-danger: #e5093b;
+
+  --color-glass-surface-1: rgba(255, 255, 255, 0.72);
+  --color-glass-surface-2: rgba(238, 243, 239, 0.66);
+  --color-glass-border: rgba(10, 20, 15, 0.08);
+  --color-scrim: rgba(12, 22, 17, 0.42);
+
+  --shadow-1: 0 1px 2px rgba(10, 20, 15, 0.06), 0 6px 18px rgba(10, 20, 15, 0.07);
+  --shadow-2: 0 2px 6px rgba(10, 20, 15, 0.08), 0 18px 44px rgba(10, 20, 15, 0.12);
+  --shadow-3: 0 8px 20px rgba(10, 20, 15, 0.12), 0 34px 80px rgba(10, 20, 15, 0.18);
+  --glow-gold: 0 0 0 1px rgba(184, 134, 10, 0.35), 0 8px 30px rgba(184, 134, 10, 0.22);
+  --risk-glow-jam: 0 0 0 1px rgba(229, 9, 59, 0.4), 0 8px 26px rgba(229, 9, 59, 0.24);
+
+  /* atmosphere: floodlight beams / pitch glow used by the HUD backdrop */
+  --grad-pitch-glow: radial-gradient(
+    120% 90% at 50% -10%,
+    color-mix(in oklab, var(--color-pitch) 16%, transparent),
+    transparent 60%
+  );
+  --grad-floodlight: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--color-accent) 8%, transparent),
+    transparent 40%
+  );
+
+  color-scheme: light;
 }
 
-/* ---- Dark (hero broadcast) — system preference unless user chose light ---- */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --color-bg: oklch(17% 0.012 var(--h-charcoal));
-    --color-surface: oklch(21% 0.014 var(--h-charcoal));
-    --color-surface-2: oklch(25% 0.015 var(--h-charcoal));
-    --color-elevated: oklch(28% 0.016 var(--h-charcoal));
-    --color-border: oklch(33% 0.016 var(--h-charcoal));
-    --color-border-strong: oklch(42% 0.018 var(--h-charcoal));
-    --color-text: oklch(96% 0.01 var(--h-gold));
-    --color-text-muted: oklch(74% 0.02 var(--h-gold));
+  :root:not([data-theme]) {
+    --color-bg: #070b09;
+    --color-surface: #0e1512;
+    --color-surface-2: #131c18;
+    --color-elevated: #18231e;
+    --color-text: #eaf2ed;
+    --color-text-muted: #8ba69a;
 
-    --color-accent: oklch(82% 0.14 var(--h-gold));
-    --color-accent-strong: oklch(86% 0.15 var(--h-gold));
-    --color-accent-bright: oklch(85% 0.16 var(--h-gold));
-    --color-on-accent: oklch(18% 0.02 var(--h-gold));
+    --color-border: #223029;
+    --color-border-strong: #34473e;
+    --color-focus: #ffd23f;
 
-    --color-pitch: oklch(78% 0.15 var(--h-pitch));
-    --color-pitch-bright: oklch(80% 0.17 var(--h-pitch));
-    --color-danger: oklch(68% 0.19 25);
-    --color-ok: oklch(78% 0.15 var(--h-pitch));
-    --color-busy: oklch(80% 0.15 80);
-    --color-jam: oklch(70% 0.2 30);
+    --color-accent: #f5c518;
+    --color-accent-strong: #ffd23f;
+    --color-on-accent: #0a0f0d;
 
-    --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
-    --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
+    --color-pitch: #19dd80;
+    --color-pitch-bright: #4dffa6;
+    --color-live: #ff2d55;
+    --color-warn: #ffb020;
+    --color-ok: #19dd80;
+    --color-busy: #ffb020;
+    --color-jam: #ff2d55;
+    --color-danger: #ff3b30;
 
-    --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 55%, transparent);
-    --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 45%, transparent);
-    --shadow-3: 0 28px 72px oklch(0% 0 0 / 0.55);
+    --color-glass-surface-1: rgba(14, 21, 18, 0.62);
+    --color-glass-surface-2: rgba(19, 28, 24, 0.55);
+    --color-glass-border: rgba(234, 242, 237, 0.09);
+    --color-scrim: rgba(3, 6, 5, 0.66);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 22px rgba(0, 0, 0, 0.34);
+    --shadow-2: 0 3px 10px rgba(0, 0, 0, 0.44), 0 22px 54px rgba(0, 0, 0, 0.5);
+    --shadow-3: 0 10px 28px rgba(0, 0, 0, 0.5), 0 40px 100px rgba(0, 0, 0, 0.62);
+    --glow-gold: 0 0 0 1px rgba(245, 197, 24, 0.34), 0 10px 40px rgba(245, 197, 24, 0.24);
+    --risk-glow-jam: 0 0 0 1px rgba(255, 45, 85, 0.44), 0 10px 32px rgba(255, 45, 85, 0.3);
+
+    color-scheme: dark;
   }
 }
 
-/* Explicit dark theme (mirrors the media block) */
 :root[data-theme='dark'] {
-  --color-bg: oklch(17% 0.012 var(--h-charcoal));
-  --color-surface: oklch(21% 0.014 var(--h-charcoal));
-  --color-surface-2: oklch(25% 0.015 var(--h-charcoal));
-  --color-elevated: oklch(28% 0.016 var(--h-charcoal));
-  --color-border: oklch(33% 0.016 var(--h-charcoal));
-  --color-border-strong: oklch(42% 0.018 var(--h-charcoal));
-  --color-text: oklch(96% 0.01 var(--h-gold));
-  --color-text-muted: oklch(74% 0.02 var(--h-gold));
-  --color-accent: oklch(82% 0.14 var(--h-gold));
-  --color-accent-strong: oklch(86% 0.15 var(--h-gold));
-  --color-accent-bright: oklch(85% 0.16 var(--h-gold));
-  --color-on-accent: oklch(18% 0.02 var(--h-gold));
-  --color-pitch: oklch(78% 0.15 var(--h-pitch));
-  --color-pitch-bright: oklch(80% 0.17 var(--h-pitch));
-  --color-danger: oklch(68% 0.19 25);
-  --color-ok: oklch(78% 0.15 var(--h-pitch));
-  --color-busy: oklch(80% 0.15 80);
-  --color-jam: oklch(70% 0.2 30);
-  --shadow-1: 0 1px 2px oklch(0% 0 0 / 0.4), 0 8px 28px oklch(0% 0 0 / 0.34);
-  --shadow-2: 0 14px 48px oklch(0% 0 0 / 0.5);
+  --color-bg: #070b09;
+  --color-surface: #0e1512;
+  --color-surface-2: #131c18;
+  --color-elevated: #18231e;
+  --color-text: #eaf2ed;
+  --color-text-muted: #8ba69a;
 
-  --color-glass-surface-1: color-mix(in oklch, var(--color-surface) 55%, transparent);
-  --color-glass-surface-2: color-mix(in oklch, var(--color-surface) 45%, transparent);
-  --shadow-3: 0 28px 72px oklch(0% 0 0 / 0.55);
+  --color-border: #223029;
+  --color-border-strong: #34473e;
+  --color-focus: #ffd23f;
+
+  --color-accent: #f5c518;
+  --color-accent-strong: #ffd23f;
+  --color-on-accent: #0a0f0d;
+
+  --color-pitch: #19dd80;
+  --color-pitch-bright: #4dffa6;
+  --color-live: #ff2d55;
+  --color-warn: #ffb020;
+  --color-ok: #19dd80;
+  --color-busy: #ffb020;
+  --color-jam: #ff2d55;
+  --color-danger: #ff3b30;
+
+  --color-glass-surface-1: rgba(14, 21, 18, 0.62);
+  --color-glass-surface-2: rgba(19, 28, 24, 0.55);
+  --color-glass-border: rgba(234, 242, 237, 0.09);
+  --color-scrim: rgba(3, 6, 5, 0.66);
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 22px rgba(0, 0, 0, 0.34);
+  --shadow-2: 0 3px 10px rgba(0, 0, 0, 0.44), 0 22px 54px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 10px 28px rgba(0, 0, 0, 0.5), 0 40px 100px rgba(0, 0, 0, 0.62);
+  --glow-gold: 0 0 0 1px rgba(245, 197, 24, 0.34), 0 10px 40px rgba(245, 197, 24, 0.24);
+  --risk-glow-jam: 0 0 0 1px rgba(255, 45, 85, 0.44), 0 10px 32px rgba(255, 45, 85, 0.3);
+
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }

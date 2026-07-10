@@ -1,13 +1,21 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-// Self-hosted fonts (bundled by Vite → served from same origin, satisfies CSP).
-import '@fontsource/bebas-neue/latin-400.css';
-import '@fontsource/source-sans-3/latin-400.css';
-import '@fontsource/source-sans-3/latin-600.css';
-import '@fontsource/source-sans-3/latin-700.css';
+
+// Self-hosted variable fonts (bundled by Vite → same-origin, satisfies CSP).
+// Archivo + Martian Mono ship a width axis for the expanded broadcast look.
+import '@fontsource-variable/archivo/standard.css';
+import '@fontsource-variable/hanken-grotesk/wght.css';
+import '@fontsource-variable/martian-mono/standard.css';
+// Arabic coverage for the multilingual assistant.
+import '@fontsource/ibm-plex-sans-arabic/arabic-400.css';
+import '@fontsource/ibm-plex-sans-arabic/arabic-600.css';
+import '@fontsource/ibm-plex-sans-arabic/arabic-700.css';
+
+import './styles/tokens.css';
 import './styles/tailwind.css';
-import './styles/global.css';
+import './styles/base.css';
+import './styles/hud.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element #root not found');

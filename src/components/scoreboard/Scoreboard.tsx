@@ -1,17 +1,20 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
-import { getOpsSnapshot } from '../../features/ops/opsFeed';
+import { CloudRain, Cloud, Sun, MapPin } from 'lucide-react';
+import { getOpsSnapshot, type Weather } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { liveScore } from '../../features/tournament/fixture';
 import { latestMoments, matchProgress, type MatchMoment } from '../../features/tournament/moments';
 import { MOMENT_LABELS } from '../../i18n/answers';
 import type { LanguageCode } from '../../features/context/types';
-import { ScoreDigit, TeamBlock } from './ScoreDigit';
 import { useNow } from '../../lib/useNow';
+import { momentSlam } from '../../lib/motion';
+import { FlipNumber } from './FlipNumber';
 
 function pad(n: number): string {
   return String(n).padStart(2, '0');
 }
+
+const WEATHER_ICON = { clear: Sun, cloudy: Cloud, rain: CloudRain } as const;
 
 function momentText(moment: MatchMoment, language: LanguageCode): string {
   const label = MOMENT_LABELS[language][moment.kind];
@@ -19,6 +22,22 @@ function momentText(moment: MatchMoment, language: LanguageCode): string {
   return who ? `${moment.minute}' ${label} — ${who}` : `${moment.minute}' ${label}`;
 }
 
+/** Team side: big federation code (broadcast expanded) + full name beneath. */
+function TeamSide({ code, name, align }: { code: string; name: string; align: 'start' | 'end' }) {
+  return (
+    <div className={`flex min-w-0 flex-col ${align === 'end' ? 'items-end text-right' : 'items-start'}`}>
+      <span className="display-wide text-[clamp(1.6rem,1rem+3vw,3rem)] text-foreground">{code}</span>
+      <span className="mt-0.5 truncate text-xs font-medium text-muted-foreground sm:text-sm">{name}</span>
+    </div>
+  );
+}
+
+/**
+ * The signature. A persistent broadcast scoreboard: split-flap score, a live
+ * ticking clock or kickoff countdown, a moment stinger that slams in on goals,
+ * and a 90' progress rail with a half-time notch. Everything derives from the
+ * shared virtual match clock, so it can never disagree with the assistant.
+ */
 export function Scoreboard() {
   const { ui, context, venue, fixture } = useFanContext();
   const now = useNow(1000);
@@ -30,99 +49,107 @@ export function Scoreboard() {
   const countdown = `${Math.floor(remainingMs / 60000)}:${pad(Math.floor((remainingMs % 60000) / 1000))}`;
   const progress = matchProgress(ops.matchClock, ops.phase);
   const latest = latestMoments(fixture, ops.matchClock, ops.phase, 1)[0];
+  const WeatherIcon = WEATHER_ICON[ops.weather as Weather];
+  const weatherLabel =
+    ops.weather === 'rain' ? ui.ops.weatherRain : ops.weather === 'cloudy' ? ui.ops.weatherCloudy : ui.ops.weatherClear;
 
   return (
     <motion.section
-      className="relative isolate overflow-hidden rounded-lg border border-border bg-gradient-to-b from-surface to-surface-2 px-5 pb-6 pt-5 shadow-1 sm:px-8"
-      aria-label={`${home.name} ${score.home}, ${away.name} ${score.away}, ${group}`}
-      initial={{ opacity: 0, y: -8 }}
+      className="glass scanlines relative isolate overflow-hidden rounded-2xl px-5 pb-5 pt-4 sm:px-8"
+      aria-label={`${home.name} ${score.home}, ${away.name} ${score.away}. ${group}, ${venue.name}.`}
+      initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      {/* top brand hairline + soft pitch glow */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-transparent via-brand to-transparent"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 left-1/2 h-48 w-[120%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklch,var(--color-accent)_16%,transparent),transparent)]"
-      />
+      <span aria-hidden className="brand-rule absolute inset-x-0 top-0" />
+      <span aria-hidden className="floodlight" />
 
-      {/* eyebrow: competition + venue */}
-      <div className="relative mb-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-2 text-center text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-muted-foreground sm:text-[0.7rem]">
-        <span className="text-brand">{group}</span>
-        <span aria-hidden="true" className="h-1 w-1 rounded-full bg-border-strong" />
-        <span className="inline-flex items-center gap-1">
-          <MapPin size={12} aria-hidden="true" />
-          {venue.name}
-        </span>
+      {/* eyebrow: competition · venue · conditions */}
+      <div className="relative mb-3 flex items-center justify-between gap-2">
+        <p className="hud-eyebrow flex items-center gap-2">
+          <span className="text-accent">{group}</span>
+          <span aria-hidden className="h-1 w-1 rounded-full bg-border-strong" />
+          <span className="inline-flex items-center gap-1 text-muted-foreground">
+            <MapPin size={11} aria-hidden />
+            <span className="truncate">{venue.name}</span>
+          </span>
+        </p>
+        <p className="hud-eyebrow inline-flex items-center gap-1.5">
+          <WeatherIcon size={13} aria-hidden />
+          <span>{weatherLabel}</span>
+          <span className="tabular text-foreground">{ops.temperatureC}°</span>
+        </p>
       </div>
 
-      <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-6">
-        <TeamBlock code={home.code} name={home.name} align="start" />
+      {/* main row */}
+      <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
+        <TeamSide code={home.code} name={home.name} align="start" />
 
-        <div className="flex flex-col items-center gap-1.5">
-          <span className="inline-flex items-baseline font-display text-4xl leading-none tracking-wider text-foreground tabular-nums sm:text-7xl">
-            <ScoreDigit value={score.home} />
-            <span className="px-1.5 text-border-strong sm:px-3">:</span>
-            <ScoreDigit value={score.away} />
-          </span>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center leading-none text-foreground">
+            <FlipNumber
+              value={score.home}
+              ariaLabel={`${home.name} ${score.home}`}
+              className="text-[var(--score-hero-size)] font-medium"
+            />
+            <span className="px-1 text-[calc(var(--score-hero-size)*0.5)] text-border-strong sm:px-2">:</span>
+            <FlipNumber
+              value={score.away}
+              ariaLabel={`${away.name} ${score.away}`}
+              className="text-[var(--score-hero-size)] font-medium"
+            />
+          </div>
 
           {ops.phase === 'live' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[color-mix(in_oklch,var(--color-live)_45%,transparent)] bg-[color-mix(in_oklch,var(--color-live)_14%,transparent)] px-2.5 py-0.5 text-[0.7rem] font-bold uppercase tracking-[0.12em] text-live">
-              <motion.span
-                className="h-1.5 w-1.5 rounded-full bg-live"
-                animate={{ opacity: [1, 0.3, 1] }}
-                transition={{ duration: 1.4, repeat: Infinity }}
-              />
+            <span className="live-chip">
+              <span className="live-dot" aria-hidden />
               {ui.ops.live} · {ops.matchClock}&apos;
             </span>
           ) : ops.phase === 'pre' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground tabular-nums">
-              {ui.ops.preMatch} {countdown}
+            <span className="chip tabular text-muted-foreground">
+              {ui.ops.preMatch} <span className="text-foreground">{countdown}</span>
             </span>
           ) : (
-            <span className="inline-flex items-center rounded-full border border-border bg-surface px-2.5 py-0.5 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {ui.ops.postMatch}
-            </span>
+            <span className="chip uppercase tracking-[0.14em] text-muted-foreground">{ui.ops.postMatch}</span>
           )}
         </div>
 
-        <TeamBlock code={away.code} name={away.name} align="end" />
+        <TeamSide code={away.code} name={away.name} align="end" />
       </div>
 
-      {/* latest moment ticker */}
-      <div className="relative mt-3 flex h-5 items-center justify-center overflow-hidden" aria-live="polite">
+      {/* moment stinger */}
+      <div className="relative mt-3 flex h-6 items-center justify-center" aria-live="polite">
         <AnimatePresence mode="wait" initial={false}>
           {latest ? (
             <motion.p
               key={`${latest.minute}-${latest.kind}-${latest.teamCode ?? ''}`}
-              className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.25 }}
+              variants={momentSlam}
+              initial="hidden"
+              animate="show"
+              exit="exit"
+              className="hud-eyebrow flex items-center gap-1.5 text-muted-foreground"
             >
-              {latest.kind === 'goal' ? <span className="text-brand">⚽ </span> : null}
-              {momentText(latest, context.language)}
+              {latest.kind === 'goal' ? <span className="text-accent">⚽</span> : null}
+              <span className={latest.kind === 'goal' ? 'text-foreground' : undefined}>
+                {momentText(latest, context.language)}
+              </span>
             </motion.p>
           ) : null}
         </AnimatePresence>
       </div>
 
-      {/* 90-minute progress bar with half-time notch */}
+      {/* 90' progress rail with half-time notch */}
       <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-[3px] bg-[color-mix(in_oklch,var(--color-border)_60%,transparent)]"
+        aria-hidden
+        className="absolute inset-x-0 bottom-0 h-[3px] bg-[color-mix(in_oklab,var(--color-border)_70%,transparent)]"
       >
         <motion.span
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-pitch to-brand"
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-pitch to-accent"
           initial={false}
           animate={{ width: `${progress * 100}%` }}
           transition={{ ease: 'easeOut', duration: 0.6 }}
         />
-        <span className="absolute inset-y-0 left-1/2 w-px bg-border-strong" />
+        <span className="absolute inset-y-[-2px] left-1/2 w-px bg-border-strong" />
       </div>
     </motion.section>
   );

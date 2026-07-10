@@ -1,11 +1,10 @@
 /**
- * Visually-hidden polite live region. Fed the assistant's status ("typing…")
- * and final answer so screen-reader users hear the outcome without every
- * streamed token being announced.
+ * Visually-hidden polite live region. Announces transient broadcast events
+ * (goals, gate alerts, mode changes) to screen readers without stealing focus.
  */
 export function LiveRegion({ message }: { message: string }) {
   return (
-    <div role="status" aria-live="polite" aria-atomic="true" className="visually-hidden">
+    <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
       {message}
     </div>
   );
