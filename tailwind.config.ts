@@ -25,8 +25,11 @@ export default {
         'secondary-foreground': 'var(--color-text)',
         muted: 'var(--color-surface-2)',
         'muted-foreground': 'var(--color-text-muted)',
-        accent: 'var(--color-surface-2)',
-        'accent-foreground': 'var(--color-text)',
+        // Broadcast gold is the accent (was a surface in the inherited shadcn map).
+        accent: 'var(--color-accent)',
+        'accent-foreground': 'var(--color-on-accent)',
+        'accent-strong': 'var(--color-accent-strong)',
+        'on-accent': 'var(--color-on-accent)',
         destructive: 'var(--color-danger)',
         'destructive-foreground': 'var(--color-on-accent)',
         border: 'var(--color-border)',

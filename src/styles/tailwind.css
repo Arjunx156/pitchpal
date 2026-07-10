@@ -1,3 +1,3 @@
+/* Tailwind base (preflight) + components, loaded before our own base/hud CSS. */
 @tailwind base;
 @tailwind components;
-@tailwind utilities;

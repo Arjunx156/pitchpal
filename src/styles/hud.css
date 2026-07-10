@@ -2,6 +2,9 @@
  * HUD layer — the broadcast Match-Day visual language.
  * Everything here is the "graphics package": glass lower-thirds, the expanded
  * display axis, live states, tickers, atmosphere, and the app shell grid.
+ *
+ * Loaded before Tailwind's utilities (see main.tsx import order) so a utility
+ * like `text-accent` always overrides a component class that also sets color.
  */
 
 /* ---------- display type (variable width axis) ---------- */
@@ -356,3 +359,4 @@
   background: color-mix(in oklab, var(--color-surface) 60%, transparent);
   color: var(--color-text-muted);
 }
+

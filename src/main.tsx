@@ -13,9 +13,10 @@ import '@fontsource/ibm-plex-sans-arabic/arabic-600.css';
 import '@fontsource/ibm-plex-sans-arabic/arabic-700.css';
 
 import './styles/tokens.css';
-import './styles/tailwind.css';
-import './styles/base.css';
-import './styles/hud.css';
+import './styles/tailwind.css'; // @tailwind base + components
+import './styles/base.css'; // our resets/atmosphere (override preflight)
+import './styles/hud.css'; // broadcast component classes
+import './styles/tailwind-utilities.css'; // @tailwind utilities — LAST so utilities win
 
 const rootElement = document.getElementById('root');
 if (!rootElement) throw new Error('Root element #root not found');

@@ -86,18 +86,16 @@ export function Scoreboard() {
         <TeamSide code={home.code} name={home.name} align="start" />
 
         <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center leading-none text-foreground">
-            <FlipNumber
-              value={score.home}
-              ariaLabel={`${home.name} ${score.home}`}
-              className="text-[var(--score-hero-size)] font-medium"
-            />
-            <span className="px-1 text-[calc(var(--score-hero-size)*0.5)] text-border-strong sm:px-2">:</span>
-            <FlipNumber
-              value={score.away}
-              ariaLabel={`${away.name} ${score.away}`}
-              className="text-[var(--score-hero-size)] font-medium"
-            />
+          <div
+            className="flex items-center leading-none text-foreground"
+            style={{ fontSize: 'clamp(3.4rem, 1.6rem + 7.5vw, 7rem)', fontVariationSettings: "'wght' 700" }}
+          >
+            <FlipNumber value={score.home} ariaLabel={`${home.name} ${score.home}`} />
+            <span aria-hidden className="flex flex-col items-center gap-[0.14em] px-2 sm:px-3">
+              <span className="h-[0.13em] w-[0.13em] rounded-full bg-accent" />
+              <span className="h-[0.13em] w-[0.13em] rounded-full bg-accent" />
+            </span>
+            <FlipNumber value={score.away} ariaLabel={`${away.name} ${score.away}`} />
           </div>
 
           {ops.phase === 'live' ? (

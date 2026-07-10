@@ -1,13 +1,14 @@
-import { useState, type ComponentType } from 'react';
+import { useCallback, useState, type ComponentType } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
 import { Command, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
 import { SpeechProvider } from './features/voice/SpeechProvider';
-import { ChatProvider } from './features/chat/ChatProvider';
+import { ChatProvider, useChatContext } from './features/chat/ChatProvider';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { ThemeToggle } from './components/ui/ThemeToggle';
 import { Panel } from './components/ui/Panel';
+import { DashboardHome } from './components/dashboard/DashboardHome';
 import { staggerContainer } from './lib/motion';
 import { cn } from './lib/utils';
 
@@ -34,7 +35,16 @@ function StagePlaceholder({ title }: { title: string }) {
 
 function Shell() {
   const { ui } = useFanContext();
+  const { send } = useChatContext();
   const [view, setView] = useState<Surface>('home');
+
+  const ask = useCallback(
+    (query: string) => {
+      setView('chat');
+      void send(query);
+    },
+    [send],
+  );
 
   const navs: NavDef[] = [
     { surface: 'home', label: ui.nav.home, icon: LayoutGrid },
@@ -95,7 +105,7 @@ function Shell() {
 
         <main id="stage" tabIndex={-1} className="workspace">
           {view === 'home' ? (
-            <StagePlaceholder title={ui.nav.home} />
+            <DashboardHome onAsk={ask} onOpenItinerary={() => setView('chat')} />
           ) : view === 'chat' ? (
             <StagePlaceholder title={ui.nav.chat} />
           ) : (

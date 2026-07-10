@@ -2,6 +2,9 @@
  * Base layer — resets, document shell, accessibility floor, atmosphere.
  * The body carries the "night stadium" backdrop: a low pitch-glow at the top
  * and a faint floodlight wash, so every surface floats over broadcast air.
+ *
+ * Loaded before Tailwind's utilities (see main.tsx import order) so a utility
+ * like `font-sans` always overrides these element defaults.
  */
 
 *,
@@ -160,3 +163,4 @@ svg {
     background-attachment: scroll;
   }
 }
+

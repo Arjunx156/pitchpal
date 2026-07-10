@@ -1,0 +1,3 @@
+/* Tailwind utilities, loaded LAST so utility classes win over our component/
+ * element CSS by source order (no @layer needed across separate files). */
+@tailwind utilities;
