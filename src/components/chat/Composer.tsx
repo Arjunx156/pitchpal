@@ -3,9 +3,14 @@ import { ArrowUp, ImagePlus, Mic, Square } from 'lucide-react';
 import { useChatContext } from '../../features/chat/ChatProvider';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useSpeechInput } from '../../features/voice/useSpeechInput';
+import { fmt } from '../../i18n/answers';
 import { cn } from '../../lib/utils';
 
 const MAX_ROWS_PX = 140;
+const MAX_MESSAGE_CHARS = 2000;
+const MAX_IMAGE_MB = 5;
+const MAX_IMAGE_BYTES = MAX_IMAGE_MB * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
 
 /** Read a File as base64 (no data: prefix) for the multimodal ticket scan. */
 function fileToBase64(file: File): Promise<string> {
@@ -24,6 +29,7 @@ export function Composer() {
   const { ui, context } = useFanContext();
   const { send, stop, isStreaming } = useChatContext();
   const [value, setValue] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -59,6 +65,12 @@ export function Composer() {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file || isStreaming) return;
+    // Client-side guard (defense-in-depth on top of the server's body cap + Zod).
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+      setError(fmt(ui.composerImageError, { max: MAX_IMAGE_MB }));
+      return;
+    }
+    setError(null);
     const data = await fileToBase64(file);
     void send('', { mimeType: file.type, data });
   };
@@ -67,14 +79,26 @@ export function Composer() {
     'grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground disabled:opacity-40';
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        submit();
-      }}
-      className="glass flex items-end gap-1.5 rounded-2xl p-1.5"
-    >
-      <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPickImage} />
+    <div>
+      {error ? (
+        <p role="alert" className="mb-1.5 px-2 text-2xs font-medium text-[var(--color-danger)]">
+          {error}
+        </p>
+      ) : null}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+        className="glass flex items-end gap-1.5 rounded-2xl p-1.5"
+      >
+        <input
+          ref={fileRef}
+          type="file"
+          accept={ALLOWED_IMAGE_TYPES.join(',')}
+          hidden
+          onChange={onPickImage}
+        />
       <button
         type="button"
         className={iconBtn}
@@ -105,6 +129,7 @@ export function Composer() {
         ref={taRef}
         rows={1}
         value={value}
+        maxLength={MAX_MESSAGE_CHARS}
         onChange={(e) => {
           setValue(e.target.value);
           grow();
@@ -133,6 +158,7 @@ export function Composer() {
           <ArrowUp size={18} aria-hidden />
         </button>
       )}
-    </form>
+      </form>
+    </div>
   );
 }

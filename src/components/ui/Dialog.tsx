@@ -80,7 +80,6 @@ export function Dialog({
                       ) : null}
                     </div>
                   </div>
-                  {!hideHeader && description === undefined ? null : null}
                   <div className={cn(!hideHeader && 'mt-4')}>{children}</div>
                 </div>
                 <RD.Close

@@ -20,6 +20,8 @@ export interface UiStrings {
   suggestionsHeading: string;
   composerLabel: string;
   composerPlaceholder: string;
+  /** Shown when a picked ticket image is the wrong type or too large. Uses {max}. */
+  composerImageError: string;
   send: string;
   you: string;
   assistant: string;
@@ -172,6 +174,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     suggestionsHeading: 'Try asking',
     composerLabel: 'Ask PitchPal',
     composerPlaceholder: 'Ask about seats, food, access, or transport…',
+    composerImageError: 'Please choose an image under {max} MB.',
     send: 'Send',
     you: 'You',
     assistant: 'PitchPal',
@@ -229,6 +232,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     suggestionsHeading: 'Prueba a preguntar',
     composerLabel: 'Pregunta a PitchPal',
     composerPlaceholder: 'Pregunta por asientos, comida, accesibilidad o transporte…',
+    composerImageError: 'Elige una imagen de menos de {max} MB.',
     send: 'Enviar',
     you: 'Tú',
     assistant: 'PitchPal',
@@ -286,6 +290,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     suggestionsHeading: 'Essayez de demander',
     composerLabel: 'Demandez à PitchPal',
     composerPlaceholder: 'Places, restauration, accessibilité ou transport…',
+    composerImageError: 'Choisissez une image de moins de {max} Mo.',
     send: 'Envoyer',
     you: 'Vous',
     assistant: 'PitchPal',
@@ -343,6 +348,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     suggestionsHeading: 'Experimente perguntar',
     composerLabel: 'Pergunte ao PitchPal',
     composerPlaceholder: 'Pergunte sobre lugares, comida, acesso ou transporte…',
+    composerImageError: 'Escolha uma imagem com menos de {max} MB.',
     send: 'Enviar',
     you: 'Você',
     assistant: 'PitchPal',
@@ -400,6 +406,7 @@ export const UI: Record<LanguageCode, UiStrings> = {
     suggestionsHeading: 'جرّب أن تسأل',
     composerLabel: 'اسأل PitchPal',
     composerPlaceholder: 'اسأل عن المقاعد أو الطعام أو الوصول أو المواصلات…',
+    composerImageError: 'اختر صورة أصغر من {max} ميغابايت.',
     send: 'إرسال',
     you: 'أنت',
     assistant: 'PitchPal',

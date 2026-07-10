@@ -103,7 +103,7 @@ export default defineConfig({
         'src/**/*.d.ts',
         'server/index.ts',
         'src/i18n/**',
-        'src/components/ui/**', // shadcn primitives (thin Radix wrappers)
+        'src/components/ui/**', // thin presentational primitives (mostly styling)
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',
         'src/features/venue/types.ts',

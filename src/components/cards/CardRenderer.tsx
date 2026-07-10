@@ -38,8 +38,8 @@ function CardShell({
 
 function AccessBadge({ ok, ui, kind }: { ok?: boolean; ui: UiStrings; kind: 'step' | 'access' }) {
   if (ok === undefined) return null;
-  const label = kind === 'step' ? (ok ? ui.card.stepFree : ui.card.notStepFree) : ui.card.accessible;
   if (kind === 'access' && !ok) return null;
+  const label = kind === 'step' ? (ok ? ui.card.stepFree : ui.card.notStepFree) : ui.card.accessible;
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[0.62rem] font-semibold"

@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion';
 import { ArrowUpRight, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
-import { getOpsSnapshot, type CongestionLevel } from '../../features/ops/opsFeed';
+import { type CongestionLevel } from '../../features/ops/opsFeed';
 import { forecastGateRisk, type RiskTrend } from '../../features/ops/riskForecast';
 import { fmt } from '../../i18n/answers';
 import { useNow } from '../../lib/useNow';
 import { rowItem } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
 import { Sparkline } from '../charts/Sparkline';
-import { cn } from '../../lib/utils';
 
 const LEVEL_COLOR: Record<CongestionLevel, string> = {
   ok: 'var(--color-ok)',
@@ -29,8 +28,6 @@ export function GateRiskPanel({ onAsk }: { onAsk: (query: string) => void }) {
     .sort((a, b) => b.projectedQueueMinutes - a.projectedQueueMinutes)
     .slice(0, 4);
 
-  const ops = getOpsSnapshot(venue, now);
-  void ops; // snapshot kept warm alongside the forecast cadence
   const worst = forecasts[0];
   const showReroute = worst && worst.projectedLevel === 'jam';
   const gateName = (id: string) => venue.gates.find((g) => g.id === id)?.name ?? id;
@@ -89,7 +86,7 @@ export function GateRiskPanel({ onAsk }: { onAsk: (query: string) => void }) {
                 </p>
               </div>
               <Trend size={15} aria-hidden style={{ color }} className="shrink-0" />
-              <Sparkline values={f.series} color={color} width={72} height={26} className={cn('shrink-0')} />
+              <Sparkline values={f.series} color={color} width={72} height={26} className="shrink-0" />
             </motion.li>
           );
         })}
