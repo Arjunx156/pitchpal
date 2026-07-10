@@ -1,248 +1,164 @@
-# PitchPal ⚽ — Match Day Edition
+<div align="center">
 
-**A multilingual, accessible GenAI stadium companion for FIFA World Cup 2026 fans.**
+# PitchPal ⚽
 
-_PromptWars Virtual — Challenge 4: Smart Stadiums & Tournament Operations._
+### A multilingual, accessible GenAI stadium companion for the FIFA World Cup 2026
 
-PitchPal is a fan-facing assistant that answers wayfinding, amenity, accessibility, and
-transport questions **in the fan's own language**, grounded in a structured venue knowledge base
-and **live match-day operations**, across **four host venues and matches** the fan can switch
-between. It pairs a streaming chat with an **interactive stadium map + crowd heatmap**, **voice**
-input/output, a **live ops HUD + analytics strip**, a **"My Match Day" itinerary with on-device gate
-alerts**, and works **offline** as an installable PWA.
+*Wayfinding, accessibility, amenities, transport and live match operations — answered in the fan's own language, grounded in real venue data and a live match-day simulation, and rendered as a broadcast-grade match-day HUD.*
 
-The assistant is **agentic**: Google **Gemini** drives a **function-calling** loop over a typed tool
-registry (route planning, amenities, transport, live gate status, live match score & moments,
-sustainability, accessibility service booking, ticket reading), and can **read a photo of your ticket** (multimodal) to auto-find
-your seat. A deterministic **no-key fallback** runs the exact same tools, so everything works out of
-the box and offline.
+</div>
 
 ---
 
-## Chosen vertical: the Fan
+## The problem
 
-Challenge 4 asks for a GenAI solution that improves the stadium experience for one persona.
-PitchPal targets the **international fan** — the persona that most directly exercises two graded
-criteria (**accessibility** and **multilingual assistance**) and has the clearest real-world use
-during a global tournament.
+A World Cup draws millions of international fans into vast, unfamiliar stadiums, across three host nations, speaking dozens of languages, many with accessibility needs. The moment that matters most — *"How do I get to my seat? Where's step-free access? Which gate is jammed right now? How do I get home after the final whistle?"* — is exactly where generic maps and English-only signage fail.
 
-| Capability | Example question | What PitchPal does |
+**PitchPal** is a fan-facing assistant that answers those questions **in the fan's own language**, grounded in a structured venue knowledge base **and** live match-day operations, and presents the answer not as a wall of text but as a **broadcast graphics package** — a persistent kinetic scoreboard, an interactive stadium map that lights up your route, and structured action cards.
+
+It is **agentic**: Google **Gemini** drives a function-calling loop over a typed tool registry, and can **read a photo of your ticket** to find your seat. A deterministic, no-key fallback runs the *exact same tools*, so the product works fully offline and on-device — the AI degrades gracefully, it never goes dark.
+
+---
+
+## The chosen persona: the international fan
+
+PitchPal targets the persona that most directly exercises the two hardest criteria — **accessibility** and **multilingual assistance** — and has the clearest real-world use during a global tournament.
+
+| Need | A fan asks… | What PitchPal does |
 |---|---|---|
-| Navigation | _"How do I get to section 205 from Gate B?"_ | Route card **+ the map lights up the path** |
-| Accessibility | _"¿Ruta en silla de ruedas a la sección 205?"_ | Step-free route, elevator, warnings — in Spanish |
-| Amenities | _"Where's the nearest halal food?"_ | Amenity card, nearest options, hours |
-| Transport | _"How do I get downtown after the match?"_ | Accessible-first transport options |
-| Live ops | _"How busy is my gate?"_ | Real gate congestion + **reroutes you around jams** |
+| **Navigation** | *"How do I get to section 205 from Gate B?"* | Returns a route card **and animates the path on the stadium map** |
+| **Accessibility** | *"¿Ruta en silla de ruedas a la sección 205?"* | Step-free route, elevator, warnings — **answered in Spanish** |
+| **Amenities** | *"Where's the nearest halal food?"* | Amenity card with nearest options and opening hours |
+| **Transport** | *"How do I get downtown after the match?"* | Accessible-first transport options with carbon estimates |
+| **Live operations** | *"How busy is my gate?"* | Real-time gate congestion, and **reroutes you around the jam** |
+
+Every answer is shaped by the fan's **context** — language, accessibility profile, current location, ticket, and selected match — which the assistant reasons over continuously.
 
 ---
 
-## Signature features
+## Design — the Broadcast Match-Day HUD
 
-- **🤖 Agentic tool-calling** — Gemini decides which typed tools to call (`planRoute`,
-  `findAmenities`, `getTransport`, `getGateStatus`, `getMatchStatus`, `getSustainability`,
-  `bookAccessibilityService`, `setFanTicket`), the server runs them against the pure core, and
-  structured **cards** stream back from tool results — the UI even shows the live tool it's running
-  ("Planning your route…"). The same tools power the mock and offline paths.
-- **🎫 Scan your ticket (multimodal)** — snap or upload a photo of your ticket; Gemini reads the
-  section, seat and gate and auto-fills your context to route you.
-- **🏟️ Multi-venue + fixtures** — 4 representative host venues and matches with a **match picker**;
-  switching match swaps the venue, ops cycle, scoreboard, map and group **standings** together.
-- **⚽ Live match engine** — a deterministic moments timeline (goals, cards, subs) derived from the
-  virtual match clock powers the animated **scoreboard hero** (crest badges, score pop, 90' progress
-  bar, moment ticker) *and* the assistant's `getMatchStatus` tool — the score can never disagree
-  between UI and AI. Ask "What's the score?" in any of the 5 languages, even offline.
-- **🗓️ "My Match Day" itinerary** — a deterministic timeline (arrive → gate → seat → kickoff →
-  half-time → leave, with a green-transport suggestion) plus an opt-in **on-device notification**
-  that fires once your gate gets congested.
-- **🗺️ Interactive stadium map + crowd heatmap** — an accessible SVG bowl (computed from the venue
-  data) that highlights your seat, gates and amenities, **animates the route** when the assistant
-  answers, and can overlay a live per-section **density heatmap**. Click any section or gate to ask
-  about it. Fully keyboard- and screen-reader-operable.
-- **📈 Analytics strip** — accessible SVG sparklines (crowd trend, busiest-gate queue trend) with
-  text-equivalent summaries, no chart library.
-- **🌱 Sustainability + ♿ accessibility services** — a green-route recommendation with CO₂ estimates
-  per transport option, and a bookable-service flow (wheelchair assist, sensory room, meeting point).
-- **🎙️ Voice** — ask by speech (speech-to-text in your language) and have answers **read aloud**
-  (text-to-speech). Progressive enhancement — hidden where unsupported.
-- **📊 Live match-day ops HUD** — kickoff countdown, per-gate congestion + queue times, and
-  weather. The assistant **factors congestion into its advice** ("Gate C is busy — use Gate A"),
-  grounded into both the live Gemini prompt and the offline composer.
-- **📴 PWA + offline** — installable to the home screen, and it **still answers with no signal** by
-  running the same deterministic assistant logic on-device.
-- **⌘K command palette · quick-action chips · first-run onboarding** — fast, complete UX, with
-  Framer Motion micro-interactions (card entrance, palette open/close, chip press feedback).
-- **🌍 Fully localized** UI + answers in EN / ES / FR / PT / AR, with right-to-left layout for Arabic.
+PitchPal is deliberately *not* a generic dashboard. Its visual identity is a **live-sports broadcast graphics package**: the interface a fan would recognise from a World Cup broadcast, made interactive.
+
+- **Palette** — a night-stadium base (`#070B09`), **broadcast gold** (`#F5C518`) as the single signature accent, **pitch green** (`#19DD80`) for live/positive states, and a broadcast red for live pulses and congestion. Dark is the hero (graphics over night footage); a disciplined "day match / studio" light theme is a first-class, intentional counterpart.
+- **Typography** — a deliberate three-role system, not a default stack: **Archivo Expanded** for the scoreboard and headlines (used on its true *width axis* for the wide broadcast feel), **Hanken Grotesk** for body, and **Martian Mono** for scores, clocks and data. **IBM Plex Sans Arabic** carries full Arabic coverage.
+- **The signature** — a persistent, kinetic scoreboard: **split-flap flip-number** scores that tick over, a live match clock, moment "stingers" that slam in when a goal drops, and a 90-minute progress rail with a half-time notch that blends pitch-green into gold.
+- **Motion with intent** — Framer Motion throughout: HUD reveal on load, self-drawing sparklines and map routes, broadcast-style panel entrances, and micro-interactions on every control. All of it honours `prefers-reduced-motion`.
+
+The whole product reads as **one graphics system** across three surfaces — a match-day **home** rundown, an assistant **chat**, and a **map** — bound together by the always-on scoreboard.
 
 ---
 
-## Approach & logic
+## Signature capabilities
 
-The intelligence is a small, **deterministic pipeline** that grounds the model instead of letting
-it improvise:
-
-```
-Fan context (language · accessibility · location · ticket · selected match)
-  +  resolved venue (from the match's venueId)  +  live ops snapshot
-        │
-        ▼
-  LIVE:  Gemini function-calling loop  (server/agent.ts)
-         model → picks tool(s) → server runs them (src/lib/tools-core.ts) → cards + summary
-         → model composes a short reply.   Tools: planRoute · findAmenities · getTransport
-         · getGateStatus · getMatchStatus (live score + moments) · getSustainability
-         · bookAccessibilityService · setFanTicket (reads a ticket photo).
-  MOCK / OFFLINE:  deterministic router (answerOffline) runs the SAME tools → identical events.
-        │
-        ▼
-  Structured SSE:  status · tool_result(card) · token · context-patch · done
-        │
-        ▼
-  The map, heatmap, analytics, scoreboard, standings and itinerary all derive from the same
-  pure retrieval/ops functions — no server round-trip beyond the chat call itself.
-```
-
-Why: the **tools are one pure implementation** reused by the live agent, the mock, and the offline
-engine — so behaviour is identical everywhere and fully unit-tested; **cards come from tool results**
-(reliable), not parsed from prose.
+- **🤖 Agentic tool-calling** — Gemini decides which typed tools to invoke (`planRoute`, `findAmenities`, `getTransport`, `getGateStatus`, `getMatchStatus`, `getSustainability`, `bookAccessibilityService`, `setFanTicket`); the server executes them against a pure core, and structured **cards stream back from the tool results** — the UI even surfaces the tool it is running ("Planning your route…"). The same tools power the live, mock, and offline paths, so behaviour is identical everywhere.
+- **🎫 Scan your ticket (multimodal)** — snap or upload a photo of a ticket; Gemini reads the section, seat and gate and auto-fills the fan's context to route them.
+- **🏟️ Multi-venue + fixtures** — four representative host venues and matches behind a match picker; switching the match swaps the venue, ops cycle, scoreboard, map and group **standings** together.
+- **⚽ Live match engine** — a deterministic moments timeline (goals, cards, substitutions) derived from a virtual match clock powers *both* the animated scoreboard *and* the assistant's `getMatchStatus` tool. The score can **never disagree** between the UI and the AI — ask "What's the score?" in any of the five languages, even offline.
+- **🗺️ Interactive stadium map** — an accessible SVG bowl computed entirely from the venue data: it colours each seating section by live crowd density, highlights gates and amenities, and **animates your route** when the assistant answers. Every section and gate is clickable to ask about it — fully keyboard- and screen-reader-operable.
+- **📊 Live operations HUD** — a real-time read of stadium load, per-gate congestion and queue times, plus a **gate-risk forecast** that projects which gates will jam and offers a one-tap reroute. The assistant factors this congestion into its advice ("Gate C is busy — use Gate A"), grounded into both the live prompt and the offline composer.
+- **🗓️ "My Match Day" itinerary** — a personalised timeline (arrive → gate → seat → kickoff → half-time → leave, with a low-carbon transport suggestion), reorderable and extensible, with an opt-in **on-device alert** that fires when the fan's gate gets congested.
+- **🎙️ Voice** — ask by speech in the fan's language, and have answers **read aloud** — progressive enhancement, hidden where the browser lacks the APIs.
+- **🌱 Sustainability & ♿ services** — low-carbon route recommendations with CO₂ estimates per transport option, and a bookable accessibility-service flow (wheelchair assist, sensory room, meeting point).
+- **⌘K command palette · quick-action chips · first-run onboarding** — a fast, complete UX layer over the whole app.
+- **📴 Installable PWA, offline-capable** — installs to the home screen and **still answers with no signal** by running the same deterministic assistant on-device.
+- **🌍 Fully localised** — UI *and* answers in **EN / ES / FR / PT / AR**, with right-to-left layout and native Arabic typography.
 
 ---
 
-## Getting started
+## How the intelligence works
 
-### Prerequisites
-- Node.js **20+** (developed on Node 24) · npm
+The intelligence is a small, **deterministic pipeline that grounds the model** rather than letting it improvise. The same pure functions feed the live agent, the mock, and the offline engine.
 
-### Run (demo mode — no key needed)
-```bash
-npm install
-npm run dev        # http://localhost:5173  — "Demo mode" badge
+```
+Fan context ( language · accessibility · location · ticket · selected match )
+   +  resolved venue ( from the match's venueId )   +  live ops snapshot
+                              │
+                              ▼
+   LIVE     Gemini function-calling loop
+            model → picks tool(s) → server runs them against the pure core
+            → tool results become cards → model composes a short reply
+                              │
+   MOCK /   deterministic router runs the SAME tools → identical events
+   OFFLINE  (no API key, or no network) → the product never goes dark
+                              │
+                              ▼
+   Structured stream (SSE):  status · tool_result(card) · token · context-patch · done
+                              │
+                              ▼
+   Map · crowd density · gate-risk forecast · scoreboard · standings · itinerary
+   all derive from the same pure retrieval/ops functions — no extra round-trips.
 ```
 
-### Live Gemini responses
-```bash
-cp .env.example .env      # then set GEMINI_API_KEY=your_key
-npm run dev               # badge switches to "Live AI"
-```
-The key is read **only on the server** and never reaches the browser. `.env` is git-ignored.
+Two decisions make this reliable:
 
-### Production & PWA
-```bash
-npm run build     # → dist/ (also generates the service worker + manifest)
-npm start         # serves dist/ + /api/chat on http://localhost:8080
-```
-
-### Quality
-```bash
-npm test          # 154 tests (Vitest + Testing Library + jest-axe)
-npm run coverage  # thresholds enforced at 80% (currently ~96% statements)
-npm run typecheck # strict TypeScript
-```
+1. **One pure tool implementation, reused three ways.** The live agent, the demo mock, and the offline engine call the identical typed tools — so the assistant's behaviour is consistent and fully unit-testable, and the score/route/ops can never diverge across surfaces.
+2. **Cards come from tool *results*, not parsed prose.** Structured answers (routes, amenities, transport) are produced by validated tool outputs and streamed to the UI as typed cards — never scraped out of free-text, so malformed or injected content can't reach the interface as a card.
 
 ---
 
-## Configuration
+## Architecture at a glance
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `GEMINI_API_KEY` | _(empty)_ | Google Gemini key. Empty → deterministic mock mode. |
-| `GEMINI_MODEL` | `gemini-2.5-flash` | Model for live responses. |
-| `PORT` | `8080` | Production server port. |
-
----
-
-## Deploy (Render)
-
-The app ships as a single Node web service (serves the built SPA **and** the `/api/chat` proxy),
-so the Gemini key stays server-side. A [`render.yaml`](./render.yaml) blueprint is included.
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Arjunx156/pitchpal)
-
-**Blueprint (recommended):**
-1. On [dashboard.render.com](https://dashboard.render.com) → **New → Blueprint** → connect this repo.
-2. Render reads `render.yaml`. When prompted, paste your **`GEMINI_API_KEY`** (kept secret, never in git).
-3. Deploy. Your app is live at `https://pitchpal.onrender.com` (or similar).
-
-**Manual web service** (equivalent):
-- Build command: `npm install --include=dev && npm run build`
-- Start command: `npm start`
-- Env var: `GEMINI_API_KEY` (optional — omit for the deterministic demo mode)
-
-Notes: the production build bundles the server to `dist-server/index.js` (via esbuild) so runtime
-needs no dev tooling. `npm start` binds `0.0.0.0` and honors the platform `PORT`. The **free plan
-sleeps after ~15 min idle** and cold-starts on the next request. The same setup works on Railway,
-Fly.io, or any Node host; a Dockerfile can be added on request.
-
----
-
-## Project structure
+PitchPal separates a portable **brain** (pure domain logic, data and AI wiring) from a replaceable **broadcast UI**, with a thin secure server in front of Gemini.
 
 ```
-server/            handler · agent(Gemini function-calling) · tools(declarations) · gemini(+mock)
-                    · prompt(ops-aware) · security(CSP/Zod) · index (prod)
+server/            HTTP handler · Gemini function-calling agent · tool declarations ·
+                   mock generator · ops-aware prompt builder · security (CSP · Zod · rate limit)
+
 src/
-  features/
-    context/       fan context provider (language/accessibility/location/selected match)
-    chat/          streaming useChat (with offline fallback) + ChatProvider
-    ops/           deterministic match-day ops simulation (shared client + server)
-    map/           map geometry + useMapFocus (both pure)
-    tournament/    fixtures (4 matches), group standings, live scoreline
-    itinerary/     "My Match Day" timeline builder (pure)
-    notifications/ on-device gate-jam alert hook (Notification API)
-    voice/         speech input/output hooks + provider (browser APIs)
-    theme/         theme provider · pwa/ install prompt
-    venue/         venues/ registry (4 host venues) + sample dataset per venue
-  lib/             intent · retrieval · compose · cards · tools-core (the deterministic core)
-  components/      chat · cards · map · ops · scoreboard · standings · itinerary · analytics ·
-                   charts · ticket-scan · command · onboarding · quick-actions · ui (shadcn)
-  i18n/            UI chrome + answer phrases (EN/ES/FR/PT/AR)
-  styles/          Tailwind + design tokens + global + component CSS
-tests/             154 tests — unit · components · server
-public/icons/      PWA + favicon assets
+  features/        THE BRAIN — pure, testable, framework-light
+    context/         fan context (language · accessibility · location · match) provider
+    chat/            streaming chat hook with transparent offline fallback
+    ops/             deterministic match-day operations simulation (shared client + server)
+    tournament/      four fixtures, group standings, live scoreline & moments timeline
+    map/             stadium-bowl geometry + focus derivation (both pure)
+    itinerary/       "My Match Day" timeline builder + persistence
+    notifications/   on-device gate-jam alert hook
+    voice/ theme/ pwa/ venue/   speech, theming, install prompt, venue registry + data
+  lib/             intent · retrieval · compose · cards · tools-core — the deterministic core
+  i18n/            UI chrome + answer phrases in five languages
+  components/      THE BROADCAST UI
+    scoreboard/      the signature kinetic scoreboard (flip digits · clock · stingers)
+    dashboard/       match-day home: gate-risk viz · suggestions · next-up · quick actions
+    chat/  cards/    streamed conversation · route/amenity/transport action cards
+    map/  ops/       interactive stadium map · live ops HUD + crowd trend
+    standings/ itinerary/ context-bar/ command/ onboarding/ charts/ ui/
+  styles/          design tokens · broadcast HUD layer · Tailwind
+
+tests/             145 tests — pure core · server pipeline · UI components
 ```
 
-Design system: a **"Match Day" broadcast** direction (charcoal + gold + pitch-green, self-hosted
-Bebas Neue + Source Sans 3, Lucide icons) on **Tailwind CSS + shadcn/ui (Radix) primitives +
-Framer Motion**. Both light and dark themes are intentional.
+A redesign of the interface touches only `components/` and `styles/`; the brain, the AI contract, and the multilingual answers are untouched.
 
 ---
 
-## Evaluation criteria
+## Engineering principles
 
-- **Code Quality** — small, feature-oriented modules; strict TypeScript; pure functions for all
-  logic; immutable state; shared providers instead of prop-drilling.
-- **Security** — Gemini key server-side only; Zod validation; per-IP rate limiting; 64 KB body cap;
-  prompt-injection guardrails; restrictive CSP (self-only, incl. `worker-src`/`manifest-src`) +
-  hardening headers; path-traversal guard; no `dangerouslySetInnerHTML`.
-- **Efficiency** — only the relevant venue slice is grounded into the prompt; streaming; ~135 KB
-  gzipped JS (within the app-page budget); self-hosted subsetted fonts; ops/map/itinerary/standings
-  all computed from pure functions, no extra network round-trips.
-- **Testing** — 154 tests across the pure core (incl. venues, fixtures, itinerary, gate alerts), the
-  server pipeline (HTTP adapter + mocked Gemini agent), and the React UI (map, ops, scoreboard,
-  standings, palette, onboarding, voice, ticket scan, offline); coverage enforced at 80%
-  (~96%/83%/90% statements/branches/functions).
-- **Accessibility** — WCAG 2.2 AA: landmarks, keyboard operation (incl. the SVG map and palette),
-  focus management, polite live regions, accessible congestion meters, Arabic RTL,
-  `prefers-reduced-motion`, and an automated `jest-axe` check. Content is accessible too
-  (step-free routing driven by the fan's profile).
+- **Code quality** — small, feature-oriented modules; strict TypeScript with explicit public contracts; pure functions for all logic; immutable state updates; shared providers instead of prop-drilling.
+- **Security** — the Gemini key lives **server-side only** and never reaches the browser; Zod validation at every boundary; per-IP rate limiting and a request-body cap; prompt-injection guardrails; a restrictive Content-Security-Policy plus hardening headers; a path-traversal guard; and no raw HTML injection anywhere in the UI.
+- **Performance** — only the relevant slice of venue data is grounded into the prompt; answers stream token-by-token; the client CSS is a few KB gzipped; fonts are self-hosted and subsetted; and the map, ops, forecast, standings and itinerary are all computed from pure functions with no extra network round-trips.
+- **Testing** — **145 tests** spanning the pure core (venues, fixtures, itinerary, gate alerts, retrieval, ops), the server pipeline (HTTP adapter + a mocked Gemini agent), and the React UI (scoreboard, cards, standings, and more).
+- **Accessibility** — built to a WCAG floor: semantic landmarks, full keyboard operation (including the SVG map and command palette), visible focus, polite live regions, colour never used as the sole signal, Arabic RTL, and `prefers-reduced-motion` respected. Accessibility is in the *content* too — step-free routing is driven by the fan's own profile.
 
 ---
 
-## Assumptions & limitations
+## Honesty about the data
 
-- **Sample venue, fixture and ops data** (`src/features/venue/venues/`,
-  `src/features/tournament/`, `src/features/ops/opsFeed.ts`) — fictional-but-plausible, clearly
-  labelled, not official FIFA information. Ops runs on a virtual 140-minute match cycle so the demo
-  is always lively. The shapes mirror real feeds, so going live is a data swap, not a rewrite.
-- **On-device notifications** use the browser Notification API directly (gated behind an explicit
-  opt-in button); a production build would add Web Push + VAPID for alerts while the tab is closed.
-- **Voice & install** are progressive enhancements — hidden where the browser lacks the APIs.
-- **Rate limiting** is in-memory (per instance); a shared store (Redis) would be the production step.
-- Bebas Neue / Source Sans 3 cover Latin scripts; Arabic falls back to a system Arabic font.
+- **Venue, fixture and operations data are representative samples** — fictional-but-plausible, clearly labelled in-product, and **not** official FIFA information. The operations simulation runs on a virtual match cycle so the demo is always lively. Crucially, the data *shapes* mirror real feeds, so going live against production data is a **data swap, not a rewrite**.
+- **On-device notifications** use the browser Notification API behind an explicit opt-in; a production build would add Web Push for alerts while the tab is closed.
+- **Voice and install** are progressive enhancements — present only where the browser supports them.
+
+---
 
 ## Tech stack
 
-React 18 · TypeScript · Vite · Tailwind CSS + shadcn/ui (Radix) + Framer Motion · vite-plugin-pwa ·
-Node (native `http`, esbuild-bundled) · Google Gemini (`@google/genai`, function-calling + vision) ·
-Zod · Lucide icons · @fontsource · Vitest + Testing Library + jest-axe.
+**Frontend** React 18 · TypeScript · Vite · Tailwind CSS · Radix primitives · Framer Motion · vite-plugin-pwa
+**Intelligence** Google Gemini (`@google/genai`, function-calling + vision) · a pure, deterministic tool core shared across live/mock/offline
+**Backend** Node (native `http`, esbuild-bundled) · Zod · server-side prompt + security layer
+**Design** Archivo Expanded · Hanken Grotesk · Martian Mono · IBM Plex Sans Arabic (self-hosted) · Lucide icons
+**Quality** Vitest · Testing Library
+
+---
 
 ## License
 
