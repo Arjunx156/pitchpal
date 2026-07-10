@@ -1,4 +1,4 @@
-import { useCallback, useState, type ComponentType } from 'react';
+import { useCallback, useEffect, useState, type ComponentType } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
 import { Command, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
@@ -7,9 +7,15 @@ import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider, useChatContext } from './features/chat/ChatProvider';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { ThemeToggle } from './components/ui/ThemeToggle';
-import { Panel } from './components/ui/Panel';
 import { DashboardHome } from './components/dashboard/DashboardHome';
 import { ChatWindow } from './components/chat/ChatWindow';
+import { ContextBar } from './components/context-bar/ContextBar';
+import { ItineraryPanel } from './components/itinerary/ItineraryPanel';
+import { Standings } from './components/standings/Standings';
+import { OpsHud } from './components/ops/OpsHud';
+import { StadiumMap } from './components/map/StadiumMap';
+import { CommandPalette } from './components/command/CommandPalette';
+import { Onboarding } from './components/onboarding/Onboarding';
 import { staggerContainer } from './lib/motion';
 import { cn } from './lib/utils';
 
@@ -21,23 +27,22 @@ interface NavDef {
   icon: ComponentType<{ size?: number | string; 'aria-hidden'?: boolean | 'true' | 'false' }>;
 }
 
-/** Temporary surface placeholder — replaced by real surfaces in the next passes. */
-function StagePlaceholder({ title }: { title: string }) {
-  return (
-    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid gap-3">
-      <Panel eyebrow="Surface" heading={title}>
-        <p className="text-sm text-muted-foreground">
-          Rebuilding this surface on the broadcast HUD system.
-        </p>
-      </Panel>
-    </motion.div>
-  );
+const ONBOARDED_KEY = 'pitchpal.onboarded';
+
+function hasOnboarded(): boolean {
+  try {
+    return localStorage.getItem(ONBOARDED_KEY) === '1';
+  } catch {
+    return true;
+  }
 }
 
 function Shell() {
   const { ui } = useFanContext();
   const { send } = useChatContext();
   const [view, setView] = useState<Surface>('home');
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(() => !hasOnboarded());
 
   const ask = useCallback(
     (query: string) => {
@@ -46,6 +51,26 @@ function Shell() {
     },
     [send],
   );
+
+  const closeOnboarding = useCallback(() => {
+    try {
+      localStorage.setItem(ONBOARDED_KEY, '1');
+    } catch {
+      /* storage unavailable — non-fatal */
+    }
+    setOnboardingOpen(false);
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const navs: NavDef[] = [
     { surface: 'home', label: ui.nav.home, icon: LayoutGrid },
@@ -66,7 +91,7 @@ function Shell() {
             <span className="brand__title">{ui.title}</span>
           </div>
 
-          <nav className="viewswitch glass" aria-label={ui.nav.switcherHeading}>
+          <nav className="viewswitch glass hidden lg:inline-flex" aria-label={ui.nav.switcherHeading}>
             {navs.map(({ surface, label, icon: Icon }) => {
               const active = view === surface;
               return (
@@ -92,7 +117,8 @@ function Shell() {
           <div className="flex items-center gap-1">
             <button
               type="button"
-              className="hidden h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition-colors hover:text-foreground sm:inline-flex"
+              onClick={() => setPaletteOpen(true)}
+              className="hidden h-9 items-center gap-1.5 rounded-full border border-border px-3 text-xs text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground sm:inline-flex"
               aria-label={ui.commandPalette.open}
             >
               <Command size={14} aria-hidden />
@@ -107,12 +133,34 @@ function Shell() {
         <main id="stage" tabIndex={-1} className="workspace">
           {view === 'home' ? (
             <DashboardHome onAsk={ask} onOpenItinerary={() => setView('chat')} />
-          ) : view === 'chat' ? (
-            <div className="mx-auto h-full w-full max-w-3xl">
-              <ChatWindow />
-            </div>
           ) : (
-            <StagePlaceholder title={ui.map.heading} />
+            <div className="workspace--triptych">
+              <motion.aside
+                className="rail rail--left"
+                aria-label={ui.settingsHeading}
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+              >
+                <ContextBar />
+                <ItineraryPanel />
+              </motion.aside>
+
+              <div className="min-h-[62vh] lg:min-h-0">
+                {view === 'chat' ? <ChatWindow /> : <StadiumMap onAsk={ask} />}
+              </div>
+
+              <motion.aside
+                className="rail rail--right"
+                variants={staggerContainer}
+                initial="hidden"
+                animate="show"
+              >
+                {view === 'chat' ? <StadiumMap onAsk={ask} /> : null}
+                <OpsHud />
+                <Standings />
+              </motion.aside>
+            </div>
           )}
         </main>
 
@@ -135,11 +183,24 @@ function Shell() {
             {label}
           </button>
         ))}
-        <button type="button" className="bottom-nav__btn" aria-label={ui.nav.more}>
+        <button
+          type="button"
+          className="bottom-nav__btn"
+          aria-label={ui.commandPalette.open}
+          onClick={() => setPaletteOpen(true)}
+        >
           <MoreHorizontal size={18} aria-hidden />
           {ui.nav.more}
         </button>
       </nav>
+
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        onFocusMap={() => setView('map')}
+        onAsk={ask}
+      />
+      <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
     </>
   );
 }

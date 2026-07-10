@@ -66,11 +66,11 @@ export function Scoreboard() {
 
       {/* eyebrow: competition · venue · conditions */}
       <div className="relative mb-3 flex items-center justify-between gap-2">
-        <p className="hud-eyebrow flex items-center gap-2">
-          <span className="text-accent">{group}</span>
-          <span aria-hidden className="h-1 w-1 rounded-full bg-border-strong" />
-          <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <MapPin size={11} aria-hidden />
+        <p className="hud-eyebrow flex min-w-0 flex-nowrap items-center gap-2">
+          <span className="shrink-0 whitespace-nowrap text-accent">{group}</span>
+          <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-border-strong" />
+          <span className="inline-flex min-w-0 items-center gap-1 text-muted-foreground">
+            <MapPin size={11} aria-hidden className="shrink-0" />
             <span className="truncate">{venue.name}</span>
           </span>
         </p>
