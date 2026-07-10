@@ -22,7 +22,7 @@ export function QuickActions({ onAsk }: { onAsk: (query: string) => void }) {
   const keys: ActionKey[] = ['seat', 'food', 'restroom', 'accessible', 'firstAid', 'leave', 'score'];
 
   return (
-    <Panel eyebrow="Ask PitchPal" heading={ui.quickActions.heading}>
+    <Panel eyebrow={ui.composerLabel} heading={ui.quickActions.heading}>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {keys.map((key) => {
           const action = ui.quickActions[key] as QuickAction;

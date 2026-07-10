@@ -48,7 +48,7 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
 
   return (
     <Panel
-      eyebrow="Wayfinding"
+      eyebrow={ui.nav.map}
       heading={ui.map.heading}
       className="overflow-hidden"
       action={

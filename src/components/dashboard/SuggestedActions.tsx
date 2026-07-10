@@ -47,7 +47,7 @@ export function SuggestedActions({ onAsk }: { onAsk: (query: string) => void }) 
   const shown = [...rows, ...evergreen].slice(0, 3);
 
   return (
-    <Panel eyebrow="For you" heading={ui.dashboard.suggestedHeading}>
+    <Panel eyebrow={ui.dashboard.forYou} heading={ui.dashboard.suggestedHeading}>
       <ul className="flex flex-col gap-2">
         {shown.map((s) => {
           const Icon = s.icon;

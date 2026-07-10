@@ -2,8 +2,8 @@ import { motion } from 'framer-motion';
 import { Armchair, ChevronRight, Coffee, DoorOpen, Flag, LogOut, MapPin } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
-import { buildItinerary, type ItineraryStepKind } from '../../features/itinerary/itinerary';
-import { ITINERARY_LABELS } from '../../i18n/itinerary';
+import { buildItinerary, stepLabel, type ItineraryStepKind } from '../../features/itinerary/itinerary';
+import { ITINERARY } from '../../i18n/ui';
 import { useNow } from '../../lib/useNow';
 import { rowItem } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
@@ -21,6 +21,7 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
   const { ui, context, venue } = useFanContext();
   const now = useNow(30000);
   const ops = getOpsSnapshot(venue, now);
+  const strings = ITINERARY[context.language];
   const steps = buildItinerary(venue, ops).filter((s) => s.kind !== 'custom');
 
   const timeFmt = new Intl.DateTimeFormat(context.language, { hour: '2-digit', minute: '2-digit' });
@@ -34,7 +35,7 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
   return (
     <Panel
       eyebrow={ui.nav.itinerary}
-      heading="Next up"
+      heading={ui.dashboard.nextUp}
       action={
         <button
           type="button"
@@ -67,10 +68,7 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
                 <Icon size={15} aria-hidden />
               </span>
               <span className="flex-1 text-sm font-medium text-foreground">
-                {ITINERARY_LABELS[context.language][kind]}
-                {step.transportName ? (
-                  <span className="block text-2xs font-normal text-muted-foreground">{step.transportName}</span>
-                ) : null}
+                {stepLabel(step, strings)}
               </span>
               <time className="tabular text-sm text-muted-foreground">{timeFmt.format(step.time)}</time>
             </motion.li>

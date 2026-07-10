@@ -10,6 +10,7 @@ import {
   type Weather,
 } from '../../features/ops/opsFeed';
 import { fmt } from '../../i18n/answers';
+import { ANALYTICS } from '../../i18n/ui';
 import { useNow } from '../../lib/useNow';
 import { rowItem, staggerContainer } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
@@ -23,7 +24,7 @@ const LEVEL_COLOR: Record<CongestionLevel, string> = {
 };
 
 export function OpsHud() {
-  const { ui, venue } = useFanContext();
+  const { ui, context, venue } = useFanContext();
   const now = useNow(5000);
   const ops = getOpsSnapshot(venue, now);
   const series = crowdSeries(venue, now, 14);
@@ -52,7 +53,7 @@ export function OpsHud() {
       {/* crowd pulse */}
       <div className="mb-3 flex items-end justify-between gap-3 rounded-lg bg-[color-mix(in_oklab,var(--color-surface-2)_60%,transparent)] p-3">
         <div>
-          <p className="hud-eyebrow">Stadium load</p>
+          <p className="hud-eyebrow">{ANALYTICS[context.language].crowd}</p>
           <p className="mt-0.5">
             <span className="tabular text-2xl font-bold text-foreground">{currentAvg}</span>
             <span className="text-sm text-muted-foreground">% full</span>

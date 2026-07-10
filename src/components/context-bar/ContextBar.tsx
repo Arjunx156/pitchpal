@@ -34,7 +34,7 @@ export function ContextBar() {
   const { ui, context, update } = useFanContext();
 
   return (
-    <Panel eyebrow="Your context" heading={ui.settingsHeading}>
+    <Panel eyebrow={ui.settingsEyebrow} heading={ui.settingsHeading}>
       <div className="flex flex-col gap-3">
         <Field icon={<Globe size={15} aria-hidden />} label={ui.languageLabel}>
           <select

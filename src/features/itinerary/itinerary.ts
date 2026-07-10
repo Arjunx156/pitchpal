@@ -1,6 +1,8 @@
 import type { OpsSnapshot } from '../ops/opsFeed';
 import type { Venue } from '../venue/types';
 import type { Fixture } from '../tournament/fixture';
+import type { ItineraryStrings } from '../../i18n/ui';
+import { fmt } from '../../i18n/answers';
 
 const MIN_MS = 60_000;
 
@@ -33,4 +35,18 @@ export function buildItinerary(venue: Venue, ops: OpsSnapshot, originGateId?: st
 
 export function fixtureLabel(fixture: Fixture): string {
   return `${fixture.home.name} vs ${fixture.away.name}`;
+}
+
+/** Localized label for an itinerary step, resolving the {id}/{transport} params. */
+export function stepLabel(step: ItineraryStep, strings: ItineraryStrings): string {
+  switch (step.kind) {
+    case 'gate':
+      return fmt(strings.gate, { id: step.gateId ?? '' });
+    case 'leave':
+      return fmt(strings.leave, { transport: step.transportName ?? '' });
+    case 'custom':
+      return step.label ?? '';
+    default:
+      return strings[step.kind];
+  }
 }

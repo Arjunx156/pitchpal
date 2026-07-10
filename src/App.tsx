@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState, type ComponentType } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
-import { Command, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
+import { Command, Download, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
 import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider, useChatContext } from './features/chat/ChatProvider';
+import { useInstallPrompt } from './features/pwa/useInstallPrompt';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { ThemeToggle } from './components/ui/ThemeToggle';
 import { DashboardHome } from './components/dashboard/DashboardHome';
@@ -43,6 +44,7 @@ function Shell() {
   const [view, setView] = useState<Surface>('home');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(() => !hasOnboarded());
+  const { canInstall, promptInstall } = useInstallPrompt();
 
   const ask = useCallback(
     (query: string) => {
@@ -115,6 +117,16 @@ function Shell() {
           </nav>
 
           <div className="flex items-center gap-1">
+            {canInstall ? (
+              <button
+                type="button"
+                onClick={() => void promptInstall()}
+                className="hidden h-9 items-center gap-1.5 rounded-full border border-[color-mix(in_oklab,var(--color-accent)_40%,transparent)] px-3 text-xs font-semibold text-accent transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent)_12%,transparent)] sm:inline-flex"
+              >
+                <Download size={14} aria-hidden />
+                {ui.install}
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={() => setPaletteOpen(true)}

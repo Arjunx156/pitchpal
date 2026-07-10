@@ -1,13 +1,31 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Armchair, ChevronDown, ChevronUp, Coffee, DoorOpen, Flag, LogOut, MapPin, Plus, X } from 'lucide-react';
+import {
+  Armchair,
+  Bell,
+  BellRing,
+  ChevronDown,
+  ChevronUp,
+  Coffee,
+  DoorOpen,
+  Flag,
+  LogOut,
+  MapPin,
+  Plus,
+  X,
+} from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
-import type { LanguageCode } from '../../features/context/types';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
-import { buildItinerary, type ItineraryStep, type ItineraryStepKind } from '../../features/itinerary/itinerary';
+import {
+  buildItinerary,
+  stepLabel,
+  type ItineraryStep,
+  type ItineraryStepKind,
+} from '../../features/itinerary/itinerary';
 import { useItineraryOrder } from '../../features/itinerary/useItineraryOrder';
-import { useGateAlerts } from '../../features/notifications/useGateAlerts';
-import { ITINERARY_LABELS } from '../../i18n/itinerary';
+import { useGateAlerts, type NotificationSupport } from '../../features/notifications/useGateAlerts';
+import { useStepReminder } from '../../features/notifications/useStepReminder';
+import { ITINERARY, type ItineraryStrings } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { useNow } from '../../lib/useNow';
 import { Panel } from '../ui/Panel';
@@ -22,21 +40,110 @@ const STEP_ICON: Record<Exclude<ItineraryStepKind, 'custom'>, typeof MapPin> = {
   leave: LogOut,
 };
 
-function stepLabel(step: ItineraryStep, language: LanguageCode): string {
-  if (step.kind === 'custom') return step.label ?? '';
-  return ITINERARY_LABELS[language][step.kind];
+interface StepRowProps {
+  step: ItineraryStep;
+  index: number;
+  total: number;
+  isNext: boolean;
+  strings: ItineraryStrings;
+  permission: NotificationSupport;
+  timeText: string;
+  onMove: (from: number, to: number) => void;
+  onRemove: (id: string) => void;
+}
+
+/** One itinerary row: label, time, reorder controls and a reminder bell. */
+function StepRow({ step, index, total, isNext, strings, permission, timeText, onMove, onRemove }: StepRowProps) {
+  const label = stepLabel(step, strings);
+  const reminder = useStepReminder(permission, step.time, strings.heading, `${label} · ${timeText}`);
+  const Icon = step.kind === 'custom' ? Plus : STEP_ICON[step.kind];
+
+  return (
+    <motion.li
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, height: 0 }}
+      className={cn(
+        'group flex items-center gap-2.5 rounded-lg px-2 py-1.5',
+        isNext && 'bg-[color-mix(in_oklab,var(--color-accent)_10%,transparent)]',
+      )}
+    >
+      <span
+        className={cn(
+          'grid h-7 w-7 shrink-0 place-items-center rounded-full border',
+          isNext ? 'border-transparent bg-accent text-on-accent' : 'border-border bg-surface text-muted-foreground',
+        )}
+      >
+        <Icon size={13} aria-hidden />
+      </span>
+      <span className="flex-1 truncate text-sm font-medium text-foreground">{label}</span>
+      <time className="tabular text-xs text-muted-foreground">{timeText}</time>
+      <span className="flex items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+        {permission !== 'unsupported' ? (
+          <button
+            type="button"
+            aria-label={fmt(strings.reminderToggle, { step: label })}
+            aria-pressed={reminder.armed}
+            title={reminder.armed ? fmt(strings.reminderOn, { step: label }) : fmt(strings.reminderToggle, { step: label })}
+            onClick={reminder.toggle}
+            className={cn(
+              'grid h-6 w-6 place-items-center rounded',
+              reminder.armed ? 'text-accent' : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            {reminder.armed ? <BellRing size={13} aria-hidden /> : <Bell size={13} aria-hidden />}
+          </button>
+        ) : null}
+        <button
+          type="button"
+          aria-label={fmt(strings.moveEarlier, { step: label })}
+          disabled={index === 0}
+          onClick={() => onMove(index, index - 1)}
+          className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground disabled:opacity-30"
+        >
+          <ChevronUp size={14} aria-hidden />
+        </button>
+        <button
+          type="button"
+          aria-label={fmt(strings.moveLater, { step: label })}
+          disabled={index === total - 1}
+          onClick={() => onMove(index, index + 1)}
+          className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground disabled:opacity-30"
+        >
+          <ChevronDown size={14} aria-hidden />
+        </button>
+        {step.kind === 'custom' && step.id ? (
+          <button
+            type="button"
+            aria-label={strings.removeStep}
+            onClick={() => onRemove(step.id as string)}
+            className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-[var(--color-danger)]"
+          >
+            <X size={14} aria-hidden />
+          </button>
+        ) : null}
+      </span>
+    </motion.li>
+  );
 }
 
 export function ItineraryPanel() {
   const { ui, context, venue } = useFanContext();
   const now = useNow(30000);
   const ops = getOpsSnapshot(venue, now);
+  const strings = ITINERARY[context.language];
   const base = useMemo(() => buildItinerary(venue, ops), [venue, ops]);
   const { steps, reorder, addCustomStep, removeCustomStep } = useItineraryOrder(context.matchId, base);
   const [draft, setDraft] = useState('');
 
   const gateStep = steps.find((s) => s.kind === 'gate');
-  useGateAlerts(ops, gateStep?.gateId, ui.risk.heading, fmt(ui.suggestions.gateJamReason, { gate: gateStep?.gateId ?? '' }));
+  const { permission, enable } = useGateAlerts(
+    ops,
+    gateStep?.gateId,
+    strings.alertTitle,
+    fmt(strings.alertBody, { gate: gateStep?.gateId ?? '' }),
+  );
 
   const timeFmt = new Intl.DateTimeFormat(context.language, { hour: '2-digit', minute: '2-digit' });
   const nextIndex = steps.findIndex((s) => s.time >= now);
@@ -49,77 +156,43 @@ export function ItineraryPanel() {
   };
 
   return (
-    <Panel eyebrow={ui.nav.itinerary} heading="My match day">
+    <Panel
+      eyebrow={ui.nav.itinerary}
+      heading={strings.heading}
+      action={
+        permission === 'granted' ? (
+          <span className="chip text-[var(--color-ok)]">
+            <BellRing size={11} aria-hidden />
+            {strings.alertsOn}
+          </span>
+        ) : permission !== 'unsupported' ? (
+          <button
+            type="button"
+            onClick={() => void enable()}
+            className="inline-flex items-center gap-1 rounded-full border border-[color-mix(in_oklab,var(--color-accent)_35%,transparent)] px-2.5 py-1 text-2xs font-semibold text-accent transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent)_12%,transparent)]"
+          >
+            <Bell size={11} aria-hidden />
+            {strings.alertsEnable}
+          </button>
+        ) : null
+      }
+    >
       <ol className="flex flex-col gap-1.5">
         <AnimatePresence initial={false}>
-          {steps.map((step, i) => {
-            const kind = step.kind;
-            const Icon = kind === 'custom' ? Plus : STEP_ICON[kind];
-            const isNext = i === nextIndex;
-            return (
-              <motion.li
-                key={step.kind === 'custom' ? step.id : step.kind}
-                layout
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0 }}
-                className={cn(
-                  'group flex items-center gap-2.5 rounded-lg px-2 py-1.5',
-                  isNext && 'bg-[color-mix(in_oklab,var(--color-accent)_10%,transparent)]',
-                )}
-              >
-                <span
-                  className={cn(
-                    'grid h-7 w-7 shrink-0 place-items-center rounded-full border',
-                    isNext
-                      ? 'border-transparent bg-accent text-on-accent'
-                      : 'border-border bg-surface text-muted-foreground',
-                  )}
-                >
-                  <Icon size={13} aria-hidden />
-                </span>
-                <span className="flex-1 truncate text-sm font-medium text-foreground">
-                  {stepLabel(step, context.language)}
-                  {step.transportName ? (
-                    <span className="block truncate text-2xs font-normal text-muted-foreground">
-                      {step.transportName}
-                    </span>
-                  ) : null}
-                </span>
-                <time className="tabular text-xs text-muted-foreground">{timeFmt.format(step.time)}</time>
-                <span className="flex items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
-                  <button
-                    type="button"
-                    aria-label="Move earlier"
-                    disabled={i === 0}
-                    onClick={() => reorder(i, i - 1)}
-                    className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  >
-                    <ChevronUp size={14} aria-hidden />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Move later"
-                    disabled={i === steps.length - 1}
-                    onClick={() => reorder(i, i + 1)}
-                    className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-foreground disabled:opacity-30"
-                  >
-                    <ChevronDown size={14} aria-hidden />
-                  </button>
-                  {step.kind === 'custom' && step.id ? (
-                    <button
-                      type="button"
-                      aria-label="Remove step"
-                      onClick={() => removeCustomStep(step.id as string)}
-                      className="grid h-6 w-6 place-items-center rounded text-muted-foreground hover:text-[var(--color-danger)]"
-                    >
-                      <X size={14} aria-hidden />
-                    </button>
-                  ) : null}
-                </span>
-              </motion.li>
-            );
-          })}
+          {steps.map((step, i) => (
+            <StepRow
+              key={step.kind === 'custom' ? step.id : step.kind}
+              step={step}
+              index={i}
+              total={steps.length}
+              isNext={i === nextIndex}
+              strings={strings}
+              permission={permission}
+              timeText={timeFmt.format(step.time)}
+              onMove={reorder}
+              onRemove={removeCustomStep}
+            />
+          ))}
         </AnimatePresence>
       </ol>
 
@@ -134,13 +207,14 @@ export function ItineraryPanel() {
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Add a step…"
+          placeholder={`${strings.addStep}…`}
+          aria-label={strings.addStep}
           maxLength={60}
           className="flex-1 rounded-lg border border-border bg-[color-mix(in_oklab,var(--color-surface)_60%,transparent)] px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-[color-mix(in_oklab,var(--color-accent)_60%,transparent)] focus:outline-none"
         />
         <button
           type="submit"
-          aria-label="Add step"
+          aria-label={strings.addStep}
           disabled={!draft.trim()}
           className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-accent text-on-accent transition-transform hover:scale-105 active:scale-95 disabled:opacity-40"
         >

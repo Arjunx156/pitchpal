@@ -129,8 +129,14 @@ export interface UiStrings {
     heroLabel: string;
     riskHeading: string;
     suggestedHeading: string;
+    /** Eyebrow above the suggestions panel. */
+    forYou: string;
+    /** Heading of the itinerary preview tile. */
+    nextUp: string;
     seeAll: string;
   };
+  /** Eyebrow above the fan-context panel. */
+  settingsEyebrow: string;
   risk: {
     heading: string;
     rising: string;
@@ -207,7 +213,8 @@ export const UI: Record<LanguageCode, UiStrings> = {
     dataNote: 'Uses representative sample venue data — not official FIFA information.',
     standings: { heading: 'Group standings', played: 'P', points: 'Pts' },
     nav: { heading: 'Main navigation', switcherHeading: 'Switch view', home: 'Home', chat: 'Chat', map: 'Map', itinerary: 'Itinerary', more: 'More' },
-    dashboard: { heading: 'Match day', heroLabel: 'Live score', riskHeading: 'Gate risk', suggestedHeading: 'Suggested for you', seeAll: 'See full itinerary' },
+    dashboard: { heading: 'Match day', heroLabel: 'Live score', riskHeading: 'Gate risk', suggestedHeading: 'Suggested for you', forYou: 'For you', nextUp: 'Next up', seeAll: 'See full itinerary' },
+    settingsEyebrow: 'Your context',
     risk: { heading: 'Gate risk forecast', rising: 'Rising', falling: 'Falling', steady: 'Steady', rerouteAsk: 'Gate {gate} looks like it will be busy — suggest a reroute.', rerouteCta: 'Ask AI to reroute', projectedIn: 'in {min} min' },
     suggestions: {
       kickoffSoonReason: 'Kickoff is soon — grab anything you need now.',
@@ -265,7 +272,8 @@ export const UI: Record<LanguageCode, UiStrings> = {
     dataNote: 'Usa datos de ejemplo del estadio, no información oficial de la FIFA.',
     standings: { heading: 'Clasificación del grupo', played: 'PJ', points: 'Pts' },
     nav: { heading: 'Navegación principal', switcherHeading: 'Cambiar vista', home: 'Inicio', chat: 'Chat', map: 'Mapa', itinerary: 'Itinerario', more: 'Más' },
-    dashboard: { heading: 'Día de partido', heroLabel: 'Marcador en vivo', riskHeading: 'Riesgo en puertas', suggestedHeading: 'Sugerido para ti', seeAll: 'Ver itinerario completo' },
+    dashboard: { heading: 'Día de partido', heroLabel: 'Marcador en vivo', riskHeading: 'Riesgo en puertas', suggestedHeading: 'Sugerido para ti', forYou: 'Para ti', nextUp: 'A continuación', seeAll: 'Ver itinerario completo' },
+    settingsEyebrow: 'Tu contexto',
     risk: { heading: 'Pronóstico de riesgo en puertas', rising: 'Aumentando', falling: 'Bajando', steady: 'Estable', rerouteAsk: 'La Puerta {gate} parece que estará concurrida — sugiere una ruta alternativa.', rerouteCta: 'Pedir a la IA una ruta alternativa', projectedIn: 'en {min} min' },
     suggestions: {
       kickoffSoonReason: 'El inicio es pronto — consigue lo que necesites ahora.',
@@ -323,7 +331,8 @@ export const UI: Record<LanguageCode, UiStrings> = {
     dataNote: "Utilise des données de stade d'exemple, pas d'informations officielles FIFA.",
     standings: { heading: 'Classement du groupe', played: 'J', points: 'Pts' },
     nav: { heading: 'Navigation principale', switcherHeading: 'Changer de vue', home: 'Accueil', chat: 'Chat', map: 'Plan', itinerary: 'Itinéraire', more: 'Plus' },
-    dashboard: { heading: 'Jour de match', heroLabel: 'Score en direct', riskHeading: 'Risque aux portes', suggestedHeading: 'Suggéré pour vous', seeAll: "Voir l'itinéraire complet" },
+    dashboard: { heading: 'Jour de match', heroLabel: 'Score en direct', riskHeading: 'Risque aux portes', suggestedHeading: 'Suggéré pour vous', forYou: 'Pour vous', nextUp: 'À suivre', seeAll: "Voir l'itinéraire complet" },
+    settingsEyebrow: 'Votre contexte',
     risk: { heading: 'Prévision de risque aux portes', rising: 'En hausse', falling: 'En baisse', steady: 'Stable', rerouteAsk: 'La Porte {gate} semble sur le point de se remplir — suggérez un autre itinéraire.', rerouteCta: 'Demander un autre itinéraire à l’IA', projectedIn: 'dans {min} min' },
     suggestions: {
       kickoffSoonReason: "Le coup d'envoi approche — prenez ce qu'il vous faut maintenant.",
@@ -381,7 +390,8 @@ export const UI: Record<LanguageCode, UiStrings> = {
     dataNote: 'Usa dados de exemplo do estádio, não informações oficiais da FIFA.',
     standings: { heading: 'Classificação do grupo', played: 'J', points: 'Pts' },
     nav: { heading: 'Navegação principal', switcherHeading: 'Mudar de vista', home: 'Início', chat: 'Chat', map: 'Mapa', itinerary: 'Itinerário', more: 'Mais' },
-    dashboard: { heading: 'Dia de jogo', heroLabel: 'Placar ao vivo', riskHeading: 'Risco nos portões', suggestedHeading: 'Sugerido para você', seeAll: 'Ver itinerário completo' },
+    dashboard: { heading: 'Dia de jogo', heroLabel: 'Placar ao vivo', riskHeading: 'Risco nos portões', suggestedHeading: 'Sugerido para você', forYou: 'Para você', nextUp: 'A seguir', seeAll: 'Ver itinerário completo' },
+    settingsEyebrow: 'Seu contexto',
     risk: { heading: 'Previsão de risco nos portões', rising: 'Subindo', falling: 'Caindo', steady: 'Estável', rerouteAsk: 'O Portão {gate} parece que vai ficar cheio — sugira uma rota alternativa.', rerouteCta: 'Pedir à IA uma rota alternativa', projectedIn: 'em {min} min' },
     suggestions: {
       kickoffSoonReason: 'O início é em breve — resolva o que precisar agora.',
@@ -439,7 +449,8 @@ export const UI: Record<LanguageCode, UiStrings> = {
     dataNote: 'يستخدم بيانات ملعب نموذجية، وليست معلومات رسمية من الفيفا.',
     standings: { heading: 'ترتيب المجموعة', played: 'لعب', points: 'نقاط' },
     nav: { heading: 'التنقل الرئيسي', switcherHeading: 'تبديل العرض', home: 'الرئيسية', chat: 'المحادثة', map: 'الخريطة', itinerary: 'خطة اليوم', more: 'المزيد' },
-    dashboard: { heading: 'يوم المباراة', heroLabel: 'النتيجة مباشرة', riskHeading: 'مخاطر البوابات', suggestedHeading: 'مقترح لك', seeAll: 'عرض خطة اليوم كاملة' },
+    dashboard: { heading: 'يوم المباراة', heroLabel: 'النتيجة مباشرة', riskHeading: 'مخاطر البوابات', suggestedHeading: 'مقترح لك', forYou: 'لك', nextUp: 'التالي', seeAll: 'عرض خطة اليوم كاملة' },
+    settingsEyebrow: 'سياقك',
     risk: { heading: 'توقعات مخاطر البوابات', rising: 'في ازدياد', falling: 'في انخفاض', steady: 'مستقرة', rerouteAsk: 'يبدو أن البوابة {gate} ستكون مزدحمة — اقترح مسارًا بديلًا.', rerouteCta: 'اطلب من الذكاء الاصطناعي مسارًا بديلًا', projectedIn: 'خلال {min} دقيقة' },
     suggestions: {
       kickoffSoonReason: 'الانطلاق قريب — احصل على ما تحتاجه الآن.',
@@ -540,6 +551,8 @@ export interface ItineraryStrings {
   dragHandleLabel: string; // {step}
   reminderToggle: string; // {step}
   reminderOn: string; // {step}
+  moveEarlier: string; // {step}
+  moveLater: string; // {step}
 }
 
 export interface AnalyticsStrings {
@@ -584,6 +597,7 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     dragHandleLabel: 'Reorder {step}',
     reminderToggle: 'Remind me before {step}',
     reminderOn: 'Reminder set for {step}',
+    moveEarlier: 'Move {step} earlier', moveLater: 'Move {step} later',
   },
   es: {
     heading: 'Mi día de partido',
@@ -604,6 +618,7 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     dragHandleLabel: 'Reordenar {step}',
     reminderToggle: 'Avísame antes de {step}',
     reminderOn: 'Recordatorio activado para {step}',
+    moveEarlier: 'Mover {step} antes', moveLater: 'Mover {step} después',
   },
   fr: {
     heading: 'Mon jour de match',
@@ -624,6 +639,7 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     dragHandleLabel: 'Réorganiser {step}',
     reminderToggle: 'Me rappeler avant {step}',
     reminderOn: 'Rappel activé pour {step}',
+    moveEarlier: 'Avancer {step}', moveLater: 'Retarder {step}',
   },
   pt: {
     heading: 'Meu dia de jogo',
@@ -644,6 +660,7 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     dragHandleLabel: 'Reordenar {step}',
     reminderToggle: 'Lembrar antes de {step}',
     reminderOn: 'Lembrete definido para {step}',
+    moveEarlier: 'Mover {step} para antes', moveLater: 'Mover {step} para depois',
   },
   ar: {
     heading: 'يوم مباراتي',
@@ -664,6 +681,7 @@ export const ITINERARY: Record<LanguageCode, ItineraryStrings> = {
     dragHandleLabel: 'إعادة ترتيب {step}',
     reminderToggle: 'ذكّرني قبل {step}',
     reminderOn: 'تم ضبط تذكير لـ {step}',
+    moveEarlier: 'انقل {step} لوقت أبكر', moveLater: 'انقل {step} لوقت لاحق',
   },
 };
 

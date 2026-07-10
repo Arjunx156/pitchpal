@@ -4,6 +4,7 @@ import { useChatContext } from '../../features/chat/ChatProvider';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useSpeechInput } from '../../features/voice/useSpeechInput';
 import { fmt } from '../../i18n/answers';
+import { SCAN_STRINGS } from '../../i18n/ui';
 import { cn } from '../../lib/utils';
 
 const MAX_ROWS_PX = 140;
@@ -72,7 +73,7 @@ export function Composer() {
     }
     setError(null);
     const data = await fileToBase64(file);
-    void send('', { mimeType: file.type, data });
+    void send(SCAN_STRINGS[context.language].query, { mimeType: file.type, data });
   };
 
   const iconBtn =
@@ -102,7 +103,7 @@ export function Composer() {
       <button
         type="button"
         className={iconBtn}
-        aria-label="Scan ticket"
+        aria-label={SCAN_STRINGS[context.language].button}
         onClick={() => fileRef.current?.click()}
         disabled={isStreaming}
       >
