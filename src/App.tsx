@@ -9,6 +9,7 @@ import { Scoreboard } from './components/scoreboard/Scoreboard';
 import { ThemeToggle } from './components/ui/ThemeToggle';
 import { Panel } from './components/ui/Panel';
 import { DashboardHome } from './components/dashboard/DashboardHome';
+import { ChatWindow } from './components/chat/ChatWindow';
 import { staggerContainer } from './lib/motion';
 import { cn } from './lib/utils';
 
@@ -107,7 +108,9 @@ function Shell() {
           {view === 'home' ? (
             <DashboardHome onAsk={ask} onOpenItinerary={() => setView('chat')} />
           ) : view === 'chat' ? (
-            <StagePlaceholder title={ui.nav.chat} />
+            <div className="mx-auto h-full w-full max-w-3xl">
+              <ChatWindow />
+            </div>
           ) : (
             <StagePlaceholder title={ui.map.heading} />
           )}
