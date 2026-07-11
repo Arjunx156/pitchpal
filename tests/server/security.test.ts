@@ -22,24 +22,42 @@ describe('chatRequestSchema', () => {
 
   it('rejects an unknown language or accessibility value', () => {
     expect(
-      chatRequestSchema.safeParse({ message: 'hi', context: { language: 'xx', accessibility: 'none' } }).success,
+      chatRequestSchema.safeParse({
+        message: 'hi',
+        context: { language: 'xx', accessibility: 'none' },
+      }).success,
     ).toBe(false);
     expect(
-      chatRequestSchema.safeParse({ message: 'hi', context: { language: 'en', accessibility: 'flying' } }).success,
+      chatRequestSchema.safeParse({
+        message: 'hi',
+        context: { language: 'en', accessibility: 'flying' },
+      }).success,
     ).toBe(false);
   });
 
   it('rejects an empty or oversized message', () => {
-    expect(chatRequestSchema.safeParse({ message: '   ', context: { language: 'en', accessibility: 'none' } }).success).toBe(false);
     expect(
-      chatRequestSchema.safeParse({ message: 'a'.repeat(1001), context: { language: 'en', accessibility: 'none' } }).success,
+      chatRequestSchema.safeParse({
+        message: '   ',
+        context: { language: 'en', accessibility: 'none' },
+      }).success,
+    ).toBe(false);
+    expect(
+      chatRequestSchema.safeParse({
+        message: 'a'.repeat(1001),
+        context: { language: 'en', accessibility: 'none' },
+      }).success,
     ).toBe(false);
   });
 
   it('caps history length', () => {
     const history = Array.from({ length: 21 }, () => ({ role: 'user' as const, content: 'x' }));
     expect(
-      chatRequestSchema.safeParse({ message: 'hi', context: { language: 'en', accessibility: 'none' }, history }).success,
+      chatRequestSchema.safeParse({
+        message: 'hi',
+        context: { language: 'en', accessibility: 'none' },
+        history,
+      }).success,
     ).toBe(false);
   });
 });

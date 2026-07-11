@@ -85,16 +85,15 @@ const TRANSPORT_KEYWORD_MAP: ReadonlyArray<{ keys: string[]; mode: TransportMode
   { keys: ['bus', 'autobús', 'autobus', 'ônibus', 'onibus'], mode: 'bus' },
   { keys: ['shuttle', 'navette'], mode: 'shuttle' },
   { keys: ['taxi', 'uber', 'lyft', 'rideshare', 'ride share'], mode: 'rideshare' },
-  { keys: ['parking', 'park', 'estacionamiento', 'stationnement', 'estacionamento'], mode: 'parking' },
+  {
+    keys: ['parking', 'park', 'estacionamiento', 'stationnement', 'estacionamento'],
+    mode: 'parking',
+  },
   { keys: ['bike', 'cycle', 'vélo', 'velo'], mode: 'bike' },
 ];
 
 /** Rank helper: matches origin section first, then step-free when needed. */
-function proximityRank(
-  nearSection: string,
-  origin: ContextSlice['origin'],
-  venue: Venue,
-): number {
+function proximityRank(nearSection: string, origin: ContextSlice['origin'], venue: Venue): number {
   if (!origin) return 2;
   const originSectionId =
     origin.kind === 'section' ? origin.section.id : nearestSectionForGate(origin.gate, venue)?.id;
@@ -124,7 +123,9 @@ function retrieveNavigation(
   }
   if (sections.length === 0) {
     // No specific section — surface a few step-free-friendly examples.
-    sections = venue.sections.filter((s) => (accessibilityFocus ? s.stepFreeAccess : true)).slice(0, MAX_RESULTS);
+    sections = venue.sections
+      .filter((s) => (accessibilityFocus ? s.stepFreeAccess : true))
+      .slice(0, MAX_RESULTS);
   }
 
   const gateIds = new Set<string>();
@@ -165,7 +166,10 @@ function retrieveAmenities(
   }
 
   return [...pool]
-    .sort((a, b) => proximityRank(a.nearSection, origin, venue) - proximityRank(b.nearSection, origin, venue))
+    .sort(
+      (a, b) =>
+        proximityRank(a.nearSection, origin, venue) - proximityRank(b.nearSection, origin, venue),
+    )
     .slice(0, MAX_RESULTS);
 }
 
@@ -192,11 +196,7 @@ function retrieveTransport(
  * Select the slice of venue data relevant to a fan message. Pure and
  * deterministic so it is fully unit-testable and keeps prompt tokens small.
  */
-export function retrieveContext(
-  message: string,
-  context: FanContext,
-  venue: Venue,
-): ContextSlice {
+export function retrieveContext(message: string, context: FanContext, venue: Venue): ContextSlice {
   const intent = classifyIntent(message);
   const accessibilityFocus = hasAccessibilityFocus(message, context.accessibility);
   const origin = resolveOrigin(context, venue);

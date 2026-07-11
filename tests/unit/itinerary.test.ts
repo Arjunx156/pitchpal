@@ -9,7 +9,14 @@ describe('buildItinerary', () => {
     const ops = getOpsSnapshot(venue, Date.now());
     const steps = buildItinerary(venue, ops, 'A');
 
-    expect(steps.map((s) => s.kind)).toEqual(['arrive', 'gate', 'seat', 'kickoff', 'halftime', 'leave']);
+    expect(steps.map((s) => s.kind)).toEqual([
+      'arrive',
+      'gate',
+      'seat',
+      'kickoff',
+      'halftime',
+      'leave',
+    ]);
     for (let i = 1; i < steps.length; i += 1) {
       expect(steps[i]?.time).toBeGreaterThan(steps[i - 1]?.time as number);
     }

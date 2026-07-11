@@ -23,7 +23,12 @@ const HOME_SCORER_NUMBERS = [9, 10, 7, 11] as const;
 const AWAY_SCORER_NUMBERS = [10, 9, 11, 7] as const;
 
 /** Fixed non-goal beats so the feed stays lively between goals. */
-const SET_PIECES: readonly { minute: number; kind: MomentKind; side: 'home' | 'away'; detail: string }[] = [
+const SET_PIECES: readonly {
+  minute: number;
+  kind: MomentKind;
+  side: 'home' | 'away';
+  detail: string;
+}[] = [
   { minute: 33, kind: 'yellow', side: 'away', detail: '#5' },
   { minute: 61, kind: 'sub', side: 'home', detail: '#17 ⇄ #7' },
   { minute: 74, kind: 'yellow', side: 'home', detail: '#4' },

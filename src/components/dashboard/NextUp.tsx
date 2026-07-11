@@ -2,10 +2,16 @@ import { motion } from 'framer-motion';
 import { Armchair, ChevronRight, Coffee, DoorOpen, Flag, LogOut, MapPin } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
-import { buildItinerary, stepLabel, type ItineraryStepKind } from '../../features/itinerary/itinerary';
+import {
+  buildItinerary,
+  stepLabel,
+  type ItineraryStepKind,
+} from '../../features/itinerary/itinerary';
 import { ITINERARY } from '../../i18n/ui';
 import { useNow } from '../../lib/useNow';
 import { rowItem } from '../../lib/motion';
+import { ACCENT_PILL } from '../../lib/variants';
+import { cn } from '../../lib/utils';
 import { Panel } from '../ui/Panel';
 
 const STEP_ICON: Record<Exclude<ItineraryStepKind, 'custom'>, typeof MapPin> = {
@@ -40,7 +46,10 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
         <button
           type="button"
           onClick={onOpenItinerary}
-          className="inline-flex items-center gap-0.5 rounded-full border border-[color-mix(in_oklab,var(--color-accent)_35%,transparent)] px-2.5 py-1 text-2xs font-semibold text-accent transition-all hover:bg-[color-mix(in_oklab,var(--color-accent)_12%,transparent)] hover:translate-x-0.5"
+          className={cn(
+            ACCENT_PILL,
+            'gap-0.5 px-2.5 py-1 text-2xs transition-all hover:translate-x-0.5',
+          )}
         >
           {ui.dashboard.seeAll}
           <ChevronRight size={13} aria-hidden />
@@ -57,7 +66,11 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
           const Icon = STEP_ICON[kind];
           const isNext = i === 0 && upcoming.length > 0;
           return (
-            <motion.li key={`${step.kind}-${step.time}`} variants={rowItem} className="relative flex items-center gap-3">
+            <motion.li
+              key={`${step.kind}-${step.time}`}
+              variants={rowItem}
+              className="relative flex items-center gap-3"
+            >
               <span
                 className={`relative z-[1] grid h-8 w-8 shrink-0 place-items-center rounded-full border ${
                   isNext
@@ -70,7 +83,9 @@ export function NextUp({ onOpenItinerary }: { onOpenItinerary: () => void }) {
               <span className="flex-1 text-sm font-medium text-foreground">
                 {stepLabel(step, strings)}
               </span>
-              <time className="tabular text-sm text-muted-foreground">{timeFmt.format(step.time)}</time>
+              <time className="tabular text-sm text-muted-foreground">
+                {timeFmt.format(step.time)}
+              </time>
             </motion.li>
           );
         })}

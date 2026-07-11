@@ -10,7 +10,12 @@ export const EASE_OUT = [0.16, 1, 0.3, 1] as const;
 export const EASE_EMPHASIZED = [0.2, 0, 0, 1] as const;
 
 /** Broadcast "slam" spring — punchy, slightly overshooting, like a stinger. */
-export const SPRING_STINGER: Transition = { type: 'spring', stiffness: 520, damping: 30, mass: 0.9 };
+export const SPRING_STINGER: Transition = {
+  type: 'spring',
+  stiffness: 520,
+  damping: 30,
+  mass: 0.9,
+};
 /** Calmer spring for panels rising into place. */
 export const SPRING_PANEL: Transition = { type: 'spring', stiffness: 260, damping: 26 };
 

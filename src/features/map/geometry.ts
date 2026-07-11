@@ -119,7 +119,16 @@ export function buildMapGeometry(venue: Venue): MapGeometry {
     };
   });
 
-  return { width: VIEW.width, height: VIEW.height, center: { x: cx, y: cy }, rx, ry, rings, gates, sections };
+  return {
+    width: VIEW.width,
+    height: VIEW.height,
+    center: { x: cx, y: cy },
+    rx,
+    ry,
+    rings,
+    gates,
+    sections,
+  };
 }
 
 /** Normalize an angle delta into [-180, 180] for shortest-arc walking. */

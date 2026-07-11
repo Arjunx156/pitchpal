@@ -65,7 +65,10 @@ export interface UseItineraryOrderResult {
 }
 
 /** Fan-controlled reordering + custom steps for the itinerary, persisted per match. */
-export function useItineraryOrder(matchId: string, baseSteps: ItineraryStep[]): UseItineraryOrderResult {
+export function useItineraryOrder(
+  matchId: string,
+  baseSteps: ItineraryStep[],
+): UseItineraryOrderResult {
   const [custom, setCustom] = useState<ItineraryStep[]>(() => loadPersisted(matchId)?.custom ?? []);
   const [order, setOrder] = useState<string[] | null>(() => loadPersisted(matchId)?.order ?? null);
 

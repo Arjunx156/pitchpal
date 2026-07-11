@@ -13,6 +13,7 @@ import { fmt } from '../../i18n/answers';
 import { Dialog } from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { cn } from '../../lib/utils';
+import { FIELD_SURFACE } from '../../lib/variants';
 
 const TOTAL = 3;
 
@@ -23,7 +24,12 @@ export function Onboarding({ open, onClose }: { open: boolean; onClose: () => vo
   const titles = [ui.onboarding.stepLanguage, ui.onboarding.stepAccess, ui.onboarding.stepSeat];
 
   return (
-    <Dialog open={open} onClose={onClose} title={ui.onboarding.title} description={ui.onboarding.subtitle}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title={ui.onboarding.title}
+      description={ui.onboarding.subtitle}
+    >
       <div className="mt-2">
         {/* progress dots */}
         <div className="mb-4 flex items-center gap-1.5" aria-hidden>
@@ -84,7 +90,10 @@ export function Onboarding({ open, onClose }: { open: boolean; onClose: () => vo
                   placeholder={ui.locationPlaceholder}
                   maxLength={120}
                   onChange={(e) => update({ location: e.target.value })}
-                  className="w-full rounded-lg border border-border bg-[color-mix(in_oklab,var(--color-surface)_60%,transparent)] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-[color-mix(in_oklab,var(--color-accent)_60%,transparent)] focus:outline-none"
+                  className={cn(
+                    FIELD_SURFACE,
+                    'w-full px-3 py-2.5 placeholder:text-muted-foreground',
+                  )}
                 />
               </div>
             )}
@@ -117,7 +126,15 @@ export function Onboarding({ open, onClose }: { open: boolean; onClose: () => vo
   );
 }
 
-function SelectTile({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function SelectTile({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       type="button"

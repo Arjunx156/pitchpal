@@ -60,7 +60,12 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
       }
     >
       <div className="relative overflow-hidden rounded-lg bg-[color-mix(in_oklab,var(--color-bg)_70%,transparent)]">
-        <svg viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} className="w-full" role="img" aria-label={summary}>
+        <svg
+          viewBox={`0 0 ${VIEW.width} ${VIEW.height}`}
+          className="w-full"
+          role="img"
+          aria-label={summary}
+        >
           <defs>
             <radialGradient id="pitch-grad" cx="50%" cy="50%" r="70%">
               <stop offset="0%" style={{ stopColor: 'var(--color-pitch)', stopOpacity: 0.32 }} />
@@ -77,7 +82,10 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
               rx={ring.rx}
               ry={ring.ry}
               strokeWidth={0.6}
-              style={{ fill: 'none', stroke: 'color-mix(in oklab, var(--color-border-strong) 60%, transparent)' }}
+              style={{
+                fill: 'none',
+                stroke: 'color-mix(in oklab, var(--color-border-strong) 60%, transparent)',
+              }}
             />
           ))}
 
@@ -100,7 +108,13 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
               strokeWidth={0.6}
               style={{ stroke: PITCH_LINE }}
             />
-            <circle cx={geo.center.x} cy={geo.center.y} r={9} strokeWidth={0.6} style={{ fill: 'none', stroke: PITCH_LINE }} />
+            <circle
+              cx={geo.center.x}
+              cy={geo.center.y}
+              r={9}
+              strokeWidth={0.6}
+              style={{ fill: 'none', stroke: PITCH_LINE }}
+            />
           </g>
 
           {/* sections — colored by live crowd density */}
@@ -116,9 +130,13 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
                 r={isTarget ? 4.6 : 3.2}
                 strokeWidth={isAmenity ? 1.4 : 0}
                 initial={{ scale: 0, opacity: 0 }}
-                animate={isTarget ? { scale: [1, 1.25, 1], opacity: 1 } : { scale: 1, opacity: 0.9 }}
+                animate={
+                  isTarget ? { scale: [1, 1.25, 1], opacity: 1 } : { scale: 1, opacity: 0.9 }
+                }
                 transition={
-                  isTarget ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.4 }
+                  isTarget
+                    ? { duration: 1.6, repeat: Infinity, ease: 'easeInOut' }
+                    : { duration: 0.4 }
                 }
                 style={{
                   fill: isTarget ? 'var(--color-accent)' : DENSITY_COLOR[level],
@@ -165,7 +183,10 @@ export function StadiumMap({ onAsk }: { onAsk?: (query: string) => void }) {
                   strokeWidth={1}
                   style={{
                     fill: isOrigin ? 'var(--color-accent)' : 'var(--color-surface-2)',
-                    stroke: isOrigin || isTransport ? 'var(--color-accent)' : 'var(--color-border-strong)',
+                    stroke:
+                      isOrigin || isTransport
+                        ? 'var(--color-accent)'
+                        : 'var(--color-border-strong)',
                   }}
                 />
                 <text

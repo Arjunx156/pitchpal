@@ -77,7 +77,8 @@ export async function* runAgent(
     parts: [{ text: t.content }],
   }));
   const userParts: Part[] = [];
-  if (input.image) userParts.push({ inlineData: { mimeType: input.image.mimeType, data: input.image.data } });
+  if (input.image)
+    userParts.push({ inlineData: { mimeType: input.image.mimeType, data: input.image.data } });
   userParts.push({ text: input.message });
   contents.push({ role: 'user', parts: userParts });
 
@@ -104,7 +105,8 @@ export async function* runAgent(
       }
       const fnCalls = chunk.functionCalls;
       if (fnCalls) {
-        for (const c of fnCalls) calls.push({ name: c.name ?? '', args: (c.args as Record<string, unknown>) ?? {} });
+        for (const c of fnCalls)
+          calls.push({ name: c.name ?? '', args: (c.args as Record<string, unknown>) ?? {} });
       }
     }
 
@@ -112,7 +114,10 @@ export async function* runAgent(
 
     contents.push({
       role: 'model',
-      parts: [...(text ? [{ text }] : []), ...calls.map((c) => ({ functionCall: { name: c.name, args: c.args } }))],
+      parts: [
+        ...(text ? [{ text }] : []),
+        ...calls.map((c) => ({ functionCall: { name: c.name, args: c.args } })),
+      ],
     });
 
     const responseParts: Part[] = [];
@@ -124,7 +129,10 @@ export async function* runAgent(
         yield { type: 'context', patch: result.contextPatch };
       }
       responseParts.push({
-        functionResponse: { name: call.name, response: { summary: result.summary, data: result.data ?? null } },
+        functionResponse: {
+          name: call.name,
+          response: { summary: result.summary, data: result.data ?? null },
+        },
       });
     }
     contents.push({ role: 'user', parts: responseParts });

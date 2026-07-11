@@ -5,7 +5,11 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { handleChatRequest } from '../../server/handler';
 import { rateLimit, resetRateLimit } from '../../server/security';
 
-function mockReq(body: string, ip = '9.9.9.9', headers: Record<string, string> = {}): IncomingMessage {
+function mockReq(
+  body: string,
+  ip = '9.9.9.9',
+  headers: Record<string, string> = {},
+): IncomingMessage {
   const stream = Readable.from([Buffer.from(body, 'utf8')]) as unknown as IncomingMessage;
   stream.headers = headers;
   (stream as unknown as { socket: unknown }).socket = { remoteAddress: ip };

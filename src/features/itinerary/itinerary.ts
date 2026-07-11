@@ -6,7 +6,8 @@ import { fmt } from '../../i18n/answers';
 
 const MIN_MS = 60_000;
 
-export type ItineraryStepKind = 'arrive' | 'gate' | 'seat' | 'kickoff' | 'halftime' | 'leave' | 'custom';
+export type ItineraryStepKind =
+  'arrive' | 'gate' | 'seat' | 'kickoff' | 'halftime' | 'leave' | 'custom';
 
 export interface ItineraryStep {
   kind: ItineraryStepKind;
@@ -19,7 +20,11 @@ export interface ItineraryStep {
 }
 
 /** Deterministic "My Match Day" timeline, derived from the venue and ops cycle. */
-export function buildItinerary(venue: Venue, ops: OpsSnapshot, originGateId?: string): ItineraryStep[] {
+export function buildItinerary(
+  venue: Venue,
+  ops: OpsSnapshot,
+  originGateId?: string,
+): ItineraryStep[] {
   const gate = venue.gates.find((g) => g.id === originGateId) ?? venue.gates[0];
   const greenest = [...venue.transport].sort((a, b) => a.carbonKg - b.carbonKg)[0];
 

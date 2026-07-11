@@ -102,65 +102,69 @@ export function Composer() {
           hidden
           onChange={onPickImage}
         />
-      <button
-        type="button"
-        className={iconBtn}
-        aria-label={SCAN_STRINGS[context.language].button}
-        onClick={() => fileRef.current?.click()}
-        disabled={isStreaming}
-      >
-        <ImagePlus size={18} aria-hidden />
-      </button>
-
-      {speech.supported ? (
         <button
           type="button"
-          className={cn(iconBtn, speech.listening && 'bg-[color-mix(in_oklab,var(--color-live)_16%,transparent)] text-[var(--color-live)]')}
-          aria-label={speech.listening ? ui.voice.stopListening : ui.voice.listen}
-          aria-pressed={speech.listening}
-          onClick={() => (speech.listening ? speech.stop() : speech.start())}
+          className={iconBtn}
+          aria-label={SCAN_STRINGS[context.language].button}
+          onClick={() => fileRef.current?.click()}
+          disabled={isStreaming}
         >
-          <Mic size={18} aria-hidden />
+          <ImagePlus size={18} aria-hidden />
         </button>
-      ) : null}
 
-      <label htmlFor="composer-input" className="sr-only">
-        {ui.composerLabel}
-      </label>
-      <textarea
-        id="composer-input"
-        ref={taRef}
-        rows={1}
-        value={value}
-        maxLength={MAX_MESSAGE_CHARS}
-        onChange={(e) => {
-          setValue(e.target.value);
-          grow();
-        }}
-        onKeyDown={onKeyDown}
-        placeholder={ui.composerPlaceholder}
-        className="max-h-[140px] flex-1 resize-none self-center bg-transparent px-2 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
-      />
+        {speech.supported ? (
+          <button
+            type="button"
+            className={cn(
+              iconBtn,
+              speech.listening &&
+                'bg-[color-mix(in_oklab,var(--color-live)_16%,transparent)] text-[var(--color-live)]',
+            )}
+            aria-label={speech.listening ? ui.voice.stopListening : ui.voice.listen}
+            aria-pressed={speech.listening}
+            onClick={() => (speech.listening ? speech.stop() : speech.start())}
+          >
+            <Mic size={18} aria-hidden />
+          </button>
+        ) : null}
 
-      {isStreaming ? (
-        <button
-          type="button"
-          onClick={stop}
-          aria-label={ui.stop}
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-foreground transition-transform hover:scale-105 active:scale-95"
-        >
-          <Square size={16} aria-hidden fill="currentColor" />
-        </button>
-      ) : (
-        <button
-          type="submit"
-          aria-label={ui.send}
-          disabled={!value.trim()}
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-on-accent shadow-[var(--glow-gold)] transition-transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
-        >
-          <ArrowUp size={18} aria-hidden />
-        </button>
-      )}
+        <label htmlFor="composer-input" className="sr-only">
+          {ui.composerLabel}
+        </label>
+        <textarea
+          id="composer-input"
+          ref={taRef}
+          rows={1}
+          value={value}
+          maxLength={MAX_MESSAGE_CHARS}
+          onChange={(e) => {
+            setValue(e.target.value);
+            grow();
+          }}
+          onKeyDown={onKeyDown}
+          placeholder={ui.composerPlaceholder}
+          className="max-h-[140px] flex-1 resize-none self-center bg-transparent px-2 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+        />
+
+        {isStreaming ? (
+          <button
+            type="button"
+            onClick={stop}
+            aria-label={ui.stop}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2 text-foreground transition-transform hover:scale-105 active:scale-95"
+          >
+            <Square size={16} aria-hidden fill="currentColor" />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            aria-label={ui.send}
+            disabled={!value.trim()}
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-on-accent shadow-[var(--glow-gold)] transition-transform hover:scale-105 active:scale-95 disabled:opacity-40 disabled:hover:scale-100"
+          >
+            <ArrowUp size={18} aria-hidden />
+          </button>
+        )}
       </form>
     </div>
   );

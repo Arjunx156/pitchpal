@@ -16,8 +16,9 @@
 :root {
   /* ---- type families ---- */
   --font-display: 'Archivo Variable', 'IBM Plex Sans Arabic', 'Arial Narrow', system-ui, sans-serif;
-  --font-sans: 'Hanken Grotesk Variable', 'IBM Plex Sans Arabic', system-ui, -apple-system,
-    'Segoe UI', Roboto, sans-serif;
+  --font-sans:
+    'Hanken Grotesk Variable', 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
   --font-mono: 'Martian Mono Variable', 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
 
   /* Width/weight instances for the broadcast display face */

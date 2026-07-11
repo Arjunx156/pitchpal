@@ -27,7 +27,10 @@ describe('Composer', () => {
     await userEvent.click(send);
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(fetchMock).toHaveBeenCalledWith('/api/chat', expect.objectContaining({ method: 'POST' }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/chat',
+      expect.objectContaining({ method: 'POST' }),
+    );
   });
 
   it('shows a Stop control while streaming and cancels on press', async () => {
@@ -35,7 +38,9 @@ describe('Composer', () => {
     const fetchMock = vi.fn(
       (_url: string, init?: RequestInit) =>
         new Promise<Response>((_resolve, reject) => {
-          init?.signal?.addEventListener('abort', () => reject(new DOMException('aborted', 'AbortError')));
+          init?.signal?.addEventListener('abort', () =>
+            reject(new DOMException('aborted', 'AbortError')),
+          );
         }),
     );
     vi.stubGlobal('fetch', fetchMock);
@@ -63,7 +68,10 @@ describe('Composer', () => {
     await userEvent.upload(fileInput, okFile);
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalled());
-    expect(fetchMock).toHaveBeenCalledWith('/api/chat', expect.objectContaining({ method: 'POST' }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/chat',
+      expect.objectContaining({ method: 'POST' }),
+    );
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
@@ -74,7 +82,9 @@ describe('Composer', () => {
     const { container } = renderWithProviders(<Composer />);
     const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
     // Allowed type (passes the input `accept` filter) but over the 5 MB cap.
-    const bigFile = new File([new Uint8Array(6 * 1024 * 1024)], 'ticket.png', { type: 'image/png' });
+    const bigFile = new File([new Uint8Array(6 * 1024 * 1024)], 'ticket.png', {
+      type: 'image/png',
+    });
     await userEvent.upload(fileInput, bigFile);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();

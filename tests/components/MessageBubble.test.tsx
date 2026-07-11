@@ -27,7 +27,12 @@ describe('MessageBubble', () => {
 
   it('offers a retry on a failed assistant turn', async () => {
     const onRetry = vi.fn();
-    const msg: ChatMessage = { id: 'a2', role: 'assistant', content: 'Something went wrong.', error: true };
+    const msg: ChatMessage = {
+      id: 'a2',
+      role: 'assistant',
+      content: 'Something went wrong.',
+      error: true,
+    };
     renderWithProviders(<MessageBubble message={msg} onRetry={onRetry} />);
     await userEvent.click(screen.getByRole('button', { name: /retry/i }));
     expect(onRetry).toHaveBeenCalledOnce();

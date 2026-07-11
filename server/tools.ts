@@ -28,7 +28,10 @@ export const FUNCTION_DECLARATIONS = [
     parametersJsonSchema: {
       type: 'object',
       properties: {
-        query: { type: 'string', description: 'What the fan wants, e.g. "halal food", "restroom".' },
+        query: {
+          type: 'string',
+          description: 'What the fan wants, e.g. "halal food", "restroom".',
+        },
         type: { type: 'string', description: 'Optional amenity category.' },
       },
       required: [],

@@ -21,7 +21,9 @@ export function Standings() {
         <thead>
           <tr className="hud-eyebrow text-left">
             <th className="w-6 pb-2 font-semibold">#</th>
-            <th className="pb-2 font-semibold"><span className="sr-only">Team</span></th>
+            <th className="pb-2 font-semibold">
+              <span className="sr-only">Team</span>
+            </th>
             <th className="pb-2 text-center font-semibold">{ui.standings.played}</th>
             <th className="pb-2 text-right font-semibold">{ui.standings.points}</th>
           </tr>
@@ -40,10 +42,14 @@ export function Standings() {
               >
                 <td className="tabular py-2 text-muted-foreground">{i + 1}</td>
                 <td className="py-2">
-                  <span className={cn('font-semibold', isPlaying ? 'text-accent' : 'text-foreground')}>
+                  <span
+                    className={cn('font-semibold', isPlaying ? 'text-accent' : 'text-foreground')}
+                  >
                     {r.code}
                   </span>
-                  <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">{r.name}</span>
+                  <span className="ml-2 hidden text-xs text-muted-foreground sm:inline">
+                    {r.name}
+                  </span>
                 </td>
                 <td className="tabular py-2 text-center text-muted-foreground">{r.played}</td>
                 <td className="tabular py-2 text-right font-bold text-foreground">{r.points}</td>

@@ -56,7 +56,10 @@ describe('runAgent (tool-calling loop)', () => {
     expect(requests).toHaveLength(2);
     expect(events.some((e) => e.type === 'status' && e.tool === 'planRoute')).toBe(true);
     expect(events.some((e) => e.type === 'tool_result')).toBe(true);
-    const text = events.filter((e) => e.type === 'token').map((e) => (e as { value: string }).value).join('');
+    const text = events
+      .filter((e) => e.type === 'token')
+      .map((e) => (e as { value: string }).value)
+      .join('');
     expect(text).toBe('Head to Gate C.');
 
     // The second request must carry the functionResponse turn back to the model.
@@ -80,12 +83,15 @@ describe('runAgent (tool-calling loop)', () => {
 
   it('emits a localized fallback instead of silence when tool rounds run out', async () => {
     // Model insists on calling tools forever — every round returns another call.
-    const { ai, requests } = fakeAi([
-      [{ functionCalls: [{ name: 'getGateStatus', args: {} }] }],
-    ]);
+    const { ai, requests } = fakeAi([[{ functionCalls: [{ name: 'getGateStatus', args: {} }] }]]);
 
     const events = await collect(
-      runAgent(input({ context: { ...DEFAULT_CONTEXT, language: 'es' } }), { GEMINI_API_KEY: 'k' }, undefined, ai),
+      runAgent(
+        input({ context: { ...DEFAULT_CONTEXT, language: 'es' } }),
+        { GEMINI_API_KEY: 'k' },
+        undefined,
+        ai,
+      ),
     );
 
     expect(requests).toHaveLength(4); // MAX_TOOL_ROUNDS
@@ -109,9 +115,7 @@ describe('runAgent (tool-calling loop)', () => {
 
   it('bails mid-stream on abort without emitting the overflow fallback', async () => {
     const controller = new AbortController();
-    const { ai } = fakeAi([
-      [{ text: 'partial ' }, { text: 'answer' }],
-    ]);
+    const { ai } = fakeAi([[{ text: 'partial ' }, { text: 'answer' }]]);
     // Abort after the first chunk is consumed.
     const events: ChatStreamEvent[] = [];
     const gen = runAgent(input(), { GEMINI_API_KEY: 'k' }, controller.signal, ai);

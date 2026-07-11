@@ -29,7 +29,7 @@ const MIME: Record<string, string> = {
 };
 
 async function serveStatic(req: IncomingMessage, res: ServerResponse): Promise<void> {
-  const urlPath = decodeURIComponent(((req.url ?? '/').split('?')[0] ?? '/'));
+  const urlPath = decodeURIComponent((req.url ?? '/').split('?')[0] ?? '/');
   let filePath = join(DIST, normalize(urlPath));
 
   // Path-traversal guard: never serve outside DIST.

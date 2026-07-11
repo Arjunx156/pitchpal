@@ -21,7 +21,8 @@ describe('parseAnswerCard', () => {
   });
 
   it('accepts a json-fenced block too', () => {
-    const raw = 'Options nearby:\n```json\n{"type":"amenity","title":"Food","items":[{"name":"Crescent Grill"}]}\n```';
+    const raw =
+      'Options nearby:\n```json\n{"type":"amenity","title":"Food","items":[{"name":"Crescent Grill"}]}\n```';
     const { card } = parseAnswerCard(raw);
     expect(card?.type).toBe('amenity');
   });

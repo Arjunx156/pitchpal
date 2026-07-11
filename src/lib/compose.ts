@@ -3,11 +3,7 @@ import type { AnswerCard } from './cards';
 import type { FanContext } from '../features/context/types';
 import type { Venue } from '../features/venue/types';
 import { ANSWER_PHRASES, fmt, type AnswerPhrases } from '../i18n/answers';
-import {
-  gateStatus,
-  quietestAccessibleGate,
-  type OpsSnapshot,
-} from '../features/ops/opsFeed';
+import { gateStatus, quietestAccessibleGate, type OpsSnapshot } from '../features/ops/opsFeed';
 
 export interface ComposedAnswer {
   text: string;

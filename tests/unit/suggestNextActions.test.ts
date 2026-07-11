@@ -6,7 +6,14 @@ import type { OpsSnapshot, GateStatus } from '../../src/features/ops/opsFeed';
 import type { ItineraryStep } from '../../src/features/itinerary/itinerary';
 
 function makeGate(overrides: Partial<GateStatus> = {}): GateStatus {
-  return { gateId: 'A', stepFree: true, occupancy: 0.3, queueMinutes: 4, level: 'ok', ...overrides };
+  return {
+    gateId: 'A',
+    stepFree: true,
+    occupancy: 0.3,
+    queueMinutes: 4,
+    level: 'ok',
+    ...overrides,
+  };
 }
 
 function makeOps(overrides: Partial<OpsSnapshot> = {}): OpsSnapshot {
@@ -41,7 +48,9 @@ describe('suggestNextActions', () => {
 
   it('does not suggest kickoff-soon well before or after kickoff', () => {
     const farOut = makeOps({ phase: 'pre', minutesToKickoff: 45 });
-    expect(suggestNextActions(DEFAULT_CONTEXT, farOut, [], ui).some((s) => s.kind === 'amenity')).toBe(false);
+    expect(
+      suggestNextActions(DEFAULT_CONTEXT, farOut, [], ui).some((s) => s.kind === 'amenity'),
+    ).toBe(false);
   });
 
   it('suggests a leaving route once the match has ended', () => {
@@ -64,7 +73,10 @@ describe('suggestNextActions', () => {
     const ops = makeOps({
       phase: 'post',
       matchClock: null,
-      gates: [makeGate({ gateId: 'A', level: 'jam', occupancy: 0.6 }), makeGate({ gateId: 'B', occupancy: 0.1 })],
+      gates: [
+        makeGate({ gateId: 'A', level: 'jam', occupancy: 0.6 }),
+        makeGate({ gateId: 'B', occupancy: 0.1 }),
+      ],
     });
     const itinerary: ItineraryStep[] = [{ kind: 'gate', time: 0, gateId: 'A' }];
     const context = { ...DEFAULT_CONTEXT, accessibility: 'wheelchair' as const };

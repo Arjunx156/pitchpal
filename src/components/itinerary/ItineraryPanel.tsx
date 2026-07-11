@@ -23,11 +23,15 @@ import {
   type ItineraryStepKind,
 } from '../../features/itinerary/itinerary';
 import { useItineraryOrder } from '../../features/itinerary/useItineraryOrder';
-import { useGateAlerts, type NotificationSupport } from '../../features/notifications/useGateAlerts';
+import {
+  useGateAlerts,
+  type NotificationSupport,
+} from '../../features/notifications/useGateAlerts';
 import { useStepReminder } from '../../features/notifications/useStepReminder';
 import { ITINERARY, type ItineraryStrings } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { useNow } from '../../lib/useNow';
+import { ACCENT_PILL, FIELD_SURFACE } from '../../lib/variants';
 import { Panel } from '../ui/Panel';
 import { cn } from '../../lib/utils';
 
@@ -53,9 +57,24 @@ interface StepRowProps {
 }
 
 /** One itinerary row: label, time, reorder controls and a reminder bell. */
-function StepRow({ step, index, total, isNext, strings, permission, timeText, onMove, onRemove }: StepRowProps) {
+function StepRow({
+  step,
+  index,
+  total,
+  isNext,
+  strings,
+  permission,
+  timeText,
+  onMove,
+  onRemove,
+}: StepRowProps) {
   const label = stepLabel(step, strings);
-  const reminder = useStepReminder(permission, step.time, strings.heading, `${label} · ${timeText}`);
+  const reminder = useStepReminder(
+    permission,
+    step.time,
+    strings.heading,
+    `${label} · ${timeText}`,
+  );
   const Icon = step.kind === 'custom' ? Plus : STEP_ICON[step.kind];
 
   return (
@@ -72,7 +91,9 @@ function StepRow({ step, index, total, isNext, strings, permission, timeText, on
       <span
         className={cn(
           'grid h-7 w-7 shrink-0 place-items-center rounded-full border',
-          isNext ? 'border-transparent bg-accent text-on-accent' : 'border-border bg-surface text-muted-foreground',
+          isNext
+            ? 'border-transparent bg-accent text-on-accent'
+            : 'border-border bg-surface text-muted-foreground',
         )}
       >
         <Icon size={13} aria-hidden />
@@ -85,7 +106,11 @@ function StepRow({ step, index, total, isNext, strings, permission, timeText, on
             type="button"
             aria-label={fmt(strings.reminderToggle, { step: label })}
             aria-pressed={reminder.armed}
-            title={reminder.armed ? fmt(strings.reminderOn, { step: label }) : fmt(strings.reminderToggle, { step: label })}
+            title={
+              reminder.armed
+                ? fmt(strings.reminderOn, { step: label })
+                : fmt(strings.reminderToggle, { step: label })
+            }
             onClick={reminder.toggle}
             className={cn(
               'grid h-6 w-6 place-items-center rounded',
@@ -134,7 +159,10 @@ export function ItineraryPanel() {
   const ops = getOpsSnapshot(venue, now);
   const strings = ITINERARY[context.language];
   const base = useMemo(() => buildItinerary(venue, ops), [venue, ops]);
-  const { steps, reorder, addCustomStep, removeCustomStep } = useItineraryOrder(context.matchId, base);
+  const { steps, reorder, addCustomStep, removeCustomStep } = useItineraryOrder(
+    context.matchId,
+    base,
+  );
   const [draft, setDraft] = useState('');
 
   const gateStep = steps.find((s) => s.kind === 'gate');
@@ -169,7 +197,7 @@ export function ItineraryPanel() {
           <button
             type="button"
             onClick={() => void enable()}
-            className="inline-flex items-center gap-1 rounded-full border border-[color-mix(in_oklab,var(--color-accent)_35%,transparent)] px-2.5 py-1 text-2xs font-semibold text-accent transition-colors hover:bg-[color-mix(in_oklab,var(--color-accent)_12%,transparent)]"
+            className={cn(ACCENT_PILL, 'gap-1 px-2.5 py-1 text-2xs transition-colors')}
           >
             <Bell size={11} aria-hidden />
             {strings.alertsEnable}
@@ -210,7 +238,7 @@ export function ItineraryPanel() {
           placeholder={`${strings.addStep}…`}
           aria-label={strings.addStep}
           maxLength={60}
-          className="flex-1 rounded-lg border border-border bg-[color-mix(in_oklab,var(--color-surface)_60%,transparent)] px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-[color-mix(in_oklab,var(--color-accent)_60%,transparent)] focus:outline-none"
+          className={cn(FIELD_SURFACE, 'flex-1 px-3 py-1.5 placeholder:text-muted-foreground')}
         />
         <button
           type="submit"

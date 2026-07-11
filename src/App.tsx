@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useState, type ComponentType } from 'react';
 import { MotionConfig, motion } from 'framer-motion';
-import { Command, Download, LayoutGrid, MessagesSquare, Map as MapIcon, MoreHorizontal } from 'lucide-react';
+import {
+  Command,
+  Download,
+  LayoutGrid,
+  MessagesSquare,
+  Map as MapIcon,
+  MoreHorizontal,
+} from 'lucide-react';
 import { ThemeProvider } from './features/theme/ThemeProvider';
 import { FanContextProvider, useFanContext } from './features/context/ContextProvider';
 import { SpeechProvider } from './features/voice/SpeechProvider';
@@ -93,7 +100,10 @@ function Shell() {
             <span className="brand__title">{ui.title}</span>
           </div>
 
-          <nav className="viewswitch glass hidden lg:inline-flex" aria-label={ui.nav.switcherHeading}>
+          <nav
+            className="viewswitch glass hidden lg:inline-flex"
+            aria-label={ui.nav.switcherHeading}
+          >
             {navs.map(({ surface, label, icon: Icon }) => {
               const active = view === surface;
               return (
@@ -105,7 +115,11 @@ function Shell() {
                   onClick={() => setView(surface)}
                 >
                   {active ? (
-                    <motion.span layoutId="viewswitch-pill" className="viewswitch__pill" aria-hidden />
+                    <motion.span
+                      layoutId="viewswitch-pill"
+                      className="viewswitch__pill"
+                      aria-hidden
+                    />
                   ) : null}
                   <span className="viewswitch__label">
                     <Icon size={16} aria-hidden />

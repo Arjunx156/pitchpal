@@ -9,10 +9,14 @@ import {
 } from '../../features/context/types';
 import { LANGUAGE_NAMES } from '../../i18n/ui';
 import { FIXTURES } from '../../features/tournament/fixture';
+import { FIELD_SURFACE } from '../../lib/variants';
+import { cn } from '../../lib/utils';
 import { Panel } from '../ui/Panel';
 
-const fieldCls =
-  'w-full appearance-none rounded-lg border border-border bg-[color-mix(in_oklab,var(--color-surface)_60%,transparent)] py-2 pl-9 pr-8 text-sm text-foreground transition-colors hover:border-border-strong focus:border-[color-mix(in_oklab,var(--color-accent)_60%,transparent)] focus:outline-none';
+const fieldCls = cn(
+  FIELD_SURFACE,
+  'w-full appearance-none py-2 pl-9 pr-8 transition-colors hover:border-border-strong',
+);
 
 function Field({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
   return (

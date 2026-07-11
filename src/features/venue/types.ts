@@ -15,13 +15,7 @@ export type AmenityType =
   | 'atm'
   | 'info';
 
-export type TransportMode =
-  | 'rail'
-  | 'bus'
-  | 'shuttle'
-  | 'rideshare'
-  | 'parking'
-  | 'bike';
+export type TransportMode = 'rail' | 'bus' | 'shuttle' | 'rideshare' | 'parking' | 'bike';
 
 export interface Gate {
   id: string;

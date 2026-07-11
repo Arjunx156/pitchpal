@@ -1,8 +1,5 @@
 import { z } from 'zod';
-import {
-  ACCESSIBILITY_PROFILES,
-  LANGUAGES,
-} from '../src/features/context/types';
+import { ACCESSIBILITY_PROFILES, LANGUAGES } from '../src/features/context/types';
 import { FIXTURES, DEFAULT_MATCH_ID } from '../src/features/tournament/fixture';
 
 const MATCH_IDS = FIXTURES.map((f) => f.id) as [string, ...string[]];

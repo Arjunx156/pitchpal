@@ -39,13 +39,16 @@ function CardShell({
 function AccessBadge({ ok, ui, kind }: { ok?: boolean; ui: UiStrings; kind: 'step' | 'access' }) {
   if (ok === undefined) return null;
   if (kind === 'access' && !ok) return null;
-  const label = kind === 'step' ? (ok ? ui.card.stepFree : ui.card.notStepFree) : ui.card.accessible;
+  const label =
+    kind === 'step' ? (ok ? ui.card.stepFree : ui.card.notStepFree) : ui.card.accessible;
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[0.62rem] font-semibold"
       style={{
         color: ok ? 'var(--color-ok)' : 'var(--color-text-muted)',
-        background: ok ? 'color-mix(in oklab, var(--color-ok) 14%, transparent)' : 'var(--color-surface-2)',
+        background: ok
+          ? 'color-mix(in oklab, var(--color-ok) 14%, transparent)'
+          : 'var(--color-surface-2)',
       }}
     >
       <Accessibility size={11} aria-hidden />
@@ -63,7 +66,9 @@ export function CardRenderer({ card, ui }: { card: AnswerCard; ui: UiStrings }) 
             <MapPin size={12} aria-hidden className="text-accent" />
             {card.fromLabel ? <span>{card.fromLabel}</span> : null}
             {card.fromLabel && card.toLabel ? <span aria-hidden>→</span> : null}
-            {card.toLabel ? <span className="font-medium text-foreground">{card.toLabel}</span> : null}
+            {card.toLabel ? (
+              <span className="font-medium text-foreground">{card.toLabel}</span>
+            ) : null}
           </p>
         ) : null}
         <div className="mb-2 flex flex-wrap gap-1.5">
@@ -77,7 +82,11 @@ export function CardRenderer({ card, ui }: { card: AnswerCard; ui: UiStrings }) 
         </div>
         <ol className="relative flex flex-col gap-2 pl-1">
           {card.steps.map((step, i) => (
-            <motion.li key={i} variants={rowItem} className="flex items-start gap-2.5 text-sm text-foreground">
+            <motion.li
+              key={i}
+              variants={rowItem}
+              className="flex items-start gap-2.5 text-sm text-foreground"
+            >
               <span className="tabular mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-surface-2 text-[0.65rem] font-bold text-accent">
                 {i + 1}
               </span>
@@ -101,7 +110,9 @@ export function CardRenderer({ card, ui }: { card: AnswerCard; ui: UiStrings }) 
             >
               <div className="min-w-0">
                 <p className="text-sm font-medium text-foreground">{item.name}</p>
-                {item.detail ? <p className="text-xs text-muted-foreground">{item.detail}</p> : null}
+                {item.detail ? (
+                  <p className="text-xs text-muted-foreground">{item.detail}</p>
+                ) : null}
               </div>
               <div className="flex shrink-0 flex-col items-end gap-1">
                 {item.hours ? (

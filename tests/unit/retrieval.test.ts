@@ -7,7 +7,11 @@ const ctx = (over: Partial<FanContext> = {}): FanContext => ({ ...DEFAULT_CONTEX
 
 describe('retrieveContext — navigation', () => {
   it('resolves the target section and its nearest gate', () => {
-    const slice = retrieveContext('How do I get to section 205?', ctx({ location: 'Gate B' }), venue);
+    const slice = retrieveContext(
+      'How do I get to section 205?',
+      ctx({ location: 'Gate B' }),
+      venue,
+    );
     expect(slice.intent).toBe('navigation');
     expect(slice.sections.map((s) => s.id)).toContain('205');
     // 205's nearest gate is C; origin gate B is also included.
@@ -18,13 +22,21 @@ describe('retrieveContext — navigation', () => {
   });
 
   it('flags an accessibility focus from the saved profile', () => {
-    const slice = retrieveContext('route to section 120', ctx({ accessibility: 'wheelchair' }), venue);
+    const slice = retrieveContext(
+      'route to section 120',
+      ctx({ accessibility: 'wheelchair' }),
+      venue,
+    );
     expect(slice.accessibilityFocus).toBe(true);
     expect(slice.sections.map((s) => s.id)).toContain('120');
   });
 
   it('falls back to step-free example sections when none is named and access is needed', () => {
-    const slice = retrieveContext('how do I find my seat?', ctx({ accessibility: 'wheelchair' }), venue);
+    const slice = retrieveContext(
+      'how do I find my seat?',
+      ctx({ accessibility: 'wheelchair' }),
+      venue,
+    );
     expect(slice.sections.length).toBeGreaterThan(0);
     expect(slice.sections.every((s) => s.stepFreeAccess)).toBe(true);
   });
@@ -52,7 +64,11 @@ describe('retrieveContext — transport', () => {
   });
 
   it('prefers accessible transport under an accessibility profile', () => {
-    const slice = retrieveContext('how do I leave after the match?', ctx({ accessibility: 'wheelchair' }), venue);
+    const slice = retrieveContext(
+      'how do I leave after the match?',
+      ctx({ accessibility: 'wheelchair' }),
+      venue,
+    );
     expect(slice.transport.length).toBeGreaterThan(0);
     expect(slice.transport.every((t) => t.accessible)).toBe(true);
   });
@@ -61,7 +77,11 @@ describe('retrieveContext — transport', () => {
 describe('retrieveContext — origin-aware ranking', () => {
   it('ranks amenities nearest the origin gate first', () => {
     // Gate C's nearest section is 114; the halal grill sits by 114.
-    const slice = retrieveContext('where can I find food or a restroom?', ctx({ location: 'Gate C' }), venue);
+    const slice = retrieveContext(
+      'where can I find food or a restroom?',
+      ctx({ location: 'Gate C' }),
+      venue,
+    );
     expect(slice.intent).toBe('amenity');
     expect(slice.amenities[0]?.nearSection).toBe('114');
   });

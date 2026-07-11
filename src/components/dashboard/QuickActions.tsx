@@ -1,5 +1,13 @@
 import { motion } from 'framer-motion';
-import { Accessibility, Armchair, HeartPulse, LogOut, Trophy, UtensilsCrossed, Droplets } from 'lucide-react';
+import {
+  Accessibility,
+  Armchair,
+  HeartPulse,
+  LogOut,
+  Trophy,
+  UtensilsCrossed,
+  Droplets,
+} from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import type { QuickAction } from '../../i18n/ui';
 import { rowItem } from '../../lib/motion';
@@ -19,7 +27,15 @@ type ActionKey = keyof typeof ACTION_ICON;
 
 export function QuickActions({ onAsk }: { onAsk: (query: string) => void }) {
   const { ui } = useFanContext();
-  const keys: ActionKey[] = ['seat', 'food', 'restroom', 'accessible', 'firstAid', 'leave', 'score'];
+  const keys: ActionKey[] = [
+    'seat',
+    'food',
+    'restroom',
+    'accessible',
+    'firstAid',
+    'leave',
+    'score',
+  ];
 
   return (
     <Panel eyebrow={ui.composerLabel} heading={ui.quickActions.heading}>

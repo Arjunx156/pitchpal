@@ -25,7 +25,10 @@ describe('runChat', () => {
 
     expect(events.at(-1)).toEqual({ type: 'done' });
     expect(events.some((e) => e.type === 'tool_result')).toBe(true);
-    const text = events.filter((e) => e.type === 'token').map((e) => (e as { value: string }).value).join('');
+    const text = events
+      .filter((e) => e.type === 'token')
+      .map((e) => (e as { value: string }).value)
+      .join('');
     expect(text.length).toBeGreaterThan(0);
   });
 
@@ -39,7 +42,11 @@ describe('runChat', () => {
     const events = await collect(runChat(body('directions to 205'), { GEMINI_API_KEY: 'k' }, deps));
 
     expect(events.some((e) => e.type === 'status')).toBe(true);
-    expect(events.some((e) => e.type === 'token' && (e as { value: string }).value === 'Head to Gate C.')).toBe(true);
+    expect(
+      events.some(
+        (e) => e.type === 'token' && (e as { value: string }).value === 'Head to Gate C.',
+      ),
+    ).toBe(true);
     expect(events.at(-1)).toEqual({ type: 'done' });
   });
 

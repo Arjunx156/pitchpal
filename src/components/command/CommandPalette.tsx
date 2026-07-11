@@ -1,14 +1,5 @@
 import { useMemo, useState, type ComponentType } from 'react';
-import {
-  Armchair,
-  Languages,
-  MapPin,
-  Moon,
-  Search,
-  Trophy,
-  Utensils,
-  Volume2,
-} from 'lucide-react';
+import { Armchair, Languages, MapPin, Moon, Search, Trophy, Utensils, Volume2 } from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useTheme } from '../../features/theme/ThemeProvider';
 import { useSpeech } from '../../features/voice/SpeechProvider';
@@ -49,21 +40,74 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
       update({ language: next });
     };
     return [
-      { id: 'seat', group: ui.commandPalette.groupAsk, icon: Armchair, label: ui.quickActions.seat.label, run: ask(ui.quickActions.seat.query) },
-      { id: 'food', group: ui.commandPalette.groupAsk, icon: Utensils, label: ui.quickActions.food.label, run: ask(ui.quickActions.food.query) },
-      { id: 'score', group: ui.commandPalette.groupAsk, icon: Trophy, label: ui.quickActions.score.label, run: ask(ui.quickActions.score.query) },
-      { id: 'map', group: ui.commandPalette.groupSettings, icon: MapPin, label: ui.commandPalette.focusMap, run: () => { onFocusMap(); onClose(); } },
-      { id: 'lang', group: ui.commandPalette.groupSettings, icon: Languages, label: `${ui.commandPalette.changeLanguage} · ${LANGUAGE_NAMES[context.language]}`, run: nextLanguage },
-      { id: 'theme', group: ui.commandPalette.groupSettings, icon: Moon, label: ui.commandPalette.toggleTheme, run: cycle },
-      { id: 'read', group: ui.commandPalette.groupSettings, icon: Volume2, label: ui.commandPalette.toggleReadAloud, run: toggleAutoRead },
+      {
+        id: 'seat',
+        group: ui.commandPalette.groupAsk,
+        icon: Armchair,
+        label: ui.quickActions.seat.label,
+        run: ask(ui.quickActions.seat.query),
+      },
+      {
+        id: 'food',
+        group: ui.commandPalette.groupAsk,
+        icon: Utensils,
+        label: ui.quickActions.food.label,
+        run: ask(ui.quickActions.food.query),
+      },
+      {
+        id: 'score',
+        group: ui.commandPalette.groupAsk,
+        icon: Trophy,
+        label: ui.quickActions.score.label,
+        run: ask(ui.quickActions.score.query),
+      },
+      {
+        id: 'map',
+        group: ui.commandPalette.groupSettings,
+        icon: MapPin,
+        label: ui.commandPalette.focusMap,
+        run: () => {
+          onFocusMap();
+          onClose();
+        },
+      },
+      {
+        id: 'lang',
+        group: ui.commandPalette.groupSettings,
+        icon: Languages,
+        label: `${ui.commandPalette.changeLanguage} · ${LANGUAGE_NAMES[context.language]}`,
+        run: nextLanguage,
+      },
+      {
+        id: 'theme',
+        group: ui.commandPalette.groupSettings,
+        icon: Moon,
+        label: ui.commandPalette.toggleTheme,
+        run: cycle,
+      },
+      {
+        id: 'read',
+        group: ui.commandPalette.groupSettings,
+        icon: Volume2,
+        label: ui.commandPalette.toggleReadAloud,
+        run: toggleAutoRead,
+      },
     ];
   }, [ui, context.language, onAsk, onClose, onFocusMap, cycle, toggleAutoRead, update]);
 
-  const filtered = commands.filter((c) => c.label.toLowerCase().includes(query.trim().toLowerCase()));
+  const filtered = commands.filter((c) =>
+    c.label.toLowerCase().includes(query.trim().toLowerCase()),
+  );
   const groups = [...new Set(filtered.map((c) => c.group))];
 
   return (
-    <Dialog open={open} onClose={onClose} title={ui.commandPalette.open} hideHeader closeLabel={ui.stop}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      title={ui.commandPalette.open}
+      hideHeader
+      closeLabel={ui.stop}
+    >
       <div className="-m-1">
         <div className="mb-2 flex items-center gap-2 rounded-xl border border-border bg-[color-mix(in_oklab,var(--color-surface)_60%,transparent)] px-3">
           <Search size={16} aria-hidden className="text-muted-foreground" />
@@ -88,7 +132,9 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
 
         <div className="max-h-[52vh] overflow-y-auto">
           {filtered.length === 0 ? (
-            <p className="px-3 py-6 text-center text-sm text-muted-foreground">{ui.commandPalette.empty}</p>
+            <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+              {ui.commandPalette.empty}
+            </p>
           ) : (
             groups.map((group) => (
               <div key={group} className="mb-1">

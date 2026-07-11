@@ -19,7 +19,9 @@ describe('Accessibility (jest-axe)', () => {
   });
 
   it('DashboardHome has no violations', async () => {
-    const { container } = renderWithProviders(<DashboardHome onAsk={noop} onOpenItinerary={noop} />);
+    const { container } = renderWithProviders(
+      <DashboardHome onAsk={noop} onOpenItinerary={noop} />,
+    );
     expect(await axe(container)).toHaveNoViolations();
   });
 

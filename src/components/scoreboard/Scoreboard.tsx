@@ -25,9 +25,15 @@ function momentText(moment: MatchMoment, language: LanguageCode): string {
 /** Team side: big federation code (broadcast expanded) + full name beneath. */
 function TeamSide({ code, name, align }: { code: string; name: string; align: 'start' | 'end' }) {
   return (
-    <div className={`flex min-w-0 flex-col ${align === 'end' ? 'items-end text-right' : 'items-start'}`}>
-      <span className="display-wide text-[clamp(1.6rem,1rem+3vw,3rem)] text-foreground">{code}</span>
-      <span className="mt-0.5 truncate text-xs font-medium text-muted-foreground sm:text-sm">{name}</span>
+    <div
+      className={`flex min-w-0 flex-col ${align === 'end' ? 'items-end text-right' : 'items-start'}`}
+    >
+      <span className="display-wide text-[clamp(1.6rem,1rem+3vw,3rem)] text-foreground">
+        {code}
+      </span>
+      <span className="mt-0.5 truncate text-xs font-medium text-muted-foreground sm:text-sm">
+        {name}
+      </span>
     </div>
   );
 }
@@ -51,7 +57,11 @@ export function Scoreboard() {
   const latest = latestMoments(fixture, ops.matchClock, ops.phase, 1)[0];
   const WeatherIcon = WEATHER_ICON[ops.weather as Weather];
   const weatherLabel =
-    ops.weather === 'rain' ? ui.ops.weatherRain : ops.weather === 'cloudy' ? ui.ops.weatherCloudy : ui.ops.weatherClear;
+    ops.weather === 'rain'
+      ? ui.ops.weatherRain
+      : ops.weather === 'cloudy'
+        ? ui.ops.weatherCloudy
+        : ui.ops.weatherClear;
 
   return (
     <motion.section
@@ -88,7 +98,10 @@ export function Scoreboard() {
         <div className="flex flex-col items-center gap-2">
           <div
             className="flex items-center leading-none text-foreground"
-            style={{ fontSize: 'clamp(3.4rem, 1.6rem + 7.5vw, 7rem)', fontVariationSettings: "'wght' 700" }}
+            style={{
+              fontSize: 'clamp(3.4rem, 1.6rem + 7.5vw, 7rem)',
+              fontVariationSettings: "'wght' 700",
+            }}
           >
             <FlipNumber value={score.home} ariaLabel={`${home.name} ${score.home}`} />
             <span aria-hidden className="flex flex-col items-center gap-[0.14em] px-2 sm:px-3">
@@ -108,7 +121,9 @@ export function Scoreboard() {
               {ui.ops.preMatch} <span className="text-foreground">{countdown}</span>
             </span>
           ) : (
-            <span className="chip uppercase tracking-[0.14em] text-muted-foreground">{ui.ops.postMatch}</span>
+            <span className="chip uppercase tracking-[0.14em] text-muted-foreground">
+              {ui.ops.postMatch}
+            </span>
           )}
         </div>
 

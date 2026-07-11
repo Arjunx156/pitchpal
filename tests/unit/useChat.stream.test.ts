@@ -17,7 +17,9 @@ function sseResponse(events: object[], mode = 'mock'): unknown {
     body: {
       getReader: () => ({
         read: async () =>
-          sent ? { done: true, value: undefined } : ((sent = true), { done: false, value: encoder.encode(payload) }),
+          sent
+            ? { done: true, value: undefined }
+            : ((sent = true), { done: false, value: encoder.encode(payload) }),
       }),
     },
   };
@@ -34,7 +36,9 @@ describe('useChat — streaming edge cases', () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce(sseResponse([{ type: 'error', message: 'boom' }]))
-      .mockResolvedValueOnce(sseResponse([{ type: 'token', value: 'Gate C is open.' }, { type: 'done' }]));
+      .mockResolvedValueOnce(
+        sseResponse([{ type: 'token', value: 'Gate C is open.' }, { type: 'done' }]),
+      );
     vi.stubGlobal('fetch', fetchMock);
     const { result } = setup();
 
@@ -55,7 +59,9 @@ describe('useChat — streaming edge cases', () => {
     expect(result.current.messages[1]?.content).toBe('Gate C is open.');
     expect(result.current.messages[1]?.error).toBeFalsy();
     // Second request must not carry the failed turn in its history.
-    const secondBody = JSON.parse((fetchMock.mock.calls[1] as [string, RequestInit])[1].body as string);
+    const secondBody = JSON.parse(
+      (fetchMock.mock.calls[1] as [string, RequestInit])[1].body as string,
+    );
     expect(secondBody.history).toEqual([]);
   });
 
@@ -72,10 +78,22 @@ describe('useChat — streaming edge cases', () => {
   });
 
   it('accepts a card-only turn as a legitimate answer', async () => {
-    const card = { type: 'route', title: 'To 205', fromLabel: 'Gate A', toLabel: '205', etaMinutes: 5, stepFree: true, steps: [] };
+    const card = {
+      type: 'route',
+      title: 'To 205',
+      fromLabel: 'Gate A',
+      toLabel: '205',
+      etaMinutes: 5,
+      stepFree: true,
+      steps: [],
+    };
     vi.stubGlobal(
       'fetch',
-      vi.fn().mockResolvedValue(sseResponse([{ type: 'tool_result', tool: 'planRoute', card }, { type: 'done' }])),
+      vi
+        .fn()
+        .mockResolvedValue(
+          sseResponse([{ type: 'tool_result', tool: 'planRoute', card }, { type: 'done' }]),
+        ),
     );
     const { result } = setup();
 
@@ -109,7 +127,9 @@ describe('useChat — streaming edge cases', () => {
                 }
                 // Hang until aborted, like a stalled live stream.
                 return new Promise((_resolve, reject) => {
-                  signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
+                  signal.addEventListener('abort', () =>
+                    reject(new DOMException('Aborted', 'AbortError')),
+                  );
                 });
               },
             }),

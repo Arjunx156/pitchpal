@@ -55,12 +55,24 @@ describe('tool-core implementations', () => {
   });
 
   it('bookAccessibilityService returns a deterministic booking reference', () => {
-    const a = bookAccessibilityService({ service: 'wheelchair' }, ctx({ location: 'Gate C' }), venue, ops);
-    const b = bookAccessibilityService({ service: 'wheelchair' }, ctx({ location: 'Gate C' }), venue, ops);
+    const a = bookAccessibilityService(
+      { service: 'wheelchair' },
+      ctx({ location: 'Gate C' }),
+      venue,
+      ops,
+    );
+    const b = bookAccessibilityService(
+      { service: 'wheelchair' },
+      ctx({ location: 'Gate C' }),
+      venue,
+      ops,
+    );
     expect(a.data?.ref).toBe(b.data?.ref);
     expect(a.summary).toContain(String(a.data?.ref));
     // Unknown service falls back to wheelchair.
-    expect(bookAccessibilityService({ service: 'x' }, ctx(), venue, ops).data?.service).toBe('wheelchair');
+    expect(bookAccessibilityService({ service: 'x' }, ctx(), venue, ops).data?.service).toBe(
+      'wheelchair',
+    );
   });
 
   it('runTool dispatches by name and handles unknown tools', () => {

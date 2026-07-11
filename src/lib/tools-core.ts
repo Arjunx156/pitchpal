@@ -41,12 +41,7 @@ export interface ToolResult {
   contextPatch?: Partial<FanContext>;
 }
 
-function answerFor(
-  query: string,
-  context: FanContext,
-  venue: Venue,
-  ops: OpsSnapshot,
-): ToolResult {
+function answerFor(query: string, context: FanContext, venue: Venue, ops: OpsSnapshot): ToolResult {
   const slice = retrieveContext(query, context, venue);
   const { text, card } = composeGroundedAnswer(slice, context, venue, ops);
   return card ? { summary: text, card } : { summary: text };
@@ -88,7 +83,9 @@ export function getTransport(
   ops: OpsSnapshot,
 ): ToolResult {
   const mode = asString(args.mode);
-  const q = mode ? `How do I leave the stadium by ${mode}?` : 'How do I get downtown after the match?';
+  const q = mode
+    ? `How do I leave the stadium by ${mode}?`
+    : 'How do I get downtown after the match?';
   return answerFor(q, context, venue, ops);
 }
 
@@ -99,7 +96,8 @@ export function getGateStatus(
   ops: OpsSnapshot,
 ): ToolResult {
   const lines = ops.gates.map(
-    (g) => `Gate ${g.gateId}: ${g.level} (~${g.queueMinutes} min, ${Math.round(g.occupancy * 100)}%)`,
+    (g) =>
+      `Gate ${g.gateId}: ${g.level} (~${g.queueMinutes} min, ${Math.round(g.occupancy * 100)}%)`,
   );
   return {
     summary: `Live gate status — ${lines.join('; ')}. Kickoff ${ops.minutesToKickoff > 0 ? `in ${ops.minutesToKickoff} min` : 'has passed'}.`,
@@ -174,7 +172,9 @@ export function setFanTicket(
   ].filter(Boolean);
 
   return {
-    summary: bits.length ? `Ticket read — ${bits.join(', ')}.` : 'I could not read the ticket clearly.',
+    summary: bits.length
+      ? `Ticket read — ${bits.join(', ')}.`
+      : 'I could not read the ticket clearly.',
     data: { section: section ?? null, seat: seat ?? null, gate: gate ?? null },
     contextPatch: patch,
   };
@@ -200,11 +200,17 @@ export function getSustainability(
       frequency: t.frequency,
     })),
   };
-  const summary = greenest ? fmt(p.greenest, { name: greenest.name, kg: greenest.carbonKg }) : p.title;
+  const summary = greenest
+    ? fmt(p.greenest, { name: greenest.name, kg: greenest.carbonKg })
+    : p.title;
   return { summary, card };
 }
 
-const ACCESS_SERVICES: readonly AccessServiceKey[] = ['wheelchair', 'sensory-room', 'meeting-point'];
+const ACCESS_SERVICES: readonly AccessServiceKey[] = [
+  'wheelchair',
+  'sensory-room',
+  'meeting-point',
+];
 
 // Booking-reference hash: a deterministic 4-digit code derived from the service
 // and location so the same request always yields the same confirmation number.
@@ -267,13 +273,28 @@ export interface OfflineAnswer {
 
 /** Score/match-status question detector (multilingual, shared-script langs). */
 const SCORE_KEYWORDS = [
-  'score', 'scored', 'winning', 'who is winning', "who's winning", 'match status',
-  'how is the match', "how's the match", 'any goals', 'full time result',
+  'score',
+  'scored',
+  'winning',
+  'who is winning',
+  "who's winning",
+  'match status',
+  'how is the match',
+  "how's the match",
+  'any goals',
+  'full time result',
   // es / fr / pt / ar
-  'marcador', 'resultado', 'quién va ganando', 'quien va ganando',
-  'quel est le score', 'qui gagne',
-  'placar', 'quem está ganhando', 'quem esta ganhando',
-  'النتيجة', 'من يفوز',
+  'marcador',
+  'resultado',
+  'quién va ganando',
+  'quien va ganando',
+  'quel est le score',
+  'qui gagne',
+  'placar',
+  'quem está ganhando',
+  'quem esta ganhando',
+  'النتيجة',
+  'من يفوز',
 ];
 
 export function isScoreQuestion(message: string): boolean {

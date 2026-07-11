@@ -46,6 +46,9 @@ describe('App integration', () => {
     // The answer streams into the chat surface.
     expect(await screen.findByText('Your seat is in section 114.')).toBeInTheDocument();
     expect(await screen.findByText('Route to 114')).toBeInTheDocument();
-    expect(fetchMock).toHaveBeenCalledWith('/api/chat', expect.objectContaining({ method: 'POST' }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/chat',
+      expect.objectContaining({ method: 'POST' }),
+    );
   });
 });

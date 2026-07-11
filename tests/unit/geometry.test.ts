@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  buildMapGeometry,
-  pointOnEllipse,
-  routePath,
-  VIEW,
-} from '../../src/features/map/geometry';
+import { buildMapGeometry, pointOnEllipse, routePath, VIEW } from '../../src/features/map/geometry';
 import { venue } from '../../src/features/venue/venue-data';
 
 describe('pointOnEllipse', () => {

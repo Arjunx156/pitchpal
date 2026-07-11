@@ -113,7 +113,8 @@ export function getOpsSnapshot(venue: Venue, now: number = Date.now()): OpsSnaps
   }
 
   const cycleIndex = Math.floor(now / (CYCLE_MIN * MS));
-  const weather = WEATHERS[((cycleIndex % WEATHERS.length) + WEATHERS.length) % WEATHERS.length] ?? 'clear';
+  const weather =
+    WEATHERS[((cycleIndex % WEATHERS.length) + WEATHERS.length) % WEATHERS.length] ?? 'clear';
   const temperatureC = BASE_TEMPERATURE_C + (cycleIndex % TEMPERATURE_SPREAD_C);
 
   const gates: GateStatus[] = venue.gates.map((gate) => {

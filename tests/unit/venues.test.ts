@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { VENUES, VENUE_OPTIONS, DEFAULT_VENUE_ID, resolveVenue } from '../../src/features/venue/venues';
-import { FIXTURES, DEFAULT_MATCH_ID, resolveFixture, liveScore } from '../../src/features/tournament/fixture';
+import {
+  VENUES,
+  VENUE_OPTIONS,
+  DEFAULT_VENUE_ID,
+  resolveVenue,
+} from '../../src/features/venue/venues';
+import {
+  FIXTURES,
+  DEFAULT_MATCH_ID,
+  resolveFixture,
+  liveScore,
+} from '../../src/features/tournament/fixture';
 import { GROUP_STANDINGS } from '../../src/features/tournament/standings';
 
 describe('venue registry', () => {

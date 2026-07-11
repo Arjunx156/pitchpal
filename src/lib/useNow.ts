@@ -69,5 +69,9 @@ function getSnapshot(intervalMs: number): () => number {
 
 /** Current timestamp, refreshed every `intervalMs` on a shared interval. */
 export function useNow(intervalMs: number): number {
-  return useSyncExternalStore(getSubscriber(intervalMs), getSnapshot(intervalMs), getSnapshot(intervalMs));
+  return useSyncExternalStore(
+    getSubscriber(intervalMs),
+    getSnapshot(intervalMs),
+    getSnapshot(intervalMs),
+  );
 }

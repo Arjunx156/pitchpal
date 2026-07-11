@@ -86,7 +86,13 @@ export function GateRiskPanel({ onAsk }: { onAsk: (query: string) => void }) {
                 </p>
               </div>
               <Trend size={15} aria-hidden style={{ color }} className="shrink-0" />
-              <Sparkline values={f.series} color={color} width={72} height={26} className="shrink-0" />
+              <Sparkline
+                values={f.series}
+                color={color}
+                width={72}
+                height={26}
+                className="shrink-0"
+              />
             </motion.li>
           );
         })}

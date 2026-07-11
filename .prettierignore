@@ -1,0 +1,17 @@
+# Build outputs
+dist
+dist-server
+coverage
+node_modules
+
+# Lockfiles
+package-lock.json
+
+# Localization data tables — deliberately kept as compact record-of-records;
+# Prettier would explode each locale object to one key per line (see ui-strings.ts).
+src/i18n/strings/ui-strings.ts
+src/i18n/strings/tool-status.ts
+src/i18n/strings/analytics.ts
+src/i18n/strings/itinerary.ts
+src/i18n/strings/scan.ts
+src/i18n/answers.ts

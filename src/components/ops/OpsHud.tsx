@@ -63,7 +63,12 @@ export function OpsHud() {
       </div>
 
       {/* gate queues */}
-      <motion.ul variants={staggerContainer} initial="hidden" animate="show" className="flex flex-col gap-2.5">
+      <motion.ul
+        variants={staggerContainer}
+        initial="hidden"
+        animate="show"
+        className="flex flex-col gap-2.5"
+      >
         {gates.map((g) => {
           const color = LEVEL_COLOR[g.level];
           return (
@@ -90,7 +95,10 @@ export function OpsHud() {
 
       {busiest ? (
         <p className="mt-3 text-2xs text-muted-foreground">
-          <span className="font-semibold" style={{ color: LEVEL_COLOR[queueRiskLevel(busiest.queueMinutes)] }}>
+          <span
+            className="font-semibold"
+            style={{ color: LEVEL_COLOR[queueRiskLevel(busiest.queueMinutes)] }}
+          >
             {gateName(busiest.gateId)}
           </span>{' '}
           — {levelLabel[busiest.level]}

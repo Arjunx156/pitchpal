@@ -1,9 +1,20 @@
 import { motion } from 'framer-motion';
-import { Accessibility, ArrowRight, Armchair, Coffee, LogOut, Route, UtensilsCrossed } from 'lucide-react';
+import {
+  Accessibility,
+  ArrowRight,
+  Armchair,
+  Coffee,
+  LogOut,
+  Route,
+  UtensilsCrossed,
+} from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { buildItinerary } from '../../features/itinerary/itinerary';
-import { suggestNextActions, type SuggestionKind } from '../../features/suggestions/suggestNextActions';
+import {
+  suggestNextActions,
+  type SuggestionKind,
+} from '../../features/suggestions/suggestNextActions';
 import { useNow } from '../../lib/useNow';
 import { rowItem } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
@@ -40,9 +51,24 @@ export function SuggestedActions({ onAsk }: { onAsk: (query: string) => void }) 
     live: true,
   }));
   const evergreen: Row[] = [
-    { id: 'seat', reason: ui.quickActions.seat.label, query: ui.quickActions.seat.query, icon: Armchair },
-    { id: 'food', reason: ui.quickActions.food.label, query: ui.quickActions.food.query, icon: UtensilsCrossed },
-    { id: 'leave', reason: ui.quickActions.leave.label, query: ui.quickActions.leave.query, icon: LogOut },
+    {
+      id: 'seat',
+      reason: ui.quickActions.seat.label,
+      query: ui.quickActions.seat.query,
+      icon: Armchair,
+    },
+    {
+      id: 'food',
+      reason: ui.quickActions.food.label,
+      query: ui.quickActions.food.query,
+      icon: UtensilsCrossed,
+    },
+    {
+      id: 'leave',
+      reason: ui.quickActions.leave.label,
+      query: ui.quickActions.leave.query,
+      icon: LogOut,
+    },
   ];
   const shown = [...rows, ...evergreen].slice(0, 3);
 

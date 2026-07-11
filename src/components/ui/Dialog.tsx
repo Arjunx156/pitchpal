@@ -80,7 +80,12 @@ export function Dialog({
               >
                 <span aria-hidden className="brand-rule absolute inset-x-0 top-0" />
                 <div className="p-5 sm:p-6">
-                  <div className={cn('flex items-start justify-between gap-4', hideHeader && 'sr-only')}>
+                  <div
+                    className={cn(
+                      'flex items-start justify-between gap-4',
+                      hideHeader && 'sr-only',
+                    )}
+                  >
                     <div>
                       <RD.Title className="display text-xl text-foreground">{title}</RD.Title>
                       {description ? (

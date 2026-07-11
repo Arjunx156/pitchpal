@@ -9,7 +9,12 @@ function readPermission(): NotificationSupport {
 }
 
 /** Fires a local (on-device) notification the first time the fan's gate hits 'jam'. */
-export function useGateAlerts(ops: OpsSnapshot, gateId: string | undefined, title: string, body: string) {
+export function useGateAlerts(
+  ops: OpsSnapshot,
+  gateId: string | undefined,
+  title: string,
+  body: string,
+) {
   const [permission, setPermission] = useState<NotificationSupport>(readPermission);
   const notifiedRef = useRef(false);
 

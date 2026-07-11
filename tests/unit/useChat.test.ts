@@ -3,12 +3,10 @@ import { extractEvents } from '../../src/features/chat/useChat';
 
 describe('extractEvents', () => {
   it('parses complete SSE events and keeps a trailing partial', () => {
-    const buffer = 'data: {"type":"token","value":"Hi"}\n\ndata: {"type":"done"}\n\ndata: {"type":"tok';
+    const buffer =
+      'data: {"type":"token","value":"Hi"}\n\ndata: {"type":"done"}\n\ndata: {"type":"tok';
     const { events, rest } = extractEvents(buffer);
-    expect(events).toEqual([
-      { type: 'token', value: 'Hi' },
-      { type: 'done' },
-    ]);
+    expect(events).toEqual([{ type: 'token', value: 'Hi' }, { type: 'done' }]);
     expect(rest).toBe('data: {"type":"tok');
   });
 

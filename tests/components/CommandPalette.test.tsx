@@ -23,7 +23,9 @@ describe('CommandPalette', () => {
 
     await userEvent.type(screen.getByPlaceholderText(UI.en.commandPalette.placeholder), 'map');
     expect(screen.getByRole('button', { name: UI.en.commandPalette.focusMap })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: UI.en.commandPalette.toggleReadAloud })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: UI.en.commandPalette.toggleReadAloud }),
+    ).not.toBeInTheDocument();
   });
 
   it('runs the "show map" action and closes', async () => {

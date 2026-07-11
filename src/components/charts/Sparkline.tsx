@@ -34,7 +34,9 @@ export function Sparkline({
     return [x, y] as const;
   });
 
-  const line = points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const line = points
+    .map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`)
+    .join(' ');
   const area = `${line} L${width},${height} L0,${height} Z`;
 
   return (
@@ -65,7 +67,12 @@ export function Sparkline({
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       />
       {points.length > 0 ? (
-        <circle cx={points[points.length - 1]![0]} cy={points[points.length - 1]![1]} r={2.6} fill={color} />
+        <circle
+          cx={points[points.length - 1]![0]}
+          cy={points[points.length - 1]![1]}
+          r={2.6}
+          fill={color}
+        />
       ) : null}
     </svg>
   );

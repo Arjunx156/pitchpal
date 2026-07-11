@@ -28,9 +28,7 @@ export function deriveMapFocus(message: string, context: FanContext, venue: Venu
     originGateId,
     targetSectionId: target?.id,
     amenitySectionIds: slice.amenities.map((a) => a.nearSection),
-    transportGateIds: slice.transport
-      .map((t) => t.nearGate)
-      .filter((g): g is string => Boolean(g)),
+    transportGateIds: slice.transport.map((t) => t.nearGate).filter((g): g is string => Boolean(g)),
   };
 }
 

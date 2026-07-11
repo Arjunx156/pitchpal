@@ -22,7 +22,13 @@ function Typing({ label }: { label: string }) {
   );
 }
 
-export function MessageBubble({ message, onRetry }: { message: ChatMessage; onRetry?: () => void }) {
+export function MessageBubble({
+  message,
+  onRetry,
+}: {
+  message: ChatMessage;
+  onRetry?: () => void;
+}) {
   const { ui, context } = useFanContext();
   const { output } = useSpeech();
   const isUser = message.role === 'user';
@@ -40,10 +46,9 @@ export function MessageBubble({ message, onRetry }: { message: ChatMessage; onRe
       <div
         className={cn(
           'max-w-[86%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
-          isUser
-            ? 'rounded-br-sm bg-accent text-on-accent'
-            : 'glass rounded-bl-sm text-foreground',
-          message.error && 'border border-[color-mix(in_oklab,var(--color-danger)_50%,transparent)]',
+          isUser ? 'rounded-br-sm bg-accent text-on-accent' : 'glass rounded-bl-sm text-foreground',
+          message.error &&
+            'border border-[color-mix(in_oklab,var(--color-danger)_50%,transparent)]',
         )}
       >
         {message.status && message.pending ? (

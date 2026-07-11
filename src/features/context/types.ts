@@ -3,12 +3,7 @@
 export const LANGUAGES = ['en', 'es', 'fr', 'pt', 'ar'] as const;
 export type LanguageCode = (typeof LANGUAGES)[number];
 
-export const ACCESSIBILITY_PROFILES = [
-  'none',
-  'wheelchair',
-  'stroller',
-  'low-vision',
-] as const;
+export const ACCESSIBILITY_PROFILES = ['none', 'wheelchair', 'stroller', 'low-vision'] as const;
 export type AccessibilityProfile = (typeof ACCESSIBILITY_PROFILES)[number];
 
 export interface FanContext {
