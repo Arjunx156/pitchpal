@@ -4,7 +4,7 @@ import type { OpsSnapshot } from '../features/ops/opsFeed';
 import type { AnswerCard } from './cards';
 import { retrieveContext } from './retrieval';
 import { composeGroundedAnswer } from './compose';
-import { classifyIntent } from './intent';
+import { classifyIntent, type Intent } from './intent';
 import { resolveFixture, liveScore } from '../features/tournament/fixture';
 import { latestMoments, type MatchMoment } from '../features/tournament/moments';
 import {
@@ -131,8 +131,8 @@ export function getMatchStatus(
     as: score.away,
     min: ops.phase === 'pre' ? Math.max(0, ops.minutesToKickoff) : (ops.matchClock ?? 0),
   };
-  const base =
-    ops.phase === 'live' ? fmt(p.live, vars) : ops.phase === 'pre' ? fmt(p.pre, vars) : fmt(p.post, vars);
+  const phaseTemplate = { live: p.live, pre: p.pre, post: p.post }[ops.phase];
+  const base = fmt(phaseTemplate, vars);
 
   const recent = latestMoments(fixture, ops.matchClock, ops.phase, 1)[0];
   const summary =
@@ -206,6 +206,13 @@ export function getSustainability(
 
 const ACCESS_SERVICES: readonly AccessServiceKey[] = ['wheelchair', 'sensory-room', 'meeting-point'];
 
+// Booking-reference hash: a deterministic 4-digit code derived from the service
+// and location so the same request always yields the same confirmation number.
+const SERVICE_HASH_PRIME = 137;
+const LOCATION_HASH_PRIME = 31;
+const REF_RANGE = 9000;
+const REF_MIN = 1000;
+
 /** Book an accessibility service and return a deterministic confirmation. */
 export function bookAccessibilityService(
   args: Record<string, unknown>,
@@ -219,7 +226,7 @@ export function bookAccessibilityService(
     ? (raw as AccessServiceKey)
     : 'wheelchair';
   const service = p.services[key];
-  const ref = `AS-${((key.length * 137 + context.location.length * 31) % 9000) + 1000}`;
+  const ref = `AS-${((key.length * SERVICE_HASH_PRIME + context.location.length * LOCATION_HASH_PRIME) % REF_RANGE) + REF_MIN}`;
   const where = context.location ? ` (${context.location})` : '';
   return {
     summary: fmt(p.booked, { service, ref, where }),
@@ -274,6 +281,14 @@ export function isScoreQuestion(message: string): boolean {
   return SCORE_KEYWORDS.some((kw) => text.includes(kw));
 }
 
+/** Which tool answers each classified intent (the 'general' fallback is gate status). */
+const INTENT_TOOL: Record<Intent, ToolName> = {
+  navigation: 'planRoute',
+  amenity: 'findAmenities',
+  transport: 'getTransport',
+  general: 'getGateStatus',
+};
+
 /**
  * Deterministic answer for the mock server and offline client: classify the
  * message, run the matching tool, and return a structured result identical in
@@ -291,13 +306,6 @@ export function answerOffline(
   const intent = classifyIntent(message);
   const slice = retrieveContext(message, context, venue);
   const { text, card } = composeGroundedAnswer(slice, context, venue, ops);
-  const toolName: ToolName =
-    intent === 'navigation'
-      ? 'planRoute'
-      : intent === 'amenity'
-        ? 'findAmenities'
-        : intent === 'transport'
-          ? 'getTransport'
-          : 'getGateStatus';
+  const toolName = INTENT_TOOL[intent];
   return { toolName, result: card ? { summary: text, card } : { summary: text } };
 }

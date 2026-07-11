@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import * as RD from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -35,6 +35,7 @@ export function Dialog({
   className,
   children,
 }: DialogProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
   return (
     <RD.Root open={open} onOpenChange={(next) => (!next ? onClose() : undefined)}>
       <AnimatePresence>
@@ -52,15 +53,24 @@ export function Dialog({
             <RD.Content
               asChild
               forceMount
-              onOpenAutoFocus={(e) => e.preventDefault()}
+              // Radix's default autofocus can fight the entrance animation and jump
+              // scroll, so we redirect focus to the dialog container instead — this
+              // keeps keyboard focus inside the modal on open (WCAG 2.4.3).
+              onOpenAutoFocus={(e) => {
+                e.preventDefault();
+                contentRef.current?.focus();
+              }}
               className="fixed z-[var(--z-modal)]"
             >
               <motion.div
+                ref={contentRef}
+                tabIndex={-1}
                 variants={dialogIn}
                 initial="hidden"
                 animate="show"
                 exit="exit"
                 className={cn(
+                  'outline-none',
                   'glass scanlines fixed left-1/2 -translate-x-1/2 overflow-hidden shadow-3',
                   variant === 'center'
                     ? 'top-1/2 w-[min(92vw,540px)] -translate-y-1/2 rounded-2xl'

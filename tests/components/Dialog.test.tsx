@@ -24,4 +24,15 @@ describe('Dialog', () => {
     await userEvent.keyboard('{Escape}');
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('moves focus into the dialog on open (WCAG 2.4.3)', () => {
+    render(
+      <Dialog open title="Settings" onClose={vi.fn()}>
+        <p>Dialog body</p>
+      </Dialog>,
+    );
+    // Focus should land inside the dialog, not remain on the document body.
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.contains(document.activeElement)).toBe(true);
+  });
 });

@@ -14,13 +14,30 @@ function storageKey(matchId: string): string {
   return `pitchpal.itinerary.${matchId}`;
 }
 
+/** A persisted custom step must carry a stable id, a label, and a numeric time. */
+function isValidCustomStep(value: unknown): value is ItineraryStep {
+  if (typeof value !== 'object' || value === null) return false;
+  const step = value as Record<string, unknown>;
+  return (
+    step.kind === 'custom' &&
+    typeof step.id === 'string' &&
+    typeof step.label === 'string' &&
+    typeof step.time === 'number' &&
+    Number.isFinite(step.time)
+  );
+}
+
 function loadPersisted(matchId: string): PersistedOrder | null {
   try {
     const raw = localStorage.getItem(storageKey(matchId));
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<PersistedOrder>;
     if (!Array.isArray(parsed.order) || !Array.isArray(parsed.custom)) return null;
-    return { order: parsed.order, custom: parsed.custom };
+    // Drop any element that doesn't match the expected shape rather than trusting
+    // whatever happens to be in storage (corruption / an older schema).
+    const order = parsed.order.filter((key): key is string => typeof key === 'string');
+    const custom = parsed.custom.filter(isValidCustomStep);
+    return { order, custom };
   } catch {
     return null;
   }

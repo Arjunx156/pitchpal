@@ -11,7 +11,9 @@ const MAX_ROWS_PX = 140;
 const MAX_MESSAGE_CHARS = 2000;
 const MAX_IMAGE_MB = 5;
 const MAX_IMAGE_BYTES = MAX_IMAGE_MB * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
+// Kept in sync with the server's Zod imageSchema (server/security.ts). The
+// vision model only accepts these three, so HEIC/HEIF are intentionally absent.
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
 /** Read a File as base64 (no data: prefix) for the multimodal ticket scan. */
 function fileToBase64(file: File): Promise<string> {

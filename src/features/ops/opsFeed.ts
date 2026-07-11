@@ -41,6 +41,22 @@ const MS = 60_000;
 const MAX_QUEUE_MIN = 22;
 const WEATHERS: Weather[] = ['clear', 'cloudy', 'rain'];
 
+// Baseline gate occupancy per phase. Pre-match ramps toward peak as kickoff nears;
+// live and post settle at fixed loads (fans are seated, then streaming out).
+const PRE_PEAK_OCCUPANCY = 0.95;
+const PRE_RAMP_MINUTES = 55;
+const PRE_MIN_OCCUPANCY = 0.25;
+const PRE_MAX_OCCUPANCY = 0.96;
+const LIVE_OCCUPANCY = 0.28;
+const POST_OCCUPANCY = 0.72;
+
+// A regulation match is 90 minutes; the virtual clock never exceeds it.
+const MATCH_FULL_TIME_MIN = 90;
+
+// Virtual weather: temperature cycles within a fixed band across match cycles.
+const BASE_TEMPERATURE_C = 21;
+const TEMPERATURE_SPREAD_C = 6;
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -65,9 +81,14 @@ function gateOccupancy(
   phase: MatchPhase,
 ): number {
   let base: number;
-  if (phase === 'pre') base = clamp(0.95 - minutesToKickoff / 55, 0.25, 0.96);
-  else if (phase === 'live') base = 0.28;
-  else base = 0.72;
+  if (phase === 'pre')
+    base = clamp(
+      PRE_PEAK_OCCUPANCY - minutesToKickoff / PRE_RAMP_MINUTES,
+      PRE_MIN_OCCUPANCY,
+      PRE_MAX_OCCUPANCY,
+    );
+  else if (phase === 'live') base = LIVE_OCCUPANCY;
+  else base = POST_OCCUPANCY;
 
   const seed = gateId.charCodeAt(0);
   const wobble = 0.1 * Math.sin(now / (7 * MS) + seed);
@@ -86,14 +107,14 @@ export function getOpsSnapshot(venue: Venue, now: number = Date.now()): OpsSnaps
     phase = 'pre';
   } else if (pos < LIVE_END_MIN) {
     phase = 'live';
-    matchClock = Math.min(90, Math.floor(pos - KICKOFF_MIN));
+    matchClock = Math.min(MATCH_FULL_TIME_MIN, Math.floor(pos - KICKOFF_MIN));
   } else {
     phase = 'post';
   }
 
   const cycleIndex = Math.floor(now / (CYCLE_MIN * MS));
   const weather = WEATHERS[((cycleIndex % WEATHERS.length) + WEATHERS.length) % WEATHERS.length] ?? 'clear';
-  const temperatureC = 21 + (cycleIndex % 6);
+  const temperatureC = BASE_TEMPERATURE_C + (cycleIndex % TEMPERATURE_SPREAD_C);
 
   const gates: GateStatus[] = venue.gates.map((gate) => {
     const occupancy = gateOccupancy(gate.id, now, minutesToKickoff, phase);

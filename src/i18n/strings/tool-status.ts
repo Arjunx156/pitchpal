@@ -1,0 +1,55 @@
+import type { LanguageCode } from '../../features/context/types';
+
+/** Localized labels shown while the agent runs a tool (from `status` events). */
+export const TOOL_STATUS: Record<LanguageCode, Record<string, string>> = {
+  en: {
+    planRoute: 'Planning your route…',
+    findAmenities: 'Finding places nearby…',
+    getTransport: 'Checking transport…',
+    getGateStatus: 'Checking gate queues…',
+    getMatchStatus: 'Checking the score…',
+    setFanTicket: 'Reading your ticket…',
+    getSustainability: 'Finding the greenest route…',
+    bookAccessibilityService: 'Booking your service…',
+  },
+  es: {
+    planRoute: 'Planificando tu ruta…',
+    findAmenities: 'Buscando lugares cercanos…',
+    getTransport: 'Consultando el transporte…',
+    getGateStatus: 'Revisando las colas de las puertas…',
+    getMatchStatus: 'Consultando el marcador…',
+    setFanTicket: 'Leyendo tu entrada…',
+    getSustainability: 'Buscando la ruta más ecológica…',
+    bookAccessibilityService: 'Reservando tu servicio…',
+  },
+  fr: {
+    planRoute: 'Calcul de votre itinéraire…',
+    findAmenities: 'Recherche de lieux à proximité…',
+    getTransport: 'Vérification des transports…',
+    getGateStatus: 'Vérification des files aux portes…',
+    getMatchStatus: 'Vérification du score…',
+    setFanTicket: 'Lecture de votre billet…',
+    getSustainability: 'Recherche du trajet le plus vert…',
+    bookAccessibilityService: 'Réservation de votre service…',
+  },
+  pt: {
+    planRoute: 'Planejando sua rota…',
+    findAmenities: 'Procurando lugares próximos…',
+    getTransport: 'Verificando o transporte…',
+    getGateStatus: 'Verificando as filas dos portões…',
+    getMatchStatus: 'Verificando o placar…',
+    setFanTicket: 'Lendo seu ingresso…',
+    getSustainability: 'Buscando a rota mais verde…',
+    bookAccessibilityService: 'Reservando seu serviço…',
+  },
+  ar: {
+    planRoute: 'نخطط مسارك…',
+    findAmenities: 'نبحث عن أماكن قريبة…',
+    getTransport: 'نتحقق من المواصلات…',
+    getGateStatus: 'نتحقق من طوابير البوابات…',
+    getMatchStatus: 'نتحقق من النتيجة…',
+    setFanTicket: 'نقرأ تذكرتك…',
+    getSustainability: 'نبحث عن المسار الأكثر خضرة…',
+    bookAccessibilityService: 'نحجز خدمتك…',
+  },
+};

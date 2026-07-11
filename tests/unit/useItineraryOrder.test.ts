@@ -34,6 +34,30 @@ describe('useItineraryOrder', () => {
     expect(second.current.steps.map((s) => s.kind)).toEqual(reorderedKinds);
   });
 
+  it('drops malformed persisted entries instead of trusting them', () => {
+    const ops = getOpsSnapshot(venue, Date.now());
+    const base = buildItinerary(venue, ops, 'A');
+    // Simulate corrupted / older-schema storage: non-string order keys and
+    // custom steps missing required fields should all be discarded.
+    localStorage.setItem(
+      `pitchpal.itinerary.${MATCH_ID}`,
+      JSON.stringify({
+        order: ['seat', 42, null, 'kickoff'],
+        custom: [
+          { kind: 'custom', id: 'ok', label: 'Valid', time: ops.kickoffAt },
+          { kind: 'custom', id: 'bad-time', label: 'No time' },
+          { kind: 'custom', label: 'No id', time: ops.kickoffAt },
+          'not-an-object',
+        ],
+      }),
+    );
+
+    const { result } = renderHook(() => useItineraryOrder(MATCH_ID, base));
+    const customSteps = result.current.steps.filter((s) => s.kind === 'custom');
+    expect(customSteps).toHaveLength(1);
+    expect(customSteps[0]?.label).toBe('Valid');
+  });
+
   it('adds and removes a custom step', () => {
     const ops = getOpsSnapshot(venue, Date.now());
     const base = buildItinerary(venue, ops, 'A');

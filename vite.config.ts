@@ -2,6 +2,7 @@
 import { defineConfig, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { contentSecurityPolicy } from './server/security';
 
 // Load .env into process.env so the dev API handler runs in live mode when a
 // GEMINI_API_KEY is present (Vite does not expose .env to process.env itself).
@@ -37,10 +38,40 @@ function apiPlugin(): PluginOption {
   };
 }
 
+/**
+ * Build-only plugin: injects a `<meta>` CSP into the built index.html so the
+ * app carries a policy even when served by a static host/CDN (or `vite preview`)
+ * that doesn't set the server's CSP header. `frame-ancestors` is dropped because
+ * it is invalid in a meta CSP (browsers ignore it) — it stays enforced by the
+ * Node server. Reusing `contentSecurityPolicy()` keeps the two from drifting.
+ * Not applied in dev, where @vitejs/plugin-react injects an inline preamble that
+ * `script-src 'self'` would block.
+ */
+function cspMetaPlugin(): PluginOption {
+  return {
+    name: 'pitchpal-csp-meta',
+    apply: 'build',
+    transformIndexHtml() {
+      const policy = contentSecurityPolicy()
+        .split('; ')
+        .filter((directive) => !directive.startsWith('frame-ancestors'))
+        .join('; ');
+      return [
+        {
+          tag: 'meta',
+          attrs: { 'http-equiv': 'Content-Security-Policy', content: policy },
+          injectTo: 'head-prepend',
+        },
+      ];
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
     react(),
     apiPlugin(),
+    cspMetaPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png', 'icons/favicon-64.png'],

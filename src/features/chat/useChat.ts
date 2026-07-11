@@ -35,6 +35,61 @@ function appendCard(list: ChatMessage[], id: string, card: AnswerCard): ChatMess
   return list.map((m) => (m.id === id ? { ...m, cards: [...(m.cards ?? []), card] } : m));
 }
 
+/** POST the chat request and return the raw streaming Response (throws on network failure). */
+function postChat(request: ChatRequest, signal: AbortSignal): Promise<Response> {
+  return fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+    signal,
+  });
+}
+
+/** Read an SSE response body to completion, invoking `onEvent` for each parsed event. */
+async function readSseStream(
+  body: ReadableStream<Uint8Array>,
+  onEvent: (event: ChatStreamEvent) => void,
+): Promise<void> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const { events, rest } = extractEvents(buffer);
+    buffer = rest;
+    for (const event of events) onEvent(event);
+  }
+}
+
+interface StreamHandlers {
+  onToken: (value: string) => void;
+  onCard: (card: AnswerCard) => void;
+  onStatus: (tool: string) => void;
+  onContext: (patch: Partial<FanContext>) => void;
+}
+
+/** Dispatch one stream event to its handler. Throws on an `error` event; `done` is a no-op. */
+function applyStreamEvent(event: ChatStreamEvent, handlers: StreamHandlers): void {
+  switch (event.type) {
+    case 'token':
+      handlers.onToken(event.value);
+      break;
+    case 'tool_result':
+      if (event.card) handlers.onCard(event.card);
+      break;
+    case 'status':
+      handlers.onStatus(event.tool);
+      break;
+    case 'context':
+      handlers.onContext(event.patch);
+      break;
+    case 'error':
+      throw new Error(event.message);
+  }
+}
+
 export interface UseChatResult {
   messages: ChatMessage[];
   isStreaming: boolean;
@@ -113,12 +168,7 @@ export function useChat(
       try {
         const request: ChatRequest = { message: trimmed || 'Scan my ticket.', context, history };
         if (image) request.image = image;
-        response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(request),
-          signal: controller.signal,
-        });
+        response = await postChat(request, controller.signal);
       } catch {
         if (controller.signal.aborted) {
           finalizeAborted(content);
@@ -134,34 +184,21 @@ export function useChat(
         if (headerMode === 'live' || headerMode === 'mock') setMode(headerMode);
         if (!response.ok || !response.body) throw new Error(`HTTP ${response.status}`);
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        for (;;) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buffer += decoder.decode(value, { stream: true });
-          const { events, rest } = extractEvents(buffer);
-          buffer = rest;
-          for (const event of events) {
-            if (event.type === 'token') {
-              content += event.value;
+        await readSseStream(response.body, (event) =>
+          applyStreamEvent(event, {
+            onToken: (value) => {
+              content += value;
               setMessages((prev) => patchMessage(prev, assistantId, { content, pending: true }));
-            } else if (event.type === 'tool_result') {
-              if (event.card) {
-                gotCard = true;
-                setMessages((prev) => appendCard(prev, assistantId, event.card as AnswerCard));
-              }
-            } else if (event.type === 'status') {
-              setMessages((prev) => patchMessage(prev, assistantId, { status: event.tool }));
-            } else if (event.type === 'context') {
-              applyPatch(event.patch);
-            } else if (event.type === 'error') {
-              throw new Error(event.message);
-            }
-          }
-        }
+            },
+            onCard: (card) => {
+              gotCard = true;
+              setMessages((prev) => appendCard(prev, assistantId, card));
+            },
+            onStatus: (tool) =>
+              setMessages((prev) => patchMessage(prev, assistantId, { status: tool })),
+            onContext: (patch) => applyPatch(patch),
+          }),
+        );
 
         // A card-only turn is a legitimate answer — only a truly empty stream
         // (no text, no cards) is treated as a failure the user can retry.
