@@ -38,4 +38,12 @@ describe('useGateAlerts', () => {
     await waitFor(() => expect(NotificationSpy).toHaveBeenCalledTimes(1));
     expect(NotificationSpy).toHaveBeenCalledWith('title', { body: 'body' });
   });
+
+  it('exposes a screen-reader announcement even without notification permission', async () => {
+    vi.stubGlobal('Notification', undefined);
+    const { result } = renderHook(() =>
+      useGateAlerts(jamSnapshot(), 'A', 'title', 'Gate A is congested'),
+    );
+    await waitFor(() => expect(result.current.announcement).toBe('Gate A is congested'));
+  });
 });

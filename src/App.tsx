@@ -14,6 +14,8 @@ import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider, useChatContext } from './features/chat/ChatProvider';
 import { useInstallPrompt } from './features/pwa/useInstallPrompt';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { ModeAnnouncer } from './components/ui/ModeAnnouncer';
 import { ThemeToggle } from './components/ui/ThemeToggle';
 import { DashboardHome } from './components/dashboard/DashboardHome';
 import { ChatWindow } from './components/chat/ChatWindow';
@@ -161,37 +163,40 @@ function Shell() {
         <Scoreboard />
 
         <main id="stage" tabIndex={-1} className="workspace">
-          {view === 'home' ? (
-            <DashboardHome onAsk={ask} onOpenItinerary={() => setView('chat')} />
-          ) : (
-            <div className="workspace--triptych">
-              <motion.aside
-                className="rail rail--left"
-                aria-label={ui.settingsHeading}
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
-              >
-                <ContextBar />
-                <ItineraryPanel />
-              </motion.aside>
+          {/* key={view} clears a caught error when the fan switches surface */}
+          <ErrorBoundary key={view} heading={ui.errorGeneric} actionLabel={ui.retry}>
+            {view === 'home' ? (
+              <DashboardHome onAsk={ask} onOpenItinerary={() => setView('chat')} />
+            ) : (
+              <div className="workspace--triptych">
+                <motion.aside
+                  className="rail rail--left"
+                  aria-label={ui.settingsHeading}
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                >
+                  <ContextBar />
+                  <ItineraryPanel />
+                </motion.aside>
 
-              <div className="min-h-[62vh] lg:min-h-0">
-                {view === 'chat' ? <ChatWindow /> : stadiumMap}
+                <div className="min-h-[62vh] lg:min-h-0">
+                  {view === 'chat' ? <ChatWindow /> : stadiumMap}
+                </div>
+
+                <motion.aside
+                  className="rail rail--right"
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {view === 'chat' ? stadiumMap : null}
+                  <OpsHud />
+                  <Standings />
+                </motion.aside>
               </div>
-
-              <motion.aside
-                className="rail rail--right"
-                variants={staggerContainer}
-                initial="hidden"
-                animate="show"
-              >
-                {view === 'chat' ? stadiumMap : null}
-                <OpsHud />
-                <Standings />
-              </motion.aside>
-            </div>
-          )}
+            )}
+          </ErrorBoundary>
         </main>
 
         <footer className="app__footer">
@@ -231,6 +236,7 @@ function Shell() {
         onAsk={ask}
       />
       <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
+      <ModeAnnouncer />
     </>
   );
 }

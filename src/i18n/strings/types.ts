@@ -29,6 +29,8 @@ export interface UiStrings {
   modeMock: string;
   modeLive: string;
   modeMockHint: string;
+  /** Screen-reader announcement on mode change; {mode} is the localized mode label. */
+  modeAnnouncement: string;
   errorGeneric: string;
   retry: string;
   stop: string;

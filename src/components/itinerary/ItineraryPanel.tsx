@@ -32,6 +32,7 @@ import { ITINERARY, type ItineraryStrings } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
 import { useNow } from '../../lib/useNow';
 import { ACCENT_PILL, FIELD_SURFACE } from '../../lib/variants';
+import { LiveRegion } from '../ui/LiveRegion';
 import { Panel } from '../ui/Panel';
 import { cn } from '../../lib/utils';
 
@@ -166,7 +167,7 @@ export function ItineraryPanel() {
   const [draft, setDraft] = useState('');
 
   const gateStep = steps.find((s) => s.kind === 'gate');
-  const { permission, enable } = useGateAlerts(
+  const { permission, enable, announcement } = useGateAlerts(
     ops,
     gateStep?.gateId,
     strings.alertTitle,
@@ -205,6 +206,7 @@ export function ItineraryPanel() {
         ) : null
       }
     >
+      <LiveRegion message={announcement} />
       <ol className="flex flex-col gap-1.5">
         <AnimatePresence initial={false}>
           {steps.map((step, i) => (

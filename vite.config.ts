@@ -137,11 +137,10 @@ export default defineConfig({
         'src/**/*.d.ts',
         'server/index.ts',
         'src/i18n/**',
-        // Thin presentational primitives (styling only, no behaviour to cover).
-        // Button, Dialog and ThemeToggle carry real logic and are tested, so they
-        // stay in the coverage denominator.
+        // Thin presentational primitive (styling only, no behaviour to cover).
+        // Button, Dialog, ThemeToggle and LiveRegion carry real runtime roles
+        // and are tested, so they stay in the coverage denominator.
         'src/components/ui/Panel.tsx',
-        'src/components/ui/LiveRegion.tsx',
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',
         'src/features/venue/types.ts',

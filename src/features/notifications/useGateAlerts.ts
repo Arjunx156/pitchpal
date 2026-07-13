@@ -8,7 +8,11 @@ function readPermission(): NotificationSupport {
   return window.Notification.permission;
 }
 
-/** Fires a local (on-device) notification the first time the fan's gate hits 'jam'. */
+/**
+ * Fires a local (on-device) notification the first time the fan's gate hits
+ * 'jam', and exposes the alert text as a screen-reader `announcement` that
+ * does not depend on notification permission.
+ */
 export function useGateAlerts(
   ops: OpsSnapshot,
   gateId: string | undefined,
@@ -16,6 +20,8 @@ export function useGateAlerts(
   body: string,
 ) {
   const [permission, setPermission] = useState<NotificationSupport>(readPermission);
+  const [announcement, setAnnouncement] = useState('');
+  const announcedRef = useRef(false);
   const notifiedRef = useRef(false);
 
   const enable = useCallback(async () => {
@@ -28,13 +34,18 @@ export function useGateAlerts(
   }, []);
 
   useEffect(() => {
+    announcedRef.current = false;
     notifiedRef.current = false;
   }, [gateId]);
 
   useEffect(() => {
-    if (permission !== 'granted' || !gateId || notifiedRef.current) return;
-    const status = gateStatus(ops, gateId);
-    if (status?.level === 'jam') {
+    const status = gateId ? gateStatus(ops, gateId) : undefined;
+    if (status?.level !== 'jam') return;
+    if (!announcedRef.current) {
+      announcedRef.current = true;
+      setAnnouncement(body);
+    }
+    if (permission === 'granted' && !notifiedRef.current) {
       notifiedRef.current = true;
       try {
         new window.Notification(title, { body });
@@ -44,5 +55,5 @@ export function useGateAlerts(
     }
   }, [ops, gateId, permission, title, body]);
 
-  return { permission, enable };
+  return { permission, enable, announcement };
 }
