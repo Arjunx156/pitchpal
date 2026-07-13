@@ -3,6 +3,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MessageBubble } from '../../src/components/chat/MessageBubble';
 import type { ChatMessage } from '../../src/features/chat/types';
+import { TOOL_STATUS } from '../../src/i18n/ui';
 import { renderWithProviders } from '../helpers/render';
 
 describe('MessageBubble', () => {
@@ -23,6 +24,19 @@ describe('MessageBubble', () => {
     expect(screen.getByText("Here's your route.")).toBeInTheDocument();
     expect(screen.getByText('Directions to 114')).toBeInTheDocument();
     expect(screen.getByText('Enter Gate C')).toBeInTheDocument();
+  });
+
+  it('shows the localized tool label, not the raw tool name, while a tool runs', () => {
+    const msg: ChatMessage = {
+      id: 'a3',
+      role: 'assistant',
+      content: '',
+      pending: true,
+      status: 'planRoute',
+    };
+    renderWithProviders(<MessageBubble message={msg} />);
+    expect(screen.getByText(TOOL_STATUS.en.planRoute as string)).toBeInTheDocument();
+    expect(screen.queryByText('planRoute')).not.toBeInTheDocument();
   });
 
   it('offers a retry on a failed assistant turn', async () => {

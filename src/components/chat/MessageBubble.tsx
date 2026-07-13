@@ -3,6 +3,7 @@ import { AlertTriangle, RotateCw, Volume2 } from 'lucide-react';
 import type { ChatMessage } from '../../features/chat/types';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useSpeech } from '../../features/voice/SpeechProvider';
+import { TOOL_STATUS } from '../../i18n/ui';
 import { CardRenderer } from '../cards/CardRenderer';
 import { cn } from '../../lib/utils';
 
@@ -52,7 +53,10 @@ export function MessageBubble({
         )}
       >
         {message.status && message.pending ? (
-          <span className="hud-eyebrow mb-1 block text-accent">{message.status}</span>
+          <span className="hud-eyebrow mb-1 block text-accent">
+            {/* status events carry the tool name — show its localized label */}
+            {TOOL_STATUS[context.language][message.status] ?? message.status}
+          </span>
         ) : null}
 
         {showTyping ? (

@@ -14,6 +14,7 @@ import { SpeechProvider } from './features/voice/SpeechProvider';
 import { ChatProvider, useChatContext } from './features/chat/ChatProvider';
 import { useInstallPrompt } from './features/pwa/useInstallPrompt';
 import { Scoreboard } from './components/scoreboard/Scoreboard';
+import { MomentTicker } from './components/scoreboard/MomentTicker';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ModeAnnouncer } from './components/ui/ModeAnnouncer';
 import { ThemeToggle } from './components/ui/ThemeToggle';
@@ -160,6 +161,7 @@ function Shell() {
         </header>
 
         <Scoreboard />
+        <MomentTicker />
 
         <main id="stage" tabIndex={-1} className="workspace">
           {/* key={view} clears a caught error when the fan switches surface */}

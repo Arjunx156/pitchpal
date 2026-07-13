@@ -8,6 +8,8 @@ import { MessageBubble } from './MessageBubble';
 /** Inviting empty state — an empty screen is an invitation to act. */
 function EmptyState() {
   const { ui } = useFanContext();
+  const { send } = useChatContext();
+  const starters = [ui.quickActions.seat, ui.quickActions.food, ui.quickActions.accessible];
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -20,6 +22,18 @@ function EmptyState() {
       </span>
       <h2 className="display text-xl text-foreground">{ui.assistant}</h2>
       <p className="max-w-sm text-sm text-muted-foreground">{ui.composerPlaceholder}</p>
+      <div className="mt-1 flex flex-wrap justify-center gap-2">
+        {starters.map((starter) => (
+          <button
+            key={starter.label}
+            type="button"
+            onClick={() => void send(starter.query)}
+            className="chip transition-colors hover:border-border-strong hover:text-foreground"
+          >
+            {starter.label}
+          </button>
+        ))}
+      </div>
     </motion.div>
   );
 }

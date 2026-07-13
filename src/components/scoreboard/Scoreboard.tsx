@@ -3,9 +3,8 @@ import { CloudRain, Cloud, Sun, MapPin } from 'lucide-react';
 import { getOpsSnapshot, type Weather } from '../../features/ops/opsFeed';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { liveScore } from '../../features/tournament/fixture';
-import { latestMoments, matchProgress, type MatchMoment } from '../../features/tournament/moments';
-import { MOMENT_LABELS } from '../../i18n/answers';
-import type { LanguageCode } from '../../features/context/types';
+import { latestMoments, matchProgress } from '../../features/tournament/moments';
+import { formatMoment } from '../../i18n/answers';
 import { useNow } from '../../lib/useNow';
 import { momentSlam } from '../../lib/motion';
 import { FlipNumber } from './FlipNumber';
@@ -16,19 +15,13 @@ function pad(n: number): string {
 
 const WEATHER_ICON = { clear: Sun, cloudy: Cloud, rain: CloudRain } as const;
 
-function momentText(moment: MatchMoment, language: LanguageCode): string {
-  const label = MOMENT_LABELS[language][moment.kind];
-  const who = [moment.teamCode, moment.detail].filter(Boolean).join(' ');
-  return who ? `${moment.minute}' ${label} — ${who}` : `${moment.minute}' ${label}`;
-}
-
 /** Team side: big federation code (broadcast expanded) + full name beneath. */
 function TeamSide({ code, name, align }: { code: string; name: string; align: 'start' | 'end' }) {
   return (
     <div
       className={`flex min-w-0 flex-col ${align === 'end' ? 'items-end text-right' : 'items-start'}`}
     >
-      <span className="display-wide text-[clamp(1.6rem,1rem+3vw,3rem)] text-foreground">
+      <span className="display-wide text-[length:var(--team-code-size)] text-foreground">
         {code}
       </span>
       <span className="mt-0.5 truncate text-xs font-medium text-muted-foreground sm:text-sm">
@@ -97,11 +90,8 @@ export function Scoreboard() {
 
         <div className="flex flex-col items-center gap-2">
           <div
-            className="flex items-center leading-none text-foreground"
-            style={{
-              fontSize: 'clamp(3.4rem, 1.6rem + 7.5vw, 7rem)',
-              fontVariationSettings: "'wght' 700",
-            }}
+            className="flex items-center text-[length:var(--score-hero-size)] leading-none text-foreground"
+            style={{ fontVariationSettings: "'wght' 700" }}
           >
             <FlipNumber value={score.home} ariaLabel={`${home.name} ${score.home}`} />
             <span aria-hidden className="flex flex-col items-center gap-[0.14em] px-2 sm:px-3">
@@ -144,7 +134,7 @@ export function Scoreboard() {
             >
               {latest.kind === 'goal' ? <span className="text-accent">⚽</span> : null}
               <span className={latest.kind === 'goal' ? 'text-foreground' : undefined}>
-                {momentText(latest, context.language)}
+                {formatMoment(latest, context.language)}
               </span>
             </motion.p>
           ) : null}

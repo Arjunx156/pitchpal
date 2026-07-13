@@ -35,7 +35,9 @@
   --text-2xl: clamp(1.7rem, 1.4rem + 1.4vw, 2.4rem);
   --text-3xl: clamp(2.3rem, 1.7rem + 2.8vw, 3.6rem);
   --text-display: clamp(2.8rem, 1.6rem + 5.6vw, 6rem);
-  --score-hero-size: clamp(3.4rem, 2rem + 8vw, 7.5rem);
+  /* Scoreboard type: the split-flap score and the federation codes. */
+  --score-hero-size: clamp(3.4rem, 1.6rem + 7.5vw, 7rem);
+  --team-code-size: clamp(1.6rem, 1rem + 3vw, 3rem);
 
   --tracking-tight: -0.02em;
   --tracking-hud: 0.16em; /* broadcast eyebrow tracking */
@@ -91,18 +93,21 @@
   --color-border-strong: #bcccc2;
   --color-focus: #0e9e5b;
 
-  --color-accent: #b8860a; /* readable gold for light */
-  --color-accent-strong: #8f6800;
-  --color-on-accent: #0a140f;
+  /* Light accent/status text passes WCAG AA (>= 4.5:1) on every light
+     surface, including surface-2 #e6ede8; on-accent flips to white because
+     the AA-compliant gold is dark. */
+  --color-accent: #7a5c05;
+  --color-accent-strong: #6f5300;
+  --color-on-accent: #ffffff;
 
   --color-pitch: #0e9e5b;
   --color-pitch-bright: #12b76a;
-  --color-live: #e5093b;
+  --color-live: #c00832;
   --color-warn: #c26a00;
-  --color-ok: #0e9e5b;
+  --color-ok: #0a7a45;
   --color-busy: #c26a00;
-  --color-jam: #e5093b;
-  --color-danger: #e5093b;
+  --color-jam: #c00832;
+  --color-danger: #c00832;
 
   --color-glass-surface-1: rgba(255, 255, 255, 0.72);
   --color-glass-surface-2: rgba(238, 243, 239, 0.66);

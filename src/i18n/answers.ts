@@ -1,4 +1,5 @@
 import type { LanguageCode } from '../features/context/types';
+import type { MatchMoment } from '../features/tournament/moments';
 import type { Level, Side } from '../features/venue/types';
 
 /**
@@ -177,6 +178,13 @@ export function fmt(template: string, vars: Record<string, string | number>): st
   return template.replace(/\{(\w+)\}/g, (whole, key: string) =>
     key in vars ? String(vars[key]) : whole,
   );
+}
+
+/** One localized ticker/stinger line for a match moment, e.g. `12' GOAL — BRA #9`. */
+export function formatMoment(moment: MatchMoment, language: LanguageCode): string {
+  const label = MOMENT_LABELS[language][moment.kind];
+  const who = [moment.teamCode, moment.detail].filter(Boolean).join(' ');
+  return who ? `${moment.minute}' ${label} — ${who}` : `${moment.minute}' ${label}`;
 }
 
 /** Sustainability (green-route) phrases. */
