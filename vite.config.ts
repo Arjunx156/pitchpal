@@ -2,6 +2,7 @@
 import { defineConfig, type PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { contentSecurityPolicy } from './server/security';
 
 // Load .env into process.env so the dev API handler runs in live mode when a
@@ -71,11 +72,14 @@ function cspMetaPlugin(): PluginOption {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     apiPlugin(),
     cspMetaPlugin(),
+    // `npm run analyze` → treemap of what's actually in each chunk.
+    mode === 'analyze' &&
+      visualizer({ filename: 'dist/stats.html', gzipSize: true, brotliSize: false }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png', 'icons/favicon-64.png'],
@@ -101,6 +105,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Runtime font loading is already gated by unicode-range, but the
+        // precache would force-download every subset. Skip scripts the app
+        // never renders (no Cyrillic/Vietnamese UI language); Latin + Arabic
+        // stay precached for offline use.
+        globIgnores: ['**/*cyrillic*', '**/*vietnamese*'],
         // Never let the SPA navigation fallback swallow the SSE endpoint.
         navigateFallbackDenylist: [/^\/api\//],
       },
@@ -158,4 +167,4 @@ export default defineConfig({
       thresholds: { lines: 95, functions: 85, branches: 82, statements: 95 },
     },
   },
-});
+}));
