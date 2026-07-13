@@ -14,6 +14,8 @@ dist-server/
 # Test / coverage artifacts
 coverage/
 *.tsbuildinfo
+test-results/
+playwright-report/
 
 # Editor / OS
 .vscode/*
