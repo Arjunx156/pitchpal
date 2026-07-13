@@ -6,11 +6,15 @@ import { contentSecurityPolicy } from './server/security';
 
 // Load .env into process.env so the dev API handler runs in live mode when a
 // GEMINI_API_KEY is present (Vite does not expose .env to process.env itself).
+// Standard dotenv precedence: an explicitly-set environment variable wins over
+// the file — this lets e2e force mock mode with GEMINI_API_KEY=''.
+const explicitKey = process.env.GEMINI_API_KEY;
 try {
   process.loadEnvFile('.env');
 } catch {
   /* no .env — dev runs in mock mode */
 }
+if (explicitKey !== undefined) process.env.GEMINI_API_KEY = explicitKey;
 
 /**
  * Dev-only plugin: mounts the same chat handler used in production so that a

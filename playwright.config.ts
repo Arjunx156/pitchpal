@@ -21,5 +21,8 @@ export default defineConfig({
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    // Force mock mode even when a real key sits in .env: e2e must be
+    // deterministic and must never spend the live Gemini quota.
+    env: { ...process.env, GEMINI_API_KEY: '' },
   },
 });
