@@ -139,7 +139,12 @@ export default defineConfig({
         'src/**/*.d.ts',
         'server/index.ts',
         'src/i18n/**',
-        'src/components/ui/**', // thin presentational primitives (mostly styling)
+        // Thin presentational primitives (styling only, no behaviour to cover).
+        // Button, Dialog and ThemeToggle carry real logic and are tested, so they
+        // stay in the coverage denominator.
+        'src/components/ui/Panel.tsx',
+        'src/components/ui/Skeleton.tsx',
+        'src/components/ui/LiveRegion.tsx',
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',
         'src/features/venue/types.ts',
@@ -148,7 +153,9 @@ export default defineConfig({
         'src/features/voice/useSpeechOutput.ts',
         'src/features/pwa/**',
       ],
-      thresholds: { lines: 80, functions: 80, branches: 80, statements: 80 },
+      // Set just below the achieved coverage (~97% lines, ~84% branches) so a
+      // real regression fails CI while normal variance doesn't.
+      thresholds: { lines: 95, functions: 85, branches: 82, statements: 95 },
     },
   },
 });

@@ -6,6 +6,11 @@ import { ChatWindow } from '../../src/components/chat/ChatWindow';
 import { StadiumMap } from '../../src/components/map/StadiumMap';
 import { OpsHud } from '../../src/components/ops/OpsHud';
 import { ContextBar } from '../../src/components/context-bar/ContextBar';
+import { Composer } from '../../src/components/chat/Composer';
+import { CommandPalette } from '../../src/components/command/CommandPalette';
+import { Onboarding } from '../../src/components/onboarding/Onboarding';
+import { ItineraryPanel } from '../../src/components/itinerary/ItineraryPanel';
+import { Standings } from '../../src/components/standings/Standings';
 import { renderWithProviders } from '../helpers/render';
 
 expect.extend(toHaveNoViolations);
@@ -43,5 +48,33 @@ describe('Accessibility (jest-axe)', () => {
   it('ContextBar has no violations', async () => {
     const { container } = renderWithProviders(<ContextBar />);
     expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('Composer has no violations', async () => {
+    const { container } = renderWithProviders(<Composer />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('ItineraryPanel has no violations', async () => {
+    const { container } = renderWithProviders(<ItineraryPanel />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('Standings has no violations', async () => {
+    const { container } = renderWithProviders(<Standings />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('CommandPalette (open) has no violations', async () => {
+    const { baseElement } = renderWithProviders(
+      <CommandPalette open onClose={noop} onFocusMap={noop} onAsk={noop} />,
+    );
+    // Dialog/palette content renders in a portal, so scan the whole document.
+    expect(await axe(baseElement)).toHaveNoViolations();
+  });
+
+  it('Onboarding (open) has no violations', async () => {
+    const { baseElement } = renderWithProviders(<Onboarding open onClose={noop} />);
+    expect(await axe(baseElement)).toHaveNoViolations();
   });
 });

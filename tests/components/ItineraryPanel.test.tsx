@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ItineraryPanel } from '../../src/components/itinerary/ItineraryPanel';
 import { renderWithProviders } from '../helpers/render';
@@ -24,7 +24,12 @@ describe('ItineraryPanel', () => {
     expect(screen.getByText('Meet friends at fountain')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: /remove step/i }));
-    // AnimatePresence keeps the row mounted during its exit animation.
-    await waitForElementToBeRemoved(() => screen.queryByText('Meet friends at fountain'));
+    // AnimatePresence keeps the row mounted during its exit animation; poll until
+    // it unmounts. (waitFor is deterministic whether the exit already finished or
+    // is still in flight, unlike waitForElementToBeRemoved which throws if it's
+    // already gone.)
+    await waitFor(() =>
+      expect(screen.queryByText('Meet friends at fountain')).not.toBeInTheDocument(),
+    );
   });
 });
