@@ -101,7 +101,7 @@ function StepRow({
       </span>
       <span className="flex-1 truncate text-sm font-medium text-foreground">{label}</span>
       <time className="tabular text-xs text-muted-foreground">{timeText}</time>
-      <span className="flex items-center opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
+      <span className="row-reveal flex items-center">
         {permission !== 'unsupported' ? (
           <button
             type="button"

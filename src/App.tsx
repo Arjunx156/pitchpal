@@ -234,6 +234,7 @@ function Shell() {
         onClose={() => setPaletteOpen(false)}
         onFocusMap={() => setView('map')}
         onAsk={ask}
+        onInstall={canInstall ? () => void promptInstall() : undefined}
       />
       <Onboarding open={onboardingOpen} onClose={closeOnboarding} />
       <ModeAnnouncer />

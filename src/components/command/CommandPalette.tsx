@@ -1,5 +1,22 @@
-import { useMemo, useState, type ComponentType } from 'react';
-import { Armchair, Languages, MapPin, Moon, Search, Trophy, Utensils, Volume2 } from 'lucide-react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+  type KeyboardEvent,
+} from 'react';
+import {
+  Armchair,
+  Download,
+  Languages,
+  MapPin,
+  Moon,
+  Search,
+  Trophy,
+  Utensils,
+  Volume2,
+} from 'lucide-react';
 import { useFanContext } from '../../features/context/ContextProvider';
 import { useTheme } from '../../features/theme/ThemeProvider';
 import { useSpeech } from '../../features/voice/SpeechProvider';
@@ -21,13 +38,31 @@ interface CommandPaletteProps {
   onClose: () => void;
   onFocusMap: () => void;
   onAsk: (query: string) => void;
+  /** Present only when the browser offers PWA install — adds an install command. */
+  onInstall?: () => void;
 }
 
-export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPaletteProps) {
+export function CommandPalette({
+  open,
+  onClose,
+  onFocusMap,
+  onAsk,
+  onInstall,
+}: CommandPaletteProps) {
   const { ui, context, update } = useFanContext();
   const { cycle } = useTheme();
   const { toggleAutoRead } = useSpeech();
   const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Fresh palette on every open: no stale filter or highlight.
+  useEffect(() => {
+    if (open) {
+      setQuery('');
+      setActiveIndex(0);
+    }
+  }, [open]);
 
   const commands = useMemo<Command[]>(() => {
     const ask = (q: string) => () => {
@@ -39,7 +74,7 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
       const next = LANGUAGES[(i + 1) % LANGUAGES.length] as LanguageCode;
       update({ language: next });
     };
-    return [
+    const list: Command[] = [
       {
         id: 'seat',
         group: ui.commandPalette.groupAsk,
@@ -93,12 +128,48 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
         run: toggleAutoRead,
       },
     ];
-  }, [ui, context.language, onAsk, onClose, onFocusMap, cycle, toggleAutoRead, update]);
+    if (onInstall) {
+      list.push({
+        id: 'install',
+        group: ui.commandPalette.groupSettings,
+        icon: Download,
+        label: ui.install,
+        run: () => {
+          onInstall();
+          onClose();
+        },
+      });
+    }
+    return list;
+  }, [ui, context.language, onAsk, onClose, onFocusMap, onInstall, cycle, toggleAutoRead, update]);
 
   const filtered = commands.filter((c) =>
     c.label.toLowerCase().includes(query.trim().toLowerCase()),
   );
   const groups = [...new Set(filtered.map((c) => c.group))];
+  // Keyboard order must mirror the grouped render order.
+  const ordered = groups.flatMap((group) => filtered.filter((c) => c.group === group));
+  const active = Math.min(activeIndex, Math.max(0, ordered.length - 1));
+  const activeCommand = ordered[active];
+
+  useEffect(() => {
+    if (!open) return;
+    listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' });
+  }, [active, open]);
+
+  const onInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (ordered.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActiveIndex((active + 1) % ordered.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActiveIndex((active - 1 + ordered.length) % ordered.length);
+    } else if (e.key === 'Enter' && activeCommand) {
+      e.preventDefault();
+      activeCommand.run();
+    }
+  };
 
   return (
     <Dialog
@@ -113,14 +184,18 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
           <Search size={16} aria-hidden className="text-muted-foreground" />
           <input
             autoFocus
+            role="combobox"
+            aria-label={ui.commandPalette.open}
+            aria-expanded="true"
+            aria-controls="palette-options"
+            aria-activedescendant={activeCommand ? `palette-opt-${activeCommand.id}` : undefined}
+            aria-autocomplete="list"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && filtered[0]) {
-                e.preventDefault();
-                filtered[0].run();
-              }
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActiveIndex(0);
             }}
+            onKeyDown={onInputKeyDown}
             placeholder={ui.commandPalette.placeholder}
             className="flex-1 bg-transparent py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
@@ -129,32 +204,44 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
           </kbd>
         </div>
 
-        <div className="max-h-[52vh] overflow-y-auto">
-          {filtered.length === 0 ? (
+        <div
+          ref={listRef}
+          id="palette-options"
+          role="listbox"
+          aria-label={ui.commandPalette.open}
+          className="max-h-[52vh] overflow-y-auto"
+        >
+          {ordered.length === 0 ? (
             <p className="px-3 py-6 text-center text-sm text-muted-foreground">
               {ui.commandPalette.empty}
             </p>
           ) : (
             groups.map((group) => (
-              <div key={group} className="mb-1">
-                <p className="hud-eyebrow px-3 py-1.5">{group}</p>
+              <div key={group} role="group" aria-label={group} className="mb-1">
+                <p aria-hidden className="hud-eyebrow px-3 py-1.5">
+                  {group}
+                </p>
                 {filtered
                   .filter((c) => c.group === group)
                   .map((c) => {
                     const Icon = c.icon;
+                    const isActive = activeCommand?.id === c.id;
                     return (
-                      <button
+                      <div
                         key={c.id}
-                        type="button"
+                        id={`palette-opt-${c.id}`}
+                        role="option"
+                        aria-selected={isActive}
                         onClick={c.run}
+                        onMouseMove={() => setActiveIndex(ordered.indexOf(c))}
                         className={cn(
-                          'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-foreground',
-                          'transition-colors hover:bg-surface-2',
+                          'flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-foreground transition-colors',
+                          isActive && 'bg-surface-2',
                         )}
                       >
                         <Icon size={16} />
                         <span className="flex-1">{c.label}</span>
-                      </button>
+                      </div>
                     );
                   })}
               </div>

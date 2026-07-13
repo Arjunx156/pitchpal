@@ -355,3 +355,23 @@
   background: color-mix(in oklab, var(--color-surface) 60%, transparent);
   color: var(--color-text-muted);
 }
+
+/* Row controls revealed on demand: hover/focus on fine pointers; always
+   visible (with larger tap targets) on touch, where hover doesn't exist. */
+.row-reveal {
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+.group:hover .row-reveal,
+.row-reveal:focus-within {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .row-reveal {
+    opacity: 1;
+  }
+  .row-reveal button {
+    min-height: 2.25rem;
+    min-width: 2.25rem;
+  }
+}
