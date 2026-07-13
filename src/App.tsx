@@ -60,7 +60,7 @@ function Shell() {
       setView('chat');
       void send(query);
     },
-    [send],
+    [send, setView],
   );
 
   const closeOnboarding = useCallback(() => {
