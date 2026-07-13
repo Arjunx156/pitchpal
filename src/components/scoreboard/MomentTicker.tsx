@@ -2,7 +2,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { getOpsSnapshot } from '../../features/ops/opsFeed';
 import { latestMoments } from '../../features/tournament/moments';
 import { formatMoment, fmt } from '../../i18n/answers';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 
 const TICKER_REFRESH_MS = 15_000;
 const TICKER_MOMENTS = 6;

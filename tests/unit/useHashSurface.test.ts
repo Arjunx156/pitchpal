@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useHashSurface } from '../../src/lib/useHashSurface';
+import { useHashSurface } from '../../src/hooks/useHashSurface';
 
 describe('useHashSurface', () => {
   beforeEach(() => {

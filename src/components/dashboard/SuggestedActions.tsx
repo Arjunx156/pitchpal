@@ -15,7 +15,7 @@ import {
   suggestNextActions,
   type SuggestionKind,
 } from '../../features/suggestions/suggestNextActions';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { rowItem } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
 

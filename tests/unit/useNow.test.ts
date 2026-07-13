@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useNow } from '../../src/lib/useNow';
+import { useNow } from '../../src/hooks/useNow';
 
 describe('useNow (shared clock)', () => {
   beforeEach(() => vi.useFakeTimers());

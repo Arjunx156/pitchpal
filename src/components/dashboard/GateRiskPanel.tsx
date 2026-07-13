@@ -4,7 +4,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { type CongestionLevel } from '../../features/ops/opsFeed';
 import { forecastGateRisk, type RiskTrend } from '../../features/ops/riskForecast';
 import { fmt } from '../../i18n/answers';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { rowItem } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
 import { Sparkline } from '../charts/Sparkline';

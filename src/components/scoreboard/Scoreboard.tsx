@@ -5,7 +5,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { liveScore } from '../../features/tournament/fixture';
 import { latestMoments, matchProgress } from '../../features/tournament/moments';
 import { formatMoment } from '../../i18n/answers';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { momentSlam } from '../../lib/motion';
 import { FlipNumber } from './FlipNumber';
 

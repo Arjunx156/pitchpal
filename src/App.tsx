@@ -28,7 +28,7 @@ import { StadiumMap } from './components/map/StadiumMap';
 import { CommandPalette } from './components/command/CommandPalette';
 import { Onboarding } from './components/onboarding/Onboarding';
 import { staggerContainer } from './lib/motion';
-import { useHashSurface, type Surface } from './lib/useHashSurface';
+import { useHashSurface, type Surface } from './hooks/useHashSurface';
 import { cn } from './lib/utils';
 
 interface NavDef {

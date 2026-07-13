@@ -4,7 +4,7 @@ import { useFanContext } from '../../features/context/ContextProvider';
 import { sectionDensity, densityLevel } from '../../features/ops/opsFeed';
 import { buildMapGeometry, routePath, VIEW } from '../../features/map/geometry';
 import { useMapFocus } from '../../features/map/useMapFocus';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { fmt } from '../../i18n/answers';
 import { Panel } from '../ui/Panel';
 

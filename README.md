@@ -116,6 +116,7 @@ src/
     notifications/   on-device gate-jam alert hook
     voice/ theme/ pwa/ venue/   speech, theming, install prompt, venue registry + data
   lib/             intent · retrieval · compose · cards · tools-core — the deterministic core
+  hooks/           shared React hooks (useNow · useOnlineStatus · useHashSurface)
   i18n/            UI chrome + answer phrases in five languages
   components/      THE BROADCAST UI
     scoreboard/      the signature kinetic scoreboard (flip digits · clock · stingers)

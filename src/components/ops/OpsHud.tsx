@@ -11,7 +11,7 @@ import {
 } from '../../features/ops/opsFeed';
 import { fmt } from '../../i18n/answers';
 import { ANALYTICS } from '../../i18n/ui';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { rowItem, staggerContainer } from '../../lib/motion';
 import { Panel } from '../ui/Panel';
 import { Sparkline } from '../charts/Sparkline';

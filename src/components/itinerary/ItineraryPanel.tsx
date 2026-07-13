@@ -30,7 +30,7 @@ import {
 import { useStepReminder } from '../../features/notifications/useStepReminder';
 import { ITINERARY, type ItineraryStrings } from '../../i18n/ui';
 import { fmt } from '../../i18n/answers';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { ACCENT_PILL, FIELD_SURFACE } from '../../lib/variants';
 import { LiveRegion } from '../ui/LiveRegion';
 import { Panel } from '../ui/Panel';

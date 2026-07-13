@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { answerOffline } from '../../lib/tools-core';
-import { useOnlineStatus } from '../../lib/useOnlineStatus';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 import { getOpsSnapshot } from '../ops/opsFeed';
 import type { FanContext } from '../context/types';
 import type { Venue } from '../venue/types';

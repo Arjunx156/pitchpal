@@ -8,7 +8,7 @@ import {
   type ItineraryStepKind,
 } from '../../features/itinerary/itinerary';
 import { ITINERARY } from '../../i18n/ui';
-import { useNow } from '../../lib/useNow';
+import { useNow } from '../../hooks/useNow';
 import { rowItem } from '../../lib/motion';
 import { ACCENT_PILL } from '../../lib/variants';
 import { cn } from '../../lib/utils';
