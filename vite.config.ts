@@ -79,8 +79,8 @@ export default defineConfig({
         name: 'PitchPal — Stadium Companion',
         short_name: 'PitchPal',
         description: 'Multilingual, accessible GenAI stadium companion for FIFA World Cup 2026.',
-        theme_color: '#12100e',
-        background_color: '#12100e',
+        theme_color: '#070b09',
+        background_color: '#070b09',
         display: 'standalone',
         start_url: '/',
         lang: 'en',
@@ -111,15 +111,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Stable vendor chunks: the app code changes every deploy, the
-        // frameworks don't — split them so returning fans hit warm caches
-        // and secondary surfaces (dnd-kit) stay out of the first paint.
+        // frameworks don't — split them so returning fans hit warm caches.
         // Function form so subpath modules (react/jsx-runtime …) match too.
         manualChunks(id: string) {
           const normalized = id.replace(/\\/g, '/');
           if (!normalized.includes('node_modules')) return undefined;
           if (/\/(react|react-dom|scheduler)\//.test(normalized)) return 'react';
           if (normalized.includes('framer-motion')) return 'motion';
-          if (normalized.includes('@dnd-kit')) return 'dnd';
           return undefined;
         },
       },
@@ -143,7 +141,6 @@ export default defineConfig({
         // Button, Dialog and ThemeToggle carry real logic and are tested, so they
         // stay in the coverage denominator.
         'src/components/ui/Panel.tsx',
-        'src/components/ui/Skeleton.tsx',
         'src/components/ui/LiveRegion.tsx',
         // Type-only modules (interfaces/unions) — no runtime to cover.
         'src/features/chat/types.ts',

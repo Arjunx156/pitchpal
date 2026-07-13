@@ -119,7 +119,6 @@ export function CommandPalette({ open, onClose, onFocusMap, onAsk }: CommandPale
               if (e.key === 'Enter' && filtered[0]) {
                 e.preventDefault();
                 filtered[0].run();
-                if (filtered[0].group === ui.commandPalette.groupAsk) return;
               }
             }}
             placeholder={ui.commandPalette.placeholder}

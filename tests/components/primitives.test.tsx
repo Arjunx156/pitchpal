@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { FlipNumber } from '../../src/components/scoreboard/FlipNumber';
 import { Sparkline } from '../../src/components/charts/Sparkline';
 import { Panel } from '../../src/components/ui/Panel';
-import { Skeleton } from '../../src/components/ui/Skeleton';
 import { LiveRegion } from '../../src/components/ui/LiveRegion';
 
 describe('FlipNumber', () => {
@@ -31,13 +30,6 @@ describe('Panel', () => {
     expect(screen.getByRole('heading', { name: 'Stadium map' })).toBeInTheDocument();
     expect(screen.getByText('Wayfinding')).toBeInTheDocument();
     expect(screen.getByText('Panel body')).toBeInTheDocument();
-  });
-});
-
-describe('Skeleton', () => {
-  it('renders a placeholder element', () => {
-    const { container } = render(<Skeleton className="h-4 w-24" />);
-    expect(container.firstChild).toBeTruthy();
   });
 });
 

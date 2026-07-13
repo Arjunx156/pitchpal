@@ -87,6 +87,10 @@ function Shell() {
     { surface: 'map', label: ui.nav.map, icon: MapIcon },
   ];
 
+  // Rendered in the triptych center on the map view and in the right rail on
+  // the chat view — one element, one set of props.
+  const stadiumMap = <StadiumMap onAsk={ask} />;
+
   return (
     <>
       <a href="#stage" className="skip-link">
@@ -173,7 +177,7 @@ function Shell() {
               </motion.aside>
 
               <div className="min-h-[62vh] lg:min-h-0">
-                {view === 'chat' ? <ChatWindow /> : <StadiumMap onAsk={ask} />}
+                {view === 'chat' ? <ChatWindow /> : stadiumMap}
               </div>
 
               <motion.aside
@@ -182,7 +186,7 @@ function Shell() {
                 initial="hidden"
                 animate="show"
               >
-                {view === 'chat' ? <StadiumMap onAsk={ask} /> : null}
+                {view === 'chat' ? stadiumMap : null}
                 <OpsHud />
                 <Standings />
               </motion.aside>
