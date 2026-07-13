@@ -1,5 +1,6 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { answerOffline } from '../../lib/tools-core';
+import { useOnlineStatus } from '../../lib/useOnlineStatus';
 import { getOpsSnapshot } from '../ops/opsFeed';
 import type { FanContext } from '../context/types';
 import type { Venue } from '../venue/types';
@@ -110,6 +111,18 @@ export function useChat(
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [mode, setMode] = useState<ChatMode>('unknown');
+  const isOnline = useOnlineStatus();
+
+  // Surface connectivity loss immediately (badge + screen-reader announcement)
+  // instead of waiting for the next send to fail. Reconnecting clears the
+  // offline badge; the real mode is re-resolved by the next send.
+  useEffect(() => {
+    if (!isOnline) {
+      setMode('offline');
+    } else {
+      setMode((m) => (m === 'offline' ? 'unknown' : m));
+    }
+  }, [isOnline]);
   const idRef = useRef(0);
   const nextId = () => `m${(idRef.current += 1)}`;
   // Mirror of `messages` so send/retry always read the freshest history
@@ -166,6 +179,8 @@ export function useChat(
 
       let response: Response;
       try {
+        // Known-offline: skip the doomed request and answer on-device.
+        if (!navigator.onLine) throw new TypeError('offline');
         const request: ChatRequest = { message: trimmed || 'Scan my ticket.', context, history };
         if (image) request.image = image;
         response = await postChat(request, controller.signal);

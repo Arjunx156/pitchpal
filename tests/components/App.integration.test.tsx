@@ -9,6 +9,8 @@ import { UI } from '../../src/i18n/ui';
 beforeEach(() => {
   localStorage.clear();
   markOnboarded();
+  // The surface is URL-hash-backed; give every test a clean slate.
+  window.location.hash = '';
 });
 afterEach(() => vi.unstubAllGlobals());
 

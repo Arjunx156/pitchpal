@@ -27,9 +27,8 @@ import { StadiumMap } from './components/map/StadiumMap';
 import { CommandPalette } from './components/command/CommandPalette';
 import { Onboarding } from './components/onboarding/Onboarding';
 import { staggerContainer } from './lib/motion';
+import { useHashSurface, type Surface } from './lib/useHashSurface';
 import { cn } from './lib/utils';
-
-type Surface = 'home' | 'chat' | 'map';
 
 interface NavDef {
   surface: Surface;
@@ -50,7 +49,7 @@ function hasOnboarded(): boolean {
 function Shell() {
   const { ui } = useFanContext();
   const { send } = useChatContext();
-  const [view, setView] = useState<Surface>('home');
+  const [view, setView] = useHashSurface();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(() => !hasOnboarded());
   const { canInstall, promptInstall } = useInstallPrompt();
